@@ -1,189 +1,573 @@
-'use client'
+'use client';
+
+import { useEffect, useState, useCallback } from 'react'
 import AdminShell from '@/components/Common/AdminShell'
+import {
+  getPassengers,
+  getPassengerStats,
+  activatePassenger,
+  deactivatePassenger,
+  deletePassenger,
+  Passenger,
+  PassengerStats,
+} from '@/api/passengers'
 
-// Types
-type PassengerStatus = 'Active' | 'Inactive' | 'Blocked'
+// ── Delete Confirm Modal ──────────────────────────────────────────────────────
+function DeleteModal({
+  passenger, onConfirm, onCancel, isLoading,
+}: {
+  passenger: Passenger
+  onConfirm: () => void
+  onCancel:  () => void
+  isLoading: boolean
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onCancel} />
+      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6">
 
-interface Passenger {
-  id: string
-  name: string
-  phone: string
-  rides: number
-  totalSpent: number
-  joined: string
-  status: PassengerStatus
+        <div className="flex items-center justify-center w-14 h-14 rounded-full
+                        bg-red-100 mx-auto mb-4">
+          <svg className="w-7 h-7 text-red-600" fill="none" viewBox="0 0 24 24"
+               stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5
+                 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </div>
+
+        <h2 className="text-center text-lg font-bold text-slate-800 mb-1">
+          Delete Passenger
+        </h2>
+        <p className="text-center text-sm text-slate-500 mb-1">
+          Are you sure you want to delete
+        </p>
+        <p className="text-center text-sm font-semibold text-slate-800 mb-1">
+          {passenger.fullName}
+        </p>
+        <p className="text-center text-xs text-slate-400 mb-2">{passenger.email}</p>
+        <p className="text-center text-xs font-mono text-slate-500 mb-5">
+          {passenger.passengerId ?? '—'}
+        </p>
+
+        <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-6">
+          <p className="text-xs text-red-600 text-center font-medium">
+            ⚠️ This action cannot be undone. All data associated with this
+            account will be permanently removed.
+          </p>
+        </div>
+
+        <div className="flex gap-3">
+          <button onClick={onCancel} disabled={isLoading}
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200
+                             text-sm font-medium text-slate-700 hover:bg-slate-50
+                             disabled:opacity-50 transition-colors">
+            Cancel
+          </button>
+          <button onClick={onConfirm} disabled={isLoading}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white
+                             text-sm font-semibold hover:bg-red-700 disabled:opacity-50
+                             transition-colors flex items-center justify-center gap-2">
+            {isLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white
+                                rounded-full animate-spin" />
+                Deleting...
+              </>
+            ) : 'Yes, Delete'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }
 
-// Mock Data
-const passengers: Passenger[] = [
-  {
-    id: 'P-1001',
-    name: 'John Doe',
-    phone: '+91 98765 43210',
-    rides: 45,
-    totalSpent: 12540,
-    joined: 'Jan 2023',
-    status: 'Active'
-  },
-  {
-    id: 'P-1002',
-    name: 'Jane Smith',
-    phone: '+91 87654 32109',
-    rides: 32,
-    totalSpent: 8750,
-    joined: 'Mar 2023',
-    status: 'Active'
-  },
-  {
-    id: 'P-1003',
-    name: 'Mike Johnson',
-    phone: '+91 76543 21098',
-    rides: 28,
-    totalSpent: 7420,
-    joined: 'Jun 2023',
-    status: 'Active'
-  },
-  {
-    id: 'P-1004',
-    name: 'Sarah Williams',
-    phone: '+91 65432 10987',
-    rides: 52,
-    totalSpent: 15680,
-    joined: 'Dec 2022',
-    status: 'Active'
-  },
-  {
-    id: 'P-1005',
-    name: 'David Brown',
-    phone: '+91 54321 09876',
-    rides: 12,
-    totalSpent: 3240,
-    joined: 'Aug 2023',
-    status: 'Inactive'
-  },
-  {
-    id: 'P-1006',
-    name: 'Emma Wilson',
-    phone: '+91 43210 98765',
-    rides: 67,
-    totalSpent: 21450,
-    joined: 'Sep 2022',
-    status: 'Active'
-  },
-  {
-    id: 'P-1007',
-    name: 'James Taylor',
-    phone: '+91 32109 87654',
-    rides: 8,
-    totalSpent: 2150,
-    joined: 'Oct 2023',
-    status: 'Active'
-  },
-  {
-    id: 'P-1008',
-    name: 'Lisa Anderson',
-    phone: '+91 21098 76543',
-    rides: 23,
-    totalSpent: 6890,
-    joined: 'Feb 2023',
-    status: 'Blocked'
-  },
-  {
-    id: 'P-1009',
-    name: 'Robert Taylor',
-    phone: '+91 10987 65432',
-    rides: 41,
-    totalSpent: 11230,
-    joined: 'Nov 2022',
-    status: 'Active'
-  },
-  {
-    id: 'P-1010',
-    name: 'Maria Garcia',
-    phone: '+91 09876 54321',
-    rides: 19,
-    totalSpent: 4980,
-    joined: 'Apr 2023',
-    status: 'Active'
-  },
-  {
-    id: 'P-1011',
-    name: 'Patricia Moore',
-    phone: '+91 98765 12345',
-    rides: 35,
-    totalSpent: 9650,
-    joined: 'Jul 2023',
-    status: 'Active'
-  },
-  {
-    id: 'P-1012',
-    name: 'Jennifer Lee',
-    phone: '+91 87654 23456',
-    rides: 0,
-    totalSpent: 0,
-    joined: 'Jan 2024',
-    status: 'Inactive'
-  }
-]
+// ── Deactivate Modal ──────────────────────────────────────────────────────────
+function DeactivateModal({
+  passenger, onConfirm, onCancel, isLoading,
+}: {
+  passenger: Passenger
+  onConfirm: (reason: string) => void
+  onCancel:  () => void
+  isLoading: boolean
+}) {
+  const [reason, setReason] = useState('')
 
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onCancel} />
+      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6">
+
+        {/* Icon */}
+        <div className="flex items-center justify-center w-14 h-14 rounded-full
+                        bg-amber-100 mx-auto mb-4">
+          <svg className="w-7 h-7 text-amber-600" fill="none" viewBox="0 0 24 24"
+               stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round"
+              d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0
+                 015.636 5.636m12.728 12.728L5.636 5.636" />
+          </svg>
+        </div>
+
+        <h2 className="text-center text-lg font-bold text-slate-800 mb-1">
+          Deactivate Passenger
+        </h2>
+        <p className="text-center text-sm text-slate-500 mb-1">
+          You are deactivating
+        </p>
+        <p className="text-center text-sm font-semibold text-slate-800 mb-1">
+          {passenger.fullName}
+        </p>
+        <p className="text-center text-xs font-mono text-slate-400 mb-5">
+          {passenger.passengerId ?? '—'}
+        </p>
+
+        {/* Reason input */}
+        <label className="text-sm font-medium text-slate-700 mb-1.5 block">
+          Reason for deactivation <span className="text-red-500">*</span>
+        </label>
+        <textarea
+          value={reason}
+          onChange={e => setReason(e.target.value)}
+          placeholder="e.g. Violated terms of service, suspicious activity..."
+          rows={3}
+          className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm
+                     focus:outline-none focus:ring-2 focus:ring-amber-400
+                     focus:border-transparent mb-2 resize-none transition"
+        />
+        <p className="text-xs text-slate-400 mb-5">
+          This reason will be saved and visible in the deactivated users list.
+        </p>
+
+        <div className="flex gap-3">
+          <button
+            onClick={onCancel}
+            disabled={isLoading}
+            className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200
+                       text-sm font-medium text-slate-700 hover:bg-slate-50
+                       disabled:opacity-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => onConfirm(reason)}
+            disabled={isLoading || !reason.trim()}
+            className="flex-1 px-4 py-2.5 rounded-xl bg-amber-500 text-white
+                       text-sm font-semibold hover:bg-amber-600 disabled:opacity-50
+                       transition-colors flex items-center justify-center gap-2"
+          >
+            {isLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white
+                                rounded-full animate-spin" />
+                Deactivating...
+              </>
+            ) : 'Deactivate'}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  )
+}
+
+// ── Main Page ─────────────────────────────────────────────────────────────────
 export default function PassengersPage() {
+
+  const [passengers,       setPassengers      ] = useState<Passenger[]>([])
+  const [stats,            setStats           ] = useState<PassengerStats>({
+    total: 0, active: 0, inactive: 0, verified: 0,
+  })
+  const [isLoading,        setIsLoading       ] = useState(true)
+  const [statsLoading,     setStatsLoading    ] = useState(true)
+  const [error,            setError           ] = useState('')
+  const [search,           setSearch          ] = useState('')
+  const [searchInput,      setSearchInput     ] = useState('')
+  const [page,             setPage            ] = useState(1)
+  const [totalPages,       setTotalPages      ] = useState(1)
+  const [total,            setTotal           ] = useState(0)
+  const [actionLoading,    setActionLoading   ] = useState<string | null>(null)
+  const [toast,            setToast           ] = useState<{ msg: string; ok: boolean } | null>(null)
+
+  // Delete modal state
+  const [deleteTarget,     setDeleteTarget    ] = useState<Passenger | null>(null)
+  const [deleteLoading,    setDeleteLoading   ] = useState(false)
+
+  // Deactivate modal state
+  const [deactivateTarget,  setDeactivateTarget ] = useState<Passenger | null>(null)
+  const [deactivateLoading, setDeactivateLoading] = useState(false)
+
+  const LIMIT = 10
+
+  // ── Fetch stats ────────────────────────────────────────────
+  const fetchStats = async () => {
+    setStatsLoading(true)
+    try {
+      const data = await getPassengerStats()
+      setStats(data)
+    } catch {
+      // silently fail
+    } finally {
+      setStatsLoading(false)
+    }
+  }
+
+  // ── Fetch passengers ───────────────────────────────────────
+  const fetchPassengers = useCallback(async () => {
+    setIsLoading(true)
+    setError('')
+    try {
+      const data = await getPassengers(page, LIMIT, search)
+      setPassengers(data.users ?? [])
+      setTotalPages(data.totalPages ?? 1)
+      setTotal(data.total ?? 0)
+    } catch (err: any) {
+      setError(err?.response?.data?.message ?? 'Failed to load passengers.')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [page, search])
+
+  useEffect(() => { fetchStats() }, [])
+  useEffect(() => { fetchPassengers() }, [fetchPassengers])
+
+  // ── Toast ──────────────────────────────────────────────────
+  const showToast = (msg: string, ok: boolean) => {
+    setToast({ msg, ok })
+    setTimeout(() => setToast(null), 3000)
+  }
+
+  // ── Activate ───────────────────────────────────────────────
+  const handleActivate = async (id: string, name: string) => {
+    setActionLoading(id)
+    try {
+      await activatePassenger(id)
+      showToast(`${name} activated successfully.`, true)
+      fetchPassengers()
+      fetchStats()
+    } catch (err: any) {
+      showToast(err?.response?.data?.message ?? 'Failed to activate.', false)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  // ── Deactivate (with reason) ───────────────────────────────
+  const handleDeactivateConfirm = async (reason: string) => {
+    if (!deactivateTarget) return
+    setDeactivateLoading(true)
+    try {
+      await deactivatePassenger(deactivateTarget._id, reason)
+      showToast(`${deactivateTarget.fullName} deactivated successfully.`, true)
+      setDeactivateTarget(null)
+      fetchPassengers()
+      fetchStats()
+    } catch (err: any) {
+      showToast(err?.response?.data?.message ?? 'Failed to deactivate.', false)
+    } finally {
+      setDeactivateLoading(false)
+    }
+  }
+
+  // ── Delete ─────────────────────────────────────────────────
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return
+    setDeleteLoading(true)
+    try {
+      await deletePassenger(deleteTarget._id)
+      showToast(`${deleteTarget.fullName} deleted successfully.`, true)
+      setDeleteTarget(null)
+      fetchPassengers()
+      fetchStats()
+    } catch (err: any) {
+      showToast(err?.response?.data?.message ?? 'Failed to delete.', false)
+    } finally {
+      setDeleteLoading(false)
+    }
+  }
+
+  // ── Search ─────────────────────────────────────────────────
+  const handleSearch = () => {
+    setPage(1)
+    setSearch(searchInput)
+  }
+
+  // ── Format date ────────────────────────────────────────────
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString('en-IN', {
+      month: 'short', year: 'numeric',
+    })
+
   return (
     <AdminShell title="Passengers">
+
+      {/* ── Deactivate Modal ── */}
+      {deactivateTarget && (
+        <DeactivateModal
+          passenger={deactivateTarget}
+          onConfirm={handleDeactivateConfirm}
+          onCancel={() => setDeactivateTarget(null)}
+          isLoading={deactivateLoading}
+        />
+      )}
+
+      {/* ── Delete Modal ── */}
+      {deleteTarget && (
+        <DeleteModal
+          passenger={deleteTarget}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setDeleteTarget(null)}
+          isLoading={deleteLoading}
+        />
+      )}
+
+      {/* ── Toast ── */}
+      {toast && (
+        <div className={`fixed top-4 right-4 z-50 px-5 py-3 rounded-xl text-white
+                         text-sm font-medium shadow-lg
+                         ${toast.ok ? 'bg-emerald-500' : 'bg-red-500'}`}>
+          {toast.msg}
+        </div>
+      )}
+
+      {/* ── Stats ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         <div className="bg-white rounded-xl p-4 border">
           <div className="text-xs text-slate-500">Total Passengers</div>
-          <div className="text-2xl font-bold mt-1">8,420</div>
+          <div className="text-2xl font-bold mt-1">
+            {statsLoading ? '...' : stats.total.toLocaleString()}
+          </div>
         </div>
         <div className="bg-white rounded-xl p-4 border">
-          <div className="text-xs text-slate-500">Active this month</div>
-          <div className="text-2xl font-bold mt-1 text-emerald-600">3,124</div>
+          <div className="text-xs text-slate-500">Active</div>
+          <div className="text-2xl font-bold mt-1 text-emerald-600">
+            {statsLoading ? '...' : stats.active.toLocaleString()}
+          </div>
         </div>
         <div className="bg-white rounded-xl p-4 border">
-          <div className="text-xs text-slate-500">New this week</div>
-          <div className="text-2xl font-bold mt-1 text-blue-600">182</div>
+          <div className="text-xs text-slate-500">Inactive</div>
+          <div className="text-2xl font-bold mt-1 text-slate-500">
+            {statsLoading ? '...' : stats.inactive.toLocaleString()}
+          </div>
         </div>
         <div className="bg-white rounded-xl p-4 border">
-          <div className="text-xs text-slate-500">Total bookings</div>
-          <div className="text-2xl font-bold mt-1">42,180</div>
+          <div className="text-xs text-slate-500">Verified</div>
+          <div className="text-2xl font-bold mt-1 text-blue-600">
+            {statsLoading ? '...' : stats.verified.toLocaleString()}
+          </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 overflow-x-auto">
-        <h3 className="text-lg font-semibold text-slate-800 mb-4">All Passengers</h3>
-        <table className="min-w-full text-sm">
-          <thead className="bg-slate-50 text-slate-500 text-xs">
-            <tr>
-              <th className="text-left font-medium px-3 py-3">Passenger ID</th>
-              <th className="text-left font-medium px-3 py-3">Name</th>
-              <th className="text-left font-medium px-3 py-3">Phone</th>
-              <th className="text-left font-medium px-3 py-3">Total Rides</th>
-              <th className="text-left font-medium px-3 py-3">Total Spent</th>
-              <th className="text-left font-medium px-3 py-3">Joined</th>
-              <th className="text-left font-medium px-3 py-3">Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {passengers.map((p: Passenger) => (
-              <tr key={p.id} className="hover:bg-slate-50">
-                <td className="px-3 py-3 text-blue-600 font-medium">{p.id}</td>
-                <td className="px-3 py-3 font-medium">{p.name}</td>
-                <td className="px-3 py-3 text-slate-600">{p.phone}</td>
-                <td className="px-3 py-3">{p.rides}</td>
-                <td className="px-3 py-3 font-medium">₹{p.totalSpent.toLocaleString()}</td>
-                <td className="px-3 py-3 text-slate-500">{p.joined}</td>
-                <td className="px-3 py-3">
-                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                    p.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 
-                    p.status === 'Blocked' ? 'bg-red-100 text-red-700' : 
-                    'bg-slate-200 text-slate-700'
-                  }`}>
-                    {p.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* ── Table ── */}
+      <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+
+        {/* Header + Search */}
+        <div className="flex flex-col sm:flex-row sm:items-center
+                        justify-between gap-3 mb-4">
+          <h3 className="text-lg font-semibold text-slate-800">All Passengers</h3>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Search name, email, phone, ID..."
+              value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSearch()}
+              className="border border-slate-200 rounded-lg px-3 py-2 text-sm
+                         focus:outline-none focus:ring-2 focus:ring-slate-300 w-64"
+            />
+            <button
+              onClick={handleSearch}
+              className="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm
+                         font-medium hover:bg-slate-700 transition-colors"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+
+        {/* Error */}
+        {error && (
+          <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg mb-4">
+            {error}
+          </div>
+        )}
+
+        {/* Loading */}
+        {isLoading ? (
+          <div className="flex justify-center items-center py-16">
+            <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800
+                            rounded-full animate-spin" />
+          </div>
+        ) : passengers.length === 0 ? (
+          <div className="text-center py-16 text-slate-400 text-sm">
+            No passengers found.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead className="bg-slate-50 text-slate-500 text-xs">
+                <tr>
+                  <th className="text-left font-medium px-3 py-3">Passenger ID</th>
+                  <th className="text-left font-medium px-3 py-3">Name</th>
+                  <th className="text-left font-medium px-3 py-3">Email</th>
+                  <th className="text-left font-medium px-3 py-3">Phone</th>
+                  <th className="text-left font-medium px-3 py-3">Joined</th>
+                  <th className="text-left font-medium px-3 py-3">Status</th>
+                  <th className="text-left font-medium px-3 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {passengers.map((p) => (
+                  <tr key={p._id} className="hover:bg-slate-50">
+
+                    {/* Passenger ID */}
+                    <td className="px-3 py-3">
+                      <span className="font-mono text-xs font-semibold text-slate-500
+                                       bg-slate-100 px-2.5 py-1 rounded-lg">
+                        {p.passengerId ?? '—'}
+                      </span>
+                    </td>
+
+                    {/* Name + Avatar */}
+                    <td className="px-3 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center
+                                        justify-center text-xs font-semibold text-slate-600
+                                        overflow-hidden flex-shrink-0">
+                          {p.avatarUrl
+                            ? <img src={p.avatarUrl} alt={p.fullName}
+                                   className="w-full h-full object-cover" />
+                            : p.fullName?.charAt(0).toUpperCase() ?? '?'
+                          }
+                        </div>
+                        <span className="font-medium text-slate-800 whitespace-nowrap">
+                          {p.fullName}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="px-3 py-3 text-slate-600">{p.email}</td>
+                    <td className="px-3 py-3 text-slate-600">{p.phoneNumber ?? '—'}</td>
+                    <td className="px-3 py-3 text-slate-500 whitespace-nowrap">
+                      {formatDate(p.createdAt)}
+                    </td>
+
+                    {/* Status */}
+                    <td className="px-3 py-3">
+                      <span className={`inline-block px-3 py-1 rounded-full
+                                        text-xs font-medium
+                        ${p.isActive
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-slate-200 text-slate-600'
+                        }`}>
+                        {p.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+
+                    {/* Actions */}
+                    <td className="px-3 py-3">
+                      <div className="flex items-center gap-2">
+                        {p.isActive ? (
+                          <button
+                            onClick={() => setDeactivateTarget(p)}  // ← opens modal
+                            disabled={actionLoading === p._id}
+                            className="text-xs px-3 py-1.5 rounded-lg bg-amber-100
+                                       text-amber-700 hover:bg-amber-200 font-medium
+                                       disabled:opacity-50 transition-colors"
+                          >
+                            Deactivate
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleActivate(p._id, p.fullName)}
+                            disabled={actionLoading === p._id}
+                            className="text-xs px-3 py-1.5 rounded-lg bg-emerald-100
+                                       text-emerald-700 hover:bg-emerald-200 font-medium
+                                       disabled:opacity-50 transition-colors"
+                          >
+                            {actionLoading === p._id ? '...' : 'Activate'}
+                          </button>
+                        )}
+
+                        <button
+                          onClick={() => setDeleteTarget(p)}
+                          disabled={actionLoading === p._id}
+                          className="text-xs px-3 py-1.5 rounded-lg bg-red-100
+                                     text-red-700 hover:bg-red-200 font-medium
+                                     disabled:opacity-50 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* ── Pagination ── */}
+        {!isLoading && totalPages > 1 && (
+          <div className="flex items-center justify-between mt-5 pt-4
+                          border-t border-slate-100">
+            <span className="text-xs text-slate-500">
+              Showing {((page - 1) * LIMIT) + 1}–{Math.min(page * LIMIT, total)} of {total}
+            </span>
+            <div className="flex gap-2 flex-wrap">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-3 py-1.5 text-xs rounded-lg border border-slate-200
+                           hover:bg-slate-50 disabled:opacity-40
+                           disabled:cursor-not-allowed font-medium transition-colors"
+              >
+                ← Prev
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(p =>
+                  p === 1 || p === totalPages ||
+                  (p >= page - 1 && p <= page + 1)
+                )
+                .map((p, idx, arr) => (
+                  <>
+                    {idx > 0 && arr[idx - 1] !== p - 1 && (
+                      <span key={`dot-${p}`}
+                            className="px-2 py-1.5 text-xs text-slate-400">
+                        ...
+                      </span>
+                    )}
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className={`px-3 py-1.5 text-xs rounded-lg font-medium
+                                  transition-colors
+                        ${page === p
+                          ? 'bg-slate-900 text-white'
+                          : 'border border-slate-200 hover:bg-slate-50'
+                        }`}
+                    >
+                      {p}
+                    </button>
+                  </>
+                ))
+              }
+
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="px-3 py-1.5 text-xs rounded-lg border border-slate-200
+                           hover:bg-slate-50 disabled:opacity-40
+                           disabled:cursor-not-allowed font-medium transition-colors"
+              >
+                Next →
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
     </AdminShell>
   )

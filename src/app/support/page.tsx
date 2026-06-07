@@ -1,167 +1,368 @@
-'use client'
+ 'use client'
+
+import { useState, useEffect, useCallback } from 'react'
 import AdminShell from '@/components/Common/AdminShell'
+import {
+  getTickets,
+  getTicketStats,
+  updateTicketStatus,
+  updateTicketPriority,
+  deleteTicket,
+  exportTickets,
+} from '@/api/support'
+import type {
+  SupportTicket,
+  TicketStats,
+  TicketFilters,
+  TicketStatus,
+  TicketPriority,
+  TicketCategory,
+  UserType,
+} from '@/types/index'
+import {
+  Ticket, CircleDot, Clock, CheckCircle, XCircle,
+  AlertTriangle, Car, User, Timer,
+} from 'lucide-react'
 
-// Types
-export type TicketPriority = 'High' | 'Medium' | 'Low'
-export type TicketStatus = 'Open' | 'In Progress' | 'Resolved'
+import TicketDrawer   from '@/components/Support/TicketDrawer'
+import TicketFiltersBar from '@/components/Support/TicketFiltersBar'
+import TicketTable    from '@/components/Support/TicketTable'
+import Pagination     from '@/components/Support/Pagination'
+import Toast          from '@/components/Support/Toast'
 
-export interface Ticket {
-  id: string
-  user: string
-  subject: string
-  priority: TicketPriority
-  status: TicketStatus
-  created: string
+// ── Helpers ───────────────────────────────────────────────────────────────────
+export const priorityStyles: Record<TicketPriority, string> = {
+  High:   'bg-red-100 text-red-700',
+  Medium: 'bg-amber-100 text-amber-700',
+  Low:    'bg-slate-100 text-slate-600',
 }
 
-// Mock Data
-const tickets: Ticket[] = [
-  {
-    id: 'TKT-001',
-    user: 'John Doe',
-    subject: 'Payment issue after ride completion',
-    priority: 'High',
-    status: 'Open',
-    created: '2024-01-15 10:30 AM'
-  },
-  {
-    id: 'TKT-002',
-    user: 'Sarah Smith',
-    subject: 'Driver cancelled ride mid-way',
-    priority: 'High',
-    status: 'In Progress',
-    created: '2024-01-15 09:15 AM'
-  },
-  {
-    id: 'TKT-003',
-    user: 'Mike Johnson',
-    subject: 'Unable to add payment method',
-    priority: 'Medium',
-    status: 'Open',
-    created: '2024-01-14 04:20 PM'
-  },
-  {
-    id: 'TKT-004',
-    user: 'Emma Wilson',
-    subject: 'Account login issue',
-    priority: 'High',
-    status: 'In Progress',
-    created: '2024-01-14 02:10 PM'
-  },
-  {
-    id: 'TKT-005',
-    user: 'David Brown',
-    subject: 'Wrong fare calculation',
-    priority: 'Medium',
-    status: 'Resolved',
-    created: '2024-01-14 11:45 AM'
-  },
-  {
-    id: 'TKT-006',
-    user: 'Lisa Anderson',
-    subject: 'Feature request: Scheduled rides',
-    priority: 'Low',
-    status: 'Open',
-    created: '2024-01-13 03:30 PM'
-  },
-  {
-    id: 'TKT-007',
-    user: 'Robert Taylor',
-    subject: 'Driver rating issue',
-    priority: 'Medium',
-    status: 'In Progress',
-    created: '2024-01-13 10:00 AM'
-  },
-  {
-    id: 'TKT-008',
-    user: 'Maria Garcia',
-    subject: 'Promo code not working',
-    priority: 'Low',
-    status: 'Resolved',
-    created: '2024-01-12 02:15 PM'
-  },
-  {
-    id: 'TKT-009',
-    user: 'James Wilson',
-    subject: 'Lost item in vehicle',
-    priority: 'High',
-    status: 'Open',
-    created: '2024-01-12 09:30 AM'
-  },
-  {
-    id: 'TKT-010',
-    user: 'Patricia Moore',
-    subject: 'App crashing on startup',
-    priority: 'High',
-    status: 'In Progress',
-    created: '2024-01-11 05:45 PM'
-  }
-]
+export const statusStyles: Record<TicketStatus, string> = {
+  'Open':        'bg-blue-100 text-blue-700',
+  'In Progress': 'bg-amber-100 text-amber-700',
+  'Resolved':    'bg-emerald-100 text-emerald-700',
+  'Closed':      'bg-slate-200 text-slate-600',
+}
 
-const pri = (p: TicketPriority): string =>
-  p === 'High' ? 'bg-red-100 text-red-700' :
-  p === 'Medium' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700'
+export const userTypeStyles: Record<UserType, string> = {
+  passenger: 'bg-purple-100 text-purple-700',
+  driver:    'bg-cyan-100 text-cyan-700',
+}
 
-const stat = (s: TicketStatus): string =>
-  s === 'Open' ? 'bg-blue-100 text-blue-700' :
-  s === 'In Progress' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
-
+// ── Main Page ─────────────────────────────────────────────────────────────────
 export default function SupportPage() {
+  // ── State ──────────────────────────────────────────────
+  const [tickets,       setTickets      ] = useState<SupportTicket[]>([])
+  const [stats,         setStats        ] = useState<TicketStats | null>(null)
+  const [selectedTicket,setSelectedTicket] = useState<SupportTicket | null>(null)
+  const [isLoading,     setIsLoading    ] = useState(true)
+  const [statsLoading,  setStatsLoading ] = useState(true)
+  const [total,         setTotal        ] = useState(0)
+  const [totalPages,    setTotalPages   ] = useState(1)
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [toast,         setToast        ] = useState<{ msg: string; ok: boolean } | null>(null)
+  const [error,         setError        ] = useState('')
+
+  // ── Filters ────────────────────────────────────────────
+  const [filters, setFilters] = useState<TicketFilters>({
+    page:     1,
+    limit:    10,
+    search:   '',
+    status:   'All',
+    priority: 'All',
+    userType: 'All',
+    category: 'All',
+  })
+  const [searchInput, setSearchInput] = useState('')
+
+  const LIMIT = 10
+
+  // ── Fetch stats ────────────────────────────────────────
+  const fetchStats = async () => {
+    setStatsLoading(true)
+    try {
+      const data = await getTicketStats()
+      setStats(data)
+    } catch { /* silently fail */ }
+    finally { setStatsLoading(false) }
+  }
+
+  // ── Fetch tickets ──────────────────────────────────────
+  const fetchTickets = useCallback(async () => {
+    setIsLoading(true)
+    setError('')
+    try {
+      const data = await getTickets(filters)
+      setTickets(data.tickets ?? [])
+      setTotal(data.total ?? 0)
+      setTotalPages(data.totalPages ?? 1)
+    } catch (err: any) {
+      setError(err?.response?.data?.message ?? 'Failed to load tickets.')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [filters])
+
+  useEffect(() => { fetchStats() }, [])
+  useEffect(() => { fetchTickets() }, [fetchTickets])
+
+  // ── Toast ──────────────────────────────────────────────
+  const showToast = (msg: string, ok: boolean) => {
+    setToast({ msg, ok })
+    setTimeout(() => setToast(null), 3500)
+  }
+
+  // ── Search ─────────────────────────────────────────────
+  const handleSearch = () => {
+    setFilters(f => ({ ...f, search: searchInput, page: 1 }))
+  }
+
+  const handleFilterChange = (key: keyof TicketFilters, value: any) => {
+    setFilters(f => ({ ...f, [key]: value, page: 1 }))
+  }
+
+  // ── Status change ──────────────────────────────────────
+  const handleStatusChange = async (id: string, status: TicketStatus) => {
+    setActionLoading(id)
+    try {
+      await updateTicketStatus(id, status)
+      showToast(`Status updated to ${status}`, true)
+      fetchTickets()
+      fetchStats()
+      // Update drawer if open
+      if (selectedTicket?._id === id) {
+        setSelectedTicket(t => t ? { ...t, status } : null)
+      }
+    } catch (err: any) {
+      showToast(err?.response?.data?.message ?? 'Failed to update status.', false)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  // ── Priority change ────────────────────────────────────
+  const handlePriorityChange = async (id: string, priority: TicketPriority) => {
+    setActionLoading(id)
+    try {
+      await updateTicketPriority(id, priority)
+      showToast(`Priority updated to ${priority}`, true)
+      fetchTickets()
+      fetchStats()
+      if (selectedTicket?._id === id) {
+        setSelectedTicket(t => t ? { ...t, priority } : null)
+      }
+    } catch (err: any) {
+      showToast(err?.response?.data?.message ?? 'Failed to update priority.', false)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  // ── Delete ─────────────────────────────────────────────
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this ticket? This cannot be undone.')) return
+    setActionLoading(id)
+    try {
+      await deleteTicket(id)
+      showToast('Ticket deleted.', true)
+      if (selectedTicket?._id === id) setSelectedTicket(null)
+      fetchTickets()
+      fetchStats()
+    } catch (err: any) {
+      showToast(err?.response?.data?.message ?? 'Failed to delete ticket.', false)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  // ── Export ─────────────────────────────────────────────
+  const handleExport = async (format: 'csv' | 'excel' | 'pdf') => {
+    try {
+      const blob = await exportTickets(format, filters)
+      const url  = URL.createObjectURL(blob)
+      const a    = document.createElement('a')
+      a.href     = url
+      a.download = `tickets-${Date.now()}.${format === 'excel' ? 'xlsx' : format}`
+      a.click()
+      URL.revokeObjectURL(url)
+      showToast(`Exported as ${format.toUpperCase()}`, true)
+    } catch {
+      showToast('Export failed.', false)
+    }
+  }
+
   return (
     <AdminShell title="Support">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-        <div className="bg-white rounded-xl p-4 border">
-          <div className="text-xs text-slate-500">Open</div>
-          <div className="text-2xl font-bold mt-1 text-blue-600">14</div>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <div className="text-xs text-slate-500">In Progress</div>
-          <div className="text-2xl font-bold mt-1 text-amber-600">8</div>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <div className="text-xs text-slate-500">Resolved Today</div>
-          <div className="text-2xl font-bold mt-1 text-emerald-600">23</div>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <div className="text-xs text-slate-500">Avg. Response</div>
-          <div className="text-2xl font-bold mt-1">12m</div>
-        </div>
-      </div>
 
-      <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 overflow-x-auto">
-        <h3 className="text-lg font-semibold text-slate-800 mb-4">Support Tickets</h3>
-        <table className="min-w-full text-sm">
-          <thead className="bg-slate-50 text-slate-500 text-xs">
-            <tr>
-              <th className="text-left font-medium px-3 py-3">Ticket ID</th>
-              <th className="text-left font-medium px-3 py-3">User</th>
-              <th className="text-left font-medium px-3 py-3">Subject</th>
-              <th className="text-left font-medium px-3 py-3">Priority</th>
-              <th className="text-left font-medium px-3 py-3">Status</th>
-              <th className="text-left font-medium px-3 py-3">Created</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {tickets.map((t: Ticket) => (
-              <tr key={t.id} className="hover:bg-slate-50">
-                <td className="px-3 py-3 text-blue-600 font-medium">{t.id}</td>
-                <td className="px-3 py-3 font-medium">{t.user}</td>
-                <td className="px-3 py-3 text-slate-700">{t.subject}</td>
-                <td className="px-3 py-3">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${pri(t.priority)}`}>
-                    {t.priority}
-                  </span>
-                </td>
-                <td className="px-3 py-3">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${stat(t.status)}`}>
-                    {t.status}
-                  </span>
-                </td>
-                <td className="px-3 py-3 text-slate-500 whitespace-nowrap">{t.created}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* ── Toast ── */}
+      {toast && <Toast message={toast.msg} success={toast.ok} />}
+
+      {/* ── Drawer ── */}
+      {selectedTicket && (
+        <TicketDrawer
+          ticket={selectedTicket}
+          onClose={() => setSelectedTicket(null)}
+          onStatusChange={handleStatusChange}
+          onPriorityChange={handlePriorityChange}
+          onDelete={handleDelete}
+          showToast={showToast}
+          actionLoading={actionLoading}
+          onRefresh={() => { fetchTickets(); fetchStats() }}
+        />
+      )}
+
+      {/* ── Stats Grid ── */}
+     {/* ── Stats Grid ── */}
+<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
+
+  <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+    <div className="flex items-center justify-between mb-2">
+      <span className="text-xs text-slate-500 font-medium">Total Tickets</span>
+      <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+        <Ticket className="w-4 h-4 text-slate-600" />
+      </div>
+    </div>
+    <div className="text-2xl font-bold text-slate-800">
+      {statsLoading ? '...' : (stats?.total ?? 0).toLocaleString()}
+    </div>
+  </div>
+
+  <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+    <div className="flex items-center justify-between mb-2">
+      <span className="text-xs text-slate-500 font-medium">Open</span>
+      <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+        <CircleDot className="w-4 h-4 text-blue-600" />
+      </div>
+    </div>
+    <div className="text-2xl font-bold text-blue-600">
+      {statsLoading ? '...' : (stats?.open ?? 0).toLocaleString()}
+    </div>
+  </div>
+
+  <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+    <div className="flex items-center justify-between mb-2">
+      <span className="text-xs text-slate-500 font-medium">In Progress</span>
+      <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+        <Clock className="w-4 h-4 text-amber-600" />
+      </div>
+    </div>
+    <div className="text-2xl font-bold text-amber-600">
+      {statsLoading ? '...' : (stats?.inProgress ?? 0).toLocaleString()}
+    </div>
+  </div>
+
+  <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+    <div className="flex items-center justify-between mb-2">
+      <span className="text-xs text-slate-500 font-medium">Resolved Today</span>
+      <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+        <CheckCircle className="w-4 h-4 text-emerald-600" />
+      </div>
+    </div>
+    <div className="text-2xl font-bold text-emerald-600">
+      {statsLoading ? '...' : (stats?.resolvedToday ?? 0).toLocaleString()}
+    </div>
+  </div>
+
+  <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+    <div className="flex items-center justify-between mb-2">
+      <span className="text-xs text-slate-500 font-medium">Closed</span>
+      <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+        <XCircle className="w-4 h-4 text-slate-500" />
+      </div>
+    </div>
+    <div className="text-2xl font-bold text-slate-600">
+      {statsLoading ? '...' : (stats?.closed ?? 0).toLocaleString()}
+    </div>
+  </div>
+
+  <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+    <div className="flex items-center justify-between mb-2">
+      <span className="text-xs text-slate-500 font-medium">High Priority</span>
+      <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
+        <AlertTriangle className="w-4 h-4 text-red-600" />
+      </div>
+    </div>
+    <div className="text-2xl font-bold text-red-600">
+      {statsLoading ? '...' : (stats?.highPriority ?? 0).toLocaleString()}
+    </div>
+  </div>
+
+  <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+    <div className="flex items-center justify-between mb-2">
+      <span className="text-xs text-slate-500 font-medium">Driver Complaints</span>
+      <div className="w-8 h-8 rounded-lg bg-cyan-50 flex items-center justify-center">
+        <Car className="w-4 h-4 text-cyan-600" />
+      </div>
+    </div>
+    <div className="text-2xl font-bold text-cyan-600">
+      {statsLoading ? '...' : (stats?.driverComplaints ?? 0).toLocaleString()}
+    </div>
+  </div>
+
+  <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+    <div className="flex items-center justify-between mb-2">
+      <span className="text-xs text-slate-500 font-medium">Passenger Complaints</span>
+      <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+        <User className="w-4 h-4 text-purple-600" />
+      </div>
+    </div>
+    <div className="text-2xl font-bold text-purple-600">
+      {statsLoading ? '...' : (stats?.passengerComplaints ?? 0).toLocaleString()}
+    </div>
+  </div>
+
+  <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+    <div className="flex items-center justify-between mb-2">
+      <span className="text-xs text-slate-500 font-medium">Avg. Response</span>
+      <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+        <Timer className="w-4 h-4 text-slate-600" />
+      </div>
+    </div>
+    <div className="text-2xl font-bold text-slate-700">
+      {statsLoading ? '...' : (stats?.avgResponseTime ?? '—')}
+    </div>
+  </div>
+
+</div>
+
+      {/* ── Filters Bar ── */}
+      <TicketFiltersBar
+        searchInput={searchInput}
+        setSearchInput={setSearchInput}
+        onSearch={handleSearch}
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onExport={handleExport}
+      />
+
+      {/* ── Table ── */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mt-4">
+        {error && (
+          <div className="bg-red-50 text-red-600 text-sm px-5 py-3 border-b border-red-100">
+            {error}
+          </div>
+        )}
+
+        <TicketTable
+          tickets={tickets}
+          isLoading={isLoading}
+          actionLoading={actionLoading}
+          onSelect={setSelectedTicket}
+          onStatusChange={handleStatusChange}
+          onPriorityChange={handlePriorityChange}
+          onDelete={handleDelete}
+        />
+
+        {/* ── Pagination ── */}
+        {!isLoading && totalPages > 1 && (
+          <Pagination
+            page={filters.page ?? 1}
+            totalPages={totalPages}
+            total={total}
+            limit={LIMIT}
+            onPageChange={(p) => setFilters(f => ({ ...f, page: p }))}
+          />
+        )}
       </div>
     </AdminShell>
   )

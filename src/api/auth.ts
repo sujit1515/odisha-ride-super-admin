@@ -1,15 +1,13 @@
 import adminApi from "./axiosinstance";
 
 // ── Admin Login
-// Backend expects: email + password + dateOfBirth (DD/MM/YYYY)
-// Backend returns: { message, token, admin }
 export const adminLogin = async (data: {
   email: string;
   password: string;
-  dateOfBirth: string;   // ✅ required by backend DTO
+  dateOfBirth: string;
 }) => {
   const res = await adminApi.post("/admin/auth/login", data);
-  return res.data;  // { message, token, admin }
+  return res.data;
 };
 
 // ── Admin Logout
@@ -25,10 +23,11 @@ export const getAdminProfile = async () => {
   return res.data;
 };
 
-// ── Update Admin Profile
+// ── Update Admin Profile — fixed: phoneNumber → phone, added city
 export const updateAdminProfile = async (data: {
   fullName?: string;
-  phoneNumber?: string;
+  phone?: string;   // was phoneNumber, backend expects phone
+  city?: string;    // added
 }) => {
   const res = await adminApi.put("/superadmin/profile", data);
   return res.data;

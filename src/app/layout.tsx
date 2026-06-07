@@ -1,5 +1,4 @@
-// app/layout.tsx
-import type { Metadata } from 'next'
+ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { AuthProvider } from '@/components/Context/AuthContext'
 import './globals.css'

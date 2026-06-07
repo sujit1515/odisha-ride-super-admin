@@ -1,5 +1,9 @@
 'use client'
-import { Search, Bell, HelpCircle, Menu } from 'lucide-react'
+import { Search, Bell, HelpCircle, Menu, User, LogOut } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { adminLogout } from '@/api/auth'  
 
 interface NavbarProps {
   title?: string
@@ -7,6 +11,76 @@ interface NavbarProps {
 }
 
 export default function Navbar({ title = 'Odisha Ride Admin', onMenuClick }: NavbarProps) {
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const router = useRouter()
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  const handleLogout = async () => {
+    try {
+      await adminLogout() // call backend logout API
+
+      localStorage.removeItem('adminToken')
+      sessionStorage.clear()
+
+      router.push('/login')
+    } catch (error) {
+      console.error('Logout failed:', error)
+
+      // still clear local data if API fails
+      localStorage.removeItem('adminToken')
+      sessionStorage.clear()
+
+      router.push('/login')
+    }
+  }
+
+  const handleProfileClick = () => {
+    setIsProfileOpen(false)
+    router.push('/profile') // navigate to profile page
+  }
+
+  const toggleProfile = () => {
+    setIsProfileOpen(!isProfileOpen)
+  }
+
+  // Close popup when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false)
+      }
+    }
+
+    if (isProfileOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isProfileOpen])
+
+  const menuVariants = {
+    hidden: { 
+      opacity: 0,
+      scale: 0.95,
+      y: -10,
+      transition: { duration: 0.2 }
+    },
+    visible: { 
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: { duration: 0.2 }
+    },
+    exit: { 
+      opacity: 0,
+      scale: 0.95,
+      y: -10,
+      transition: { duration: 0.15 }
+    }
+  }
+
   return (
     <header className="sticky top-0 z-20 bg-slate-50/80 backdrop-blur border-b border-slate-200">
       <div className="flex items-center gap-3 md:gap-6 px-4 md:px-8 py-4">
@@ -38,11 +112,57 @@ export default function Navbar({ title = 'Odisha Ride Admin', onMenuClick }: Nav
               <div className="text-sm font-semibold text-slate-800">Admin Profile</div>
               <div className="text-xs text-slate-500">Super Admin</div>
             </div>
-            <img
-              src="https://i.pravatar.cc/80?img=12"
-              alt="admin"
-              className="h-9 w-9 rounded-full object-cover ring-2 ring-white shadow"
-            />
+            <div className="relative" ref={menuRef}>
+              <button 
+                onClick={toggleProfile}
+                className="focus:outline-none"
+              >
+                <img
+                  src="https://i.pravatar.cc/80?img=12"
+                  alt="admin"
+                  className="h-9 w-9 rounded-full object-cover ring-2 ring-white shadow cursor-pointer hover:ring-3 transition-all"
+                />
+              </button>
+
+              <AnimatePresence>
+                {isProfileOpen && (
+                  <motion.div
+                    variants={menuVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    className="absolute right-0 mt-3 w-72 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-40"
+                  >
+                    {/* Menu Items - Only Profile and Logout */}
+                    <div className="py-2">
+                      <button 
+                        onClick={handleProfileClick}
+                        className="w-full px-4 py-3 flex items-center gap-3 hover:bg-slate-50 transition-colors"
+                      >
+                        <User className="h-5 w-5 text-slate-500" />
+                        <div className="flex-1 text-left">
+                          <div className="text-sm font-medium text-slate-700">Profile</div>
+                          <div className="text-xs text-slate-400">View and edit your profile</div>
+                        </div>
+                      </button>
+                      
+                      <div className="border-t border-slate-100 my-1"></div>
+                      
+                      <button 
+                        onClick={handleLogout}
+                        className="w-full px-4 py-3 flex items-center gap-3 hover:bg-red-50 transition-colors"
+                      >
+                        <LogOut className="h-5 w-5 text-red-500" />
+                        <div className="flex-1 text-left">
+                          <div className="text-sm font-medium text-red-600">Logout</div>
+                          <div className="text-xs text-slate-400">Sign out of your account</div>
+                        </div>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </div>
