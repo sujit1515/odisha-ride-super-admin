@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import AdminShell from '@/components/Common/AdminShell'
 import {
   getPassengers,
@@ -11,6 +12,7 @@ import {
   Passenger,
   PassengerStats,
 } from '@/api/passengers'
+import { Eye } from 'lucide-react'
 
 // ── Delete Confirm Modal ──────────────────────────────────────────────────────
 function DeleteModal({
@@ -174,6 +176,7 @@ function DeactivateModal({
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function PassengersPage() {
 
+  const router = useRouter()
   const [passengers,       setPassengers      ] = useState<Passenger[]>([])
   const [stats,            setStats           ] = useState<PassengerStats>({
     total: 0, active: 0, inactive: 0, verified: 0,
@@ -290,6 +293,11 @@ export default function PassengersPage() {
   const handleSearch = () => {
     setPage(1)
     setSearch(searchInput)
+  }
+
+  // ── View Profile ───────────────────────────────────────────
+  const handleViewProfile = (passengerId: string) => {
+    router.push(`/passengers/${passengerId}`)
   }
 
   // ── Format date ────────────────────────────────────────────
@@ -466,10 +474,23 @@ export default function PassengersPage() {
 
                     {/* Actions */}
                     <td className="px-3 py-3">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {/* View Profile Button */}
+                        <button
+                          // onClick={() => handleViewProfile(p._id)}
+                          onClick={() => handleViewProfile(p.passengerId || p._id)}
+
+                          className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 
+                                     rounded-lg bg-blue-100 text-blue-700 
+                                     hover:bg-blue-200 font-medium transition-colors"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          View Profile
+                        </button>
+
                         {p.isActive ? (
                           <button
-                            onClick={() => setDeactivateTarget(p)}  // ← opens modal
+                            onClick={() => setDeactivateTarget(p)}
                             disabled={actionLoading === p._id}
                             className="text-xs px-3 py-1.5 rounded-lg bg-amber-100
                                        text-amber-700 hover:bg-amber-200 font-medium
@@ -532,15 +553,13 @@ export default function PassengersPage() {
                   (p >= page - 1 && p <= page + 1)
                 )
                 .map((p, idx, arr) => (
-                  <>
+                  <span key={p}>
                     {idx > 0 && arr[idx - 1] !== p - 1 && (
-                      <span key={`dot-${p}`}
-                            className="px-2 py-1.5 text-xs text-slate-400">
+                      <span className="px-2 py-1.5 text-xs text-slate-400">
                         ...
                       </span>
                     )}
                     <button
-                      key={p}
                       onClick={() => setPage(p)}
                       className={`px-3 py-1.5 text-xs rounded-lg font-medium
                                   transition-colors
@@ -551,7 +570,7 @@ export default function PassengersPage() {
                     >
                       {p}
                     </button>
-                  </>
+                  </span>
                 ))
               }
 

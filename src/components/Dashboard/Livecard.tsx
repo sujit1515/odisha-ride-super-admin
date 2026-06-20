@@ -7,16 +7,17 @@ interface LiveCardProps {
   href?: string
 }
 
-export default function LiveCard({
+export default function LiveCard({    
   label,
   value,
   dotClass = 'bg-emerald-500',
-  href = '/live-map',
+  href = '/passengers/waiting',
 }: LiveCardProps) {
   return (
     <Link
       href={href}
-      className="block bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition"
+     className="block bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+
     >
       <div className="flex items-center gap-2 text-xs text-slate-500">
         <span className={`h-2 w-2 rounded-full ${dotClass} animate-pulse`} />

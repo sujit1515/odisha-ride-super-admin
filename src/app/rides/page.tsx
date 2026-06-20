@@ -1,280 +1,32 @@
-// 'use client'
-// import { useState, ChangeEvent } from 'react'
-// import Link from 'next/link'
-// import AdminShell from '@/components/Common/AdminShell'
-// import { Search, Calendar } from 'lucide-react'
-
-// // Types
-// type RideStatus = 'Completed' | 'Ongoing' | 'Cancelled' | 'Pending'
-
-// interface Ride {
-//   id: string
-//   passenger: string
-//   driver: string
-//   fare: number
-//   status: RideStatus
-//   time: string
-//   date: string
-//   pickup: string
-//   drop: string
-// }
-
-// // Mock Data
-// const rides: Ride[] = [
-//   {
-//     id: 'RIDE-001',
-//     passenger: 'John Doe',
-//     driver: 'Rajesh Kumar',
-//     fare: 245,
-//     status: 'Completed',
-//     time: '10:30 AM',
-//     date: '2024-01-15',
-//     pickup: 'MG Road, Bangalore',
-//     drop: 'Indiranagar, Bangalore'
-//   },
-//   {
-//     id: 'RIDE-002',
-//     passenger: 'Jane Smith',
-//     driver: 'Suresh Patel',
-//     fare: 189,
-//     status: 'Ongoing',
-//     time: '11:15 AM',
-//     date: '2024-01-15',
-//     pickup: 'Koramangala, Bangalore',
-//     drop: 'HSR Layout, Bangalore'
-//   },
-//   {
-//     id: 'RIDE-003',
-//     passenger: 'Mike Johnson',
-//     driver: 'Amit Singh',
-//     fare: 320,
-//     status: 'Completed',
-//     time: '09:45 AM',
-//     date: '2024-01-15',
-//     pickup: 'Whitefield, Bangalore',
-//     drop: 'Electronic City, Bangalore'
-//   },
-//   {
-//     id: 'RIDE-004',
-//     passenger: 'Sarah Williams',
-//     driver: 'Vikram Reddy',
-//     fare: 156,
-//     status: 'Cancelled',
-//     time: '08:30 AM',
-//     date: '2024-01-14',
-//     pickup: 'Jayanagar, Bangalore',
-//     drop: 'Banashankari, Bangalore'
-//   },
-//   {
-//     id: 'RIDE-005',
-//     passenger: 'David Brown',
-//     driver: 'Manish Gupta',
-//     fare: 278,
-//     status: 'Completed',
-//     time: '02:30 PM',
-//     date: '2024-01-14',
-//     pickup: 'Hebbal, Bangalore',
-//     drop: 'Yeshwanthpur, Bangalore'
-//   },
-//   {
-//     id: 'RIDE-006',
-//     passenger: 'Emma Wilson',
-//     driver: 'Rahul Verma',
-//     fare: 342,
-//     status: 'Completed',
-//     time: '06:45 PM',
-//     date: '2024-01-13',
-//     pickup: 'Marathahalli, Bangalore',
-//     drop: 'Bellandur, Bangalore'
-//   },
-//   {
-//     id: 'RIDE-007',
-//     passenger: 'James Taylor',
-//     driver: 'Pankaj Singh',
-//     fare: 198,
-//     status: 'Ongoing',
-//     time: '07:20 PM',
-//     date: '2024-01-13',
-//     pickup: 'Ulsoor, Bangalore',
-//     drop: 'Richmond Town, Bangalore'
-//   },
-//   {
-//     id: 'RIDE-008',
-//     passenger: 'Lisa Anderson',
-//     driver: 'Deepak Sharma',
-//     fare: 267,
-//     status: 'Completed',
-//     time: '12:15 PM',
-//     date: '2024-01-12',
-//     pickup: 'BTM Layout, Bangalore',
-//     drop: 'JP Nagar, Bangalore'
-//   },
-//   {
-//     id: 'RIDE-009',
-//     passenger: 'Robert Taylor',
-//     driver: 'Anil Kumar',
-//     fare: 185,
-//     status: 'Cancelled',
-//     time: '04:30 PM',
-//     date: '2024-01-12',
-//     pickup: 'Frazer Town, Bangalore',
-//     drop: 'Shivajinagar, Bangalore'
-//   },
-//   {
-//     id: 'RIDE-010',
-//     passenger: 'Maria Garcia',
-//     driver: 'Sunil Reddy',
-//     fare: 412,
-//     status: 'Completed',
-//     time: '09:00 PM',
-//     date: '2024-01-11',
-//     pickup: 'Airport Road, Bangalore',
-//     drop: 'Domlur, Bangalore'
-//   }
-// ]
-
-// type StatusFilter = 'All' | RideStatus
-
-// const statusBadge = (s: RideStatus): string => {
-//   if (s === 'Completed') return 'bg-emerald-100 text-emerald-700'
-//   if (s === 'Ongoing') return 'bg-orange-100 text-orange-700'
-//   if (s === 'Cancelled') return 'bg-red-100 text-red-700'
-//   return 'bg-slate-100 text-slate-700'
-// }
-
-// export default function RidesPage() {
-//   const [q, setQ] = useState<string>('')
-//   const [status, setStatus] = useState<StatusFilter>('All')
-//   const [date, setDate] = useState<string>('')
-
-//   const filtered = rides.filter(r => {
-//     const matchQ = !q || `${r.id} ${r.passenger} ${r.driver}`.toLowerCase().includes(q.toLowerCase())
-//     const matchStatus = status === 'All' || r.status === status
-//     const matchDate = !date || r.date === date
-//     return matchQ && matchStatus && matchDate
-//   })
-
-//   return (
-//     <AdminShell title="All Rides">
-//       <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
-//         <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-//           <div>
-//             <h3 className="text-xl font-bold text-slate-800">Rides ({filtered.length})</h3>
-//             <p className="text-sm text-slate-500">All rides with date &amp; time</p>
-//           </div>
-//           <div className="flex flex-col sm:flex-row gap-2">
-//             <div className="relative">
-//               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-//               <input 
-//                 value={q} 
-//                 onChange={(e: ChangeEvent<HTMLInputElement>) => setQ(e.target.value)} 
-//                 placeholder="Search ride / user..." 
-//                 className="pl-9 pr-3 py-2 rounded-lg border border-slate-200 text-sm" 
-//               />
-//             </div>
-//             <div className="relative">
-//               <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-//               <input 
-//                 value={date} 
-//                 onChange={(e: ChangeEvent<HTMLInputElement>) => setDate(e.target.value)} 
-//                 type="date" 
-//                 className="pl-9 pr-3 py-2 rounded-lg border border-slate-200 text-sm" 
-//               />
-//             </div>
-//             <select 
-//               value={status} 
-//               onChange={(e: ChangeEvent<HTMLSelectElement>) => setStatus(e.target.value as StatusFilter)} 
-//               className="px-3 py-2 rounded-lg border border-slate-200 text-sm"
-//             >
-//               <option>All</option>
-//               <option>Completed</option>
-//               <option>Ongoing</option>
-//               <option>Cancelled</option>
-//             </select>
-//           </div>
-//         </div>
-
-//         <div className="mt-5 overflow-x-auto">
-//           <table className="min-w-full text-sm">
-//             <thead>
-//               <tr className="text-slate-500 text-xs bg-slate-50">
-//                 <th className="text-left font-medium px-3 py-3">Ride ID</th>
-//                 <th className="text-left font-medium px-3 py-3">Passenger</th>
-//                 <th className="text-left font-medium px-3 py-3">Driver</th>
-//                 <th className="text-left font-medium px-3 py-3">Pickup</th>
-//                 <th className="text-left font-medium px-3 py-3">Drop</th>
-//                 <th className="text-left font-medium px-3 py-3">Fare</th>
-//                 <th className="text-left font-medium px-3 py-3">Status</th>
-//                 <th className="text-left font-medium px-3 py-3">Date</th>
-//                 <th className="text-left font-medium px-3 py-3">Time</th>
-//               </tr>
-//             </thead>
-//             <tbody className="divide-y divide-slate-100">
-//               {filtered.map(r => (
-//                 <tr key={r.id} className="hover:bg-slate-50">
-//                   <td className="px-3 py-3">
-//                     <Link href={`/rides/${encodeURIComponent(r.id)}`} className="text-blue-600 font-medium hover:underline">
-//                       {r.id}
-//                     </Link>
-//                   </td>
-//                   <td className="px-3 py-3">{r.passenger}</td>
-//                   <td className="px-3 py-3">{r.driver}</td>
-//                   <td className="px-3 py-3 text-slate-600">{r.pickup}</td>
-//                   <td className="px-3 py-3 text-slate-600">{r.drop}</td>
-//                   <td className="px-3 py-3 font-medium">₹{r.fare}</td>
-//                   <td className="px-3 py-3">
-//                     <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${statusBadge(r.status)}`}>
-//                       {r.status}
-//                     </span>
-//                   </td>
-//                   <td className="px-3 py-3 text-slate-500 whitespace-nowrap">{r.date}</td>
-//                   <td className="px-3 py-3 text-slate-500 whitespace-nowrap">{r.time}</td>
-//                 </tr>
-//               ))}
-//               {filtered.length === 0 && (
-//                 <tr>
-//                   <td colSpan={9} className="text-center py-10 text-slate-400">No rides found</td>
-//                 </tr>
-//               )}
-//             </tbody>
-//           </table>
-//         </div>
-//       </div>
-//     </AdminShell>
-//   )
-// }
-
-
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import AdminShell from '@/components/Common/AdminShell'
 import {
   Search, Trash2, Eye, ChevronLeft, ChevronRight, RefreshCw
 } from 'lucide-react'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
 type RideStatus = 'requested' | 'accepted' | 'arrived' | 'started' | 'completed' | 'cancelled' | 'all'
 
 interface Ride {
-  _id:         string
-  userId:      { fullName: string; phoneNumber: string }
-  driverId:    { fullName: string; phone: string; vehicleNumber: string } | null
-  pickup:      { address: string }
+  _id: string
+  userId: { fullName: string; phoneNumber: string }
+  driverId: { fullName: string; phone: string; vehicleNumber: string } | null
+  pickup: { address: string }
   destination: { address: string }
-  finalFare:      number | null
-  estimatedFare:  number | null
-  status:      RideStatus
-  createdAt:   string
+  finalFare: number | null
+  estimatedFare: number | null
+  status: RideStatus
+  createdAt: string
 }
 
 interface RidesResponse {
-  rides:      Ride[]
-  total:      number
-  page:       number
-  limit:      number
+  rides: Ride[]
+  total: number
+  page: number
+  limit: number
   totalPages: number
 }
 
@@ -282,18 +34,18 @@ const STATUS_STYLES: Record<string, string> = {
   completed: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
   cancelled: 'bg-red-50 text-red-600 border border-red-200',
   requested: 'bg-blue-50 text-blue-700 border border-blue-200',
-  accepted:  'bg-indigo-50 text-indigo-700 border border-indigo-200',
-  arrived:   'bg-purple-50 text-purple-700 border border-purple-200',
-  started:   'bg-amber-50 text-amber-700 border border-amber-200',
+  accepted: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
+  arrived: 'bg-purple-50 text-purple-700 border border-purple-200',
+  started: 'bg-amber-50 text-amber-700 border border-amber-200',
 }
 
 const STATUS_LABEL: Record<string, string> = {
   completed: 'Completed',
   cancelled: 'Cancelled',
   requested: 'Requested',
-  accepted:  'Accepted',
-  arrived:   'Arrived',
-  started:   'Ongoing',
+  accepted: 'Accepted',
+  arrived: 'Arrived',
+  started: 'Ongoing',
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -311,7 +63,7 @@ function SkeletonRow() {
       {Array.from({ length: 10 }).map((_, i) => (
         <td key={i} className="px-4 py-3">
           <div className="h-4 bg-slate-100 rounded animate-pulse"
-               style={{ width: `${60 + Math.random() * 40}%` }} />
+            style={{ width: `${60 + Math.random() * 40}%` }} />
         </td>
       ))}
     </tr>
@@ -321,71 +73,64 @@ function SkeletonRow() {
 export default function AllRidesPage() {
   const router = useRouter()
 
-  const [rides,      setRides     ] = useState<Ride[]>([])
-  const [total,      setTotal     ] = useState(0)
+  const [rides, setRides] = useState<Ride[]>([])
+  const [total, setTotal] = useState(0)
   const [totalPages, setTotalPages] = useState(1)
-  const [page,       setPage      ] = useState(1)
-  const [loading,    setLoading   ] = useState(true)
-  const [error,      setError     ] = useState('')
+  const [page, setPage] = useState(1)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<RideStatus>('all')
-  const [date,   setDate  ] = useState('')
+  const [date, setDate] = useState('')
 
   const [deleteId, setDeleteId] = useState<string | null>(null)
-  const [deleting, setDeleting] = useState(false)
+
 
   const limit = 10
 
-  // ── Fetch ────────────────────────────────────────────────
-  const fetchRides = useCallback(async () => {
-    setLoading(true)
-    setError('')
-    try {
-      const token  = localStorage.getItem('adminToken')
-      const params = new URLSearchParams({
-        page:  String(page),
-        limit: String(limit),
-        ...(status !== 'all' && { status }),
-        ...(date   && { date }),
-        ...(search && { search }),
-      })
-      const res = await fetch(`${API_BASE}/admin/rides?${params}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (!res.ok) throw new Error('Failed to fetch rides')
-      const data: RidesResponse = await res.json()
-      setRides(data.rides)
-      setTotal(data.total)
-      setTotalPages(data.totalPages)
-    } catch (err: any) {
-      setError(err.message ?? 'Something went wrong')
-    } finally {
-      setLoading(false)
-    }
-  }, [page, status, date, search])
+  const STATIC_RIDES: Ride[] = [
+    { _id: '6650a1b2c3d4e5f6a7b8c001', userId: { fullName: 'John Doe', phoneNumber: '+91 98765 43210' }, driverId: { fullName: 'Rajesh Kumar', phone: '+91 91234 56789', vehicleNumber: 'OD-05-AB-1234' }, pickup: { address: 'MG Road, Bhubaneswar' }, destination: { address: 'Infocity, Bhubaneswar' }, finalFare: 245, estimatedFare: 230, status: 'completed', createdAt: '2024-01-15T10:30:00Z' },
+    { _id: '6650a1b2c3d4e5f6a7b8c002', userId: { fullName: 'Jane Smith', phoneNumber: '+91 98765 43211' }, driverId: { fullName: 'Suresh Patel', phone: '+91 91234 56790', vehicleNumber: 'OD-05-CD-5678' }, pickup: { address: 'Patia, Bhubaneswar' }, destination: { address: 'Esplanade, Bhubaneswar' }, finalFare: null, estimatedFare: 189, status: 'accepted', createdAt: '2024-01-15T11:15:00Z' },
+    { _id: '6650a1b2c3d4e5f6a7b8c003', userId: { fullName: 'Mike Johnson', phoneNumber: '+91 98765 43212' }, driverId: { fullName: 'Amit Singh', phone: '+91 91234 56791', vehicleNumber: 'OD-05-EF-9012' }, pickup: { address: 'Cuttack Road, Bhubaneswar' }, destination: { address: 'Airport, Bhubaneswar' }, finalFare: 320, estimatedFare: 310, status: 'completed', createdAt: '2024-01-15T09:45:00Z' },
+    { _id: '6650a1b2c3d4e5f6a7b8c004', userId: { fullName: 'Sarah Williams', phoneNumber: '+91 98765 43213' }, driverId: { fullName: 'Vikram Reddy', phone: '+91 91234 56792', vehicleNumber: 'OD-05-GH-3456' }, pickup: { address: 'Jaydev Vihar, Bhubaneswar' }, destination: { address: 'Ram Mandir, Bhubaneswar' }, finalFare: null, estimatedFare: 156, status: 'cancelled', createdAt: '2024-01-14T08:30:00Z' },
+    { _id: '6650a1b2c3d4e5f6a7b8c005', userId: { fullName: 'David Brown', phoneNumber: '+91 98765 43214' }, driverId: { fullName: 'Manish Gupta', phone: '+91 91234 56793', vehicleNumber: 'OD-05-IJ-7890' }, pickup: { address: 'Saheed Nagar, Bhubaneswar' }, destination: { address: 'Rasulgarh, Bhubaneswar' }, finalFare: 278, estimatedFare: 260, status: 'completed', createdAt: '2024-01-14T14:30:00Z' },
+    { _id: '6650a1b2c3d4e5f6a7b8c006', userId: { fullName: 'Emma Wilson', phoneNumber: '+91 98765 43215' }, driverId: { fullName: 'Rahul Verma', phone: '+91 91234 56794', vehicleNumber: 'OD-05-KL-2345' }, pickup: { address: 'Khandagiri, Bhubaneswar' }, destination: { address: 'Nayapalli, Bhubaneswar' }, finalFare: 342, estimatedFare: 330, status: 'requested', createdAt: '2024-01-13T18:45:00Z' },
+    { _id: '6650a1b2c3d4e5f6a7b8c007', userId: { fullName: 'James Taylor', phoneNumber: '+91 98765 43216' }, driverId: { fullName: 'Pankaj Singh', phone: '+91 91234 56795', vehicleNumber: 'OD-05-MN-6789' }, pickup: { address: 'Unit-4, Bhubaneswar' }, destination: { address: 'Bomikhal, Bhubaneswar' }, finalFare: null, estimatedFare: 198, status: 'arrived', createdAt: '2024-01-13T19:20:00Z' },
+    { _id: '6650a1b2c3d4e5f6a7b8c008', userId: { fullName: 'Lisa Anderson', phoneNumber: '+91 98765 43217' }, driverId: { fullName: 'Deepak Sharma', phone: '+91 91234 56796', vehicleNumber: 'OD-05-OP-0123' }, pickup: { address: 'Bapuji Nagar, Bhubaneswar' }, destination: { address: 'Sundarpada, Bhubaneswar' }, finalFare: 267, estimatedFare: 250, status: 'completed', createdAt: '2024-01-12T12:15:00Z' },
+    { _id: '6650a1b2c3d4e5f6a7b8c009', userId: { fullName: 'Robert Taylor', phoneNumber: '+91 98765 43218' }, driverId: { fullName: 'Anil Kumar', phone: '+91 91234 56797', vehicleNumber: 'OD-05-QR-4567' }, pickup: { address: 'Vani Vihar, Bhubaneswar' }, destination: { address: 'Mancheswar, Bhubaneswar' }, finalFare: null, estimatedFare: 185, status: 'cancelled', createdAt: '2024-01-12T16:30:00Z' },
+    { _id: '6650a1b2c3d4e5f6a7b8c010', userId: { fullName: 'Maria Garcia', phoneNumber: '+91 98765 43219' }, driverId: { fullName: 'Sunil Reddy', phone: '+91 91234 56798', vehicleNumber: 'OD-05-ST-8901' }, pickup: { address: 'Airport Road, Bhubaneswar' }, destination: { address: 'Domlur, Bhubaneswar' }, finalFare: 412, estimatedFare: 400, status: 'completed', createdAt: '2024-01-11T09:00:00Z' },
+  ]
 
-  useEffect(() => { fetchRides() }, [fetchRides])
-  useEffect(() => { setPage(1)   }, [status, date, search])
+  const allRides = useMemo(() => STATIC_RIDES, [])
+
+  const filtered = useMemo(() => {
+    return allRides.filter(r => {
+      const matchStatus = status === 'all' || r.status === status
+      const matchDate = !date || r.createdAt.startsWith(date)
+      const matchSearch = !search ||
+        r.userId.fullName.toLowerCase().includes(search.toLowerCase()) ||
+        r._id.toLowerCase().includes(search.toLowerCase()) ||
+        (r.driverId?.fullName ?? '').toLowerCase().includes(search.toLowerCase())
+      return matchStatus && matchDate && matchSearch
+    })
+  }, [allRides, status, date, search])
+
+  useEffect(() => {
+    const start = (page - 1) * limit
+    setRides(filtered.slice(start, start + limit))
+    setTotal(filtered.length)
+    setTotalPages(Math.max(1, Math.ceil(filtered.length / limit)))
+    setLoading(false)
+  }, [filtered, page, limit])
+
+  useEffect(() => { setPage(1) }, [status, date, search])
 
   // ── Delete ────────────────────────────────────────────────
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!deleteId) return
-    setDeleting(true)
-    try {
-      const token = localStorage.getItem('adminToken')
-      const res = await fetch(`${API_BASE}/admin/rides/${deleteId}`, {
-        method:  'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (!res.ok) throw new Error('Delete failed')
-      setDeleteId(null)
-      fetchRides()
-    } catch {
-      alert('Failed to delete ride')
-    } finally {
-      setDeleting(false)
-    }
+    setRides(prev => prev.filter(r => r._id !== deleteId))
+    setDeleteId(null)
   }
 
   const formatDate = (iso: string) =>
@@ -444,9 +189,6 @@ export default function AllRidesPage() {
               <option value="requested">Requested</option>
               <option value="accepted">Accepted</option>
               <option value="arrived">Arrived</option>
-              <option value="started">Ongoing</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
             </select>
 
             {/* Count + Refresh */}
@@ -455,12 +197,12 @@ export default function AllRidesPage() {
                 Rides ({total})
               </span>
               <button
-                onClick={fetchRides}
+                onClick={() => { }}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-lg border
                            border-slate-200 text-sm text-slate-600 hover:bg-slate-50
                            transition-colors"
               >
-                <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw className="h-3.5 w-3.5" />
                 Refresh
               </button>
             </div>
@@ -473,12 +215,12 @@ export default function AllRidesPage() {
                 <tr className="border-b border-slate-100 bg-slate-50/60">
                   {['Ride ID', 'Passenger', 'Driver', 'Pickup', 'Drop',
                     'Fare', 'Status', 'Date', 'Time', ''].map(h => (
-                    <th key={h}
+                      <th key={h}
                         className="px-4 py-3 text-left text-xs font-semibold text-slate-500
                                    uppercase tracking-wide whitespace-nowrap">
-                      {h}
-                    </th>
-                  ))}
+                        {h}
+                      </th>
+                    ))}
                 </tr>
               </thead>
               <tbody>
@@ -499,7 +241,7 @@ export default function AllRidesPage() {
                 ) : (
                   rides.map(ride => (
                     <tr key={ride._id}
-                        className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+                      className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
 
                       {/* Ride ID */}
                       <td className="px-4 py-3">
@@ -597,11 +339,10 @@ export default function AllRidesPage() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
-                          p === page
+                        className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${p === page
                             ? 'bg-blue-600 text-white'
                             : 'text-slate-600 hover:bg-slate-100'
-                        }`}
+                          }`}
                       >
                         {p}
                       </button>
@@ -646,12 +387,10 @@ export default function AllRidesPage() {
               </button>
               <button
                 onClick={handleDelete}
-                disabled={deleting}
                 className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white
-                           text-sm font-medium hover:bg-red-700 disabled:opacity-60
-                           transition-colors"
+           text-sm font-medium hover:bg-red-700 transition-colors"
               >
-                {deleting ? 'Deleting…' : 'Delete'}
+                Delete
               </button>
             </div>
           </div>

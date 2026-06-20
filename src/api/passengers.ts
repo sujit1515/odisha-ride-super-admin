@@ -1,5 +1,6 @@
 import adminApi from './axiosinstance';
 import { Passenger,PassengersResponse,PassengerStats,} from './types';
+export type { Passenger, PassengersResponse, PassengerStats };
 
 // GET all passengers
 export const getPassengers = async (

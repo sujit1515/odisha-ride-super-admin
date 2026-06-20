@@ -13,6 +13,9 @@ export interface Settings {
   cancellationFee: number
   surgeMultiplier: number
   nightChargeMultiplier: number
+  bikeRatePerKm: number
+  autoRatePerKm: number
+  carRatePerKm: number
 
   // Ride
   maxSearchRadius: number
@@ -55,6 +58,9 @@ export const DEFAULTS: Settings = {
   cancellationFee: 25,
   surgeMultiplier: 2,
   nightChargeMultiplier: 1.25,
+  bikeRatePerKm: 8,
+  autoRatePerKm: 12,
+  carRatePerKm: 18,
   maxSearchRadius: 10,
   maxWaitingTime: 5,
   autoAssignDriver: true,

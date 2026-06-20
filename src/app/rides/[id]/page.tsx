@@ -26,83 +26,16 @@ interface Ride {
 
 // Mock Data
 const rides: Ride[] = [
-  {
-    id: 'RIDE-001',
-    passenger: 'John Doe',
-    driver: 'Rajesh Kumar',
-    fare: 245,
-    status: 'Completed',
-    time: '10:30 AM',
-    date: '2024-01-15',
-    pickup: 'MG Road, Bhubaneswar',
-    drop: 'Indiranagar, Bhubaneswar'
-  },
-  {
-    id: 'RIDE-002',
-    passenger: 'Jane Smith',
-    driver: 'Suresh Patel',
-    fare: 189,
-    status: 'Ongoing',
-    time: '11:15 AM',
-    date: '2024-01-15',
-    pickup: 'Koramangala, Bhubaneswar',
-    drop: 'HSR Layout, Bhubaneswar'
-  },
-  {
-    id: 'RIDE-003',
-    passenger: 'Mike Johnson',
-    driver: 'Amit Singh',
-    fare: 320,
-    status: 'Completed',
-    time: '09:45 AM',
-    date: '2024-01-15',
-    pickup: 'Whitefield, Bhubaneswar',
-    drop: 'Electronic City, Bhubaneswar'
-  },
-  {
-    id: 'RIDE-004',
-    passenger: 'Sarah Williams',
-    driver: 'Vikram Reddy',
-    fare: 156,
-    status: 'Cancelled',
-    time: '08:30 AM',
-    date: '2024-01-14',
-    pickup: 'Jayanagar, Bhubaneswar',
-    drop: 'Banashankari, Bhubaneswar'
-  },
-  {
-    id: 'RIDE-005',
-    passenger: 'David Brown',
-    driver: 'Manish Gupta',
-    fare: 278,
-    status: 'Completed',
-    time: '02:30 PM',
-    date: '2024-01-14',
-    pickup: 'Hebbal, Bhubaneswar',
-    drop: 'Yeshwanthpur, Bhubaneswar'
-  },
-  {
-    id: 'RIDE-006',
-    passenger: 'Emma Wilson',
-    driver: 'Rahul Verma',
-    fare: 342,
-    status: 'Completed',
-    time: '06:45 PM',
-    date: '2024-01-13',
-    pickup: 'Marathahalli, Bhubaneswar',
-    drop: 'Bellandur, Bhubaneswar'
-  },
-  {
-    id: 'RIDE-007',
-    passenger: 'James Taylor',
-    driver: 'Pankaj Singh',
-    fare: 198,
-    status: 'Ongoing',
-    time: '07:20 PM',
-    date: '2024-01-13',
-    pickup: 'Ulsoor, Bhubaneswar',
-    drop: 'Richmond Town, Bhubaneswar'
-  }
+  { id: '6650a1b2c3d4e5f6a7b8c001', passenger: 'John Doe',      driver: 'Rajesh Kumar', fare: 245, status: 'Completed', time: '04:00 PM', date: '15 Jan 2024', pickup: 'MG Road, Bhubaneswar',      drop: 'Infocity, Bhubaneswar'    },
+  { id: '6650a1b2c3d4e5f6a7b8c002', passenger: 'Jane Smith',    driver: 'Suresh Patel', fare: 189, status: 'Ongoing',   time: '04:45 PM', date: '15 Jan 2024', pickup: 'Patia, Bhubaneswar',        drop: 'Esplanade, Bhubaneswar'   },
+  { id: '6650a1b2c3d4e5f6a7b8c003', passenger: 'Mike Johnson',  driver: 'Amit Singh',   fare: 320, status: 'Completed', time: '03:15 PM', date: '15 Jan 2024', pickup: 'Cuttack Road, Bhubaneswar', drop: 'Airport, Bhubaneswar'     },
+  { id: '6650a1b2c3d4e5f6a7b8c004', passenger: 'Sarah Williams',driver: 'Vikram Reddy', fare: 156, status: 'Cancelled', time: '02:00 PM', date: '14 Jan 2024', pickup: 'Jaydev Vihar, Bhubaneswar', drop: 'Ram Mandir, Bhubaneswar'  },
+  { id: '6650a1b2c3d4e5f6a7b8c005', passenger: 'David Brown',   driver: 'Manish Gupta', fare: 278, status: 'Completed', time: '08:00 PM', date: '14 Jan 2024', pickup: 'Saheed Nagar, Bhubaneswar', drop: 'Rasulgarh, Bhubaneswar'   },
+  { id: '6650a1b2c3d4e5f6a7b8c006', passenger: 'Emma Wilson',   driver: 'Rahul Verma',  fare: 342, status: 'Pending',   time: '12:15 AM', date: '13 Jan 2024', pickup: 'Khandagiri, Bhubaneswar',   drop: 'Nayapalli, Bhubaneswar'   },
+  { id: '6650a1b2c3d4e5f6a7b8c007', passenger: 'James Taylor',  driver: 'Pankaj Singh', fare: 198, status: 'Ongoing',   time: '12:50 AM', date: '13 Jan 2024', pickup: 'Unit-4, Bhubaneswar',       drop: 'Bomikhal, Bhubaneswar'    },
+  { id: '6650a1b2c3d4e5f6a7b8c008', passenger: 'Lisa Anderson', driver: 'Deepak Sharma',fare: 267, status: 'Completed', time: '05:45 PM', date: '12 Jan 2024', pickup: 'Bapuji Nagar, Bhubaneswar', drop: 'Sundarpada, Bhubaneswar'  },
+  { id: '6650a1b2c3d4e5f6a7b8c009', passenger: 'Robert Taylor', driver: 'Anil Kumar',   fare: 185, status: 'Cancelled', time: '10:00 PM', date: '12 Jan 2024', pickup: 'Vani Vihar, Bhubaneswar',   drop: 'Mancheswar, Bhubaneswar'  },
+  { id: '6650a1b2c3d4e5f6a7b8c010', passenger: 'Maria Garcia',  driver: 'Sunil Reddy',  fare: 412, status: 'Completed', time: '02:30 PM', date: '11 Jan 2024', pickup: 'Airport Road, Bhubaneswar', drop: 'Domlur, Bhubaneswar'      },
 ]
 
 const statusBadge = (s: RideStatus): string => {

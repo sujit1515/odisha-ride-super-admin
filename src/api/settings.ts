@@ -32,6 +32,9 @@ export const saveFareSettings = async (data: {
   perMinuteRate:         number
   surgeMultiplier:       number
   nightChargeMultiplier: number
+  bikeRatePerKm:         number
+  autoRatePerKm:         number
+  carRatePerKm:          number
 }) => {
   const res = await adminApi.patch("/admin/settings/fare", data);
   return res.data; // { message: string, settings: Settings }

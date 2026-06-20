@@ -12,3 +12,9 @@ export async function getDriverStatusSummary(): Promise<DriverStatusSummary> {
   const res = await api.get<DriverStatusSummary>('/admin/drivers/status-summary')
   return res.data
 }
+
+// GET /api/v1/admin/drivers/:driverId/profile
+export async function getDriverProfile(driverId: string) {
+  const res = await api.get(`/admin/drivers/${driverId}/profile`)
+  return res.data
+}

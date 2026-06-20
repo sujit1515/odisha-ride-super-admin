@@ -73,6 +73,11 @@ export default function ScheduledRidesPage() {
   const [rides,  setRides ]   = useState<ScheduledRide[]>(STATIC_SCHEDULED)
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
+const handleDelete = () => {
+  setRides(prev => prev.filter(r => r._id !== deleteId))
+  setDeleteId(null)
+}
+
   const filtered = useMemo(() => {
     return rides.filter(r => {
       const matchStatus = status === 'all' || r.status === status
@@ -87,10 +92,7 @@ export default function ScheduledRidesPage() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / LIMIT))
   const paginated  = filtered.slice((page - 1) * LIMIT, page * LIMIT)
 
-  const handleDelete = () => {
-    setRides(prev => prev.filter(r => r._id !== deleteId))
-    setDeleteId(null)
-  }
+ 
 
   const formatDateTime = (iso: string) =>
     new Date(iso).toLocaleString('en-IN', {

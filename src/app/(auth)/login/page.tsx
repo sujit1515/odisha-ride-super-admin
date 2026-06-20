@@ -25,13 +25,13 @@ function DatePicker({
   onChange,
   onClose,
 }: {
-  value:      string
-  anchorRef:  React.RefObject<HTMLDivElement | null>
-  onChange:   (date: string) => void
-  onClose:    () => void
+  value: string
+  anchorRef: React.RefObject<HTMLDivElement | null>
+  onChange: (date: string) => void
+  onClose: () => void
 }) {
   const pickerRef = useRef<HTMLDivElement>(null)
-  const today     = new Date()
+  const today = new Date()
 
   // ── Parse DD/MM/YYYY → Date ──────────────────────────────────────────────
   const parseValue = (): Date | null => {
@@ -43,26 +43,26 @@ function DatePicker({
   }
   const selected = parseValue()
 
-  const [view,  setView]  = useState<'day' | 'month' | 'year'>('day')
-  const [month, setMonth] = useState(selected?.getMonth()    ?? today.getMonth())
-  const [year,  setYear]  = useState(selected?.getFullYear() ?? today.getFullYear())
-  const [pos,   setPos]   = useState({ top: 0, left: 0 })
+  const [view, setView] = useState<'day' | 'month' | 'year'>('day')
+  const [month, setMonth] = useState(selected?.getMonth() ?? today.getMonth())
+  const [year, setYear] = useState(selected?.getFullYear() ?? today.getFullYear())
+  const [pos, setPos] = useState({ top: 0, left: 0 })
 
   // ── Position relative to anchor ──────────────────────────────────────────
   useEffect(() => {
     const update = () => {
       if (!anchorRef.current) return
-      const r       = anchorRef.current.getBoundingClientRect()
+      const r = anchorRef.current.getBoundingClientRect()
       const pickerH = pickerRef.current?.offsetHeight ?? 380
       const pickerW = 288
 
       const spaceBelow = window.innerHeight - r.bottom
       const top = spaceBelow >= pickerH + 8
         ? r.bottom + window.scrollY + 6
-        : r.top    + window.scrollY - pickerH - 6
+        : r.top + window.scrollY - pickerH - 6
 
       const rawLeft = r.left + window.scrollX
-      const left    = Math.min(rawLeft, window.innerWidth + window.scrollX - pickerW - 8)
+      const left = Math.min(rawLeft, window.innerWidth + window.scrollX - pickerW - 8)
 
       setPos({ top, left: Math.max(left, 8) })
     }
@@ -79,8 +79,8 @@ function DatePicker({
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (
-        pickerRef.current  && !pickerRef.current.contains(e.target as Node) &&
-        anchorRef.current  && !anchorRef.current.contains(e.target as Node)
+        pickerRef.current && !pickerRef.current.contains(e.target as Node) &&
+        anchorRef.current && !anchorRef.current.contains(e.target as Node)
       ) onClose()
     }
     const id = setTimeout(() => document.addEventListener('mousedown', handler), 0)
@@ -91,9 +91,9 @@ function DatePicker({
   }, [anchorRef, onClose])
 
   // ── Calendar helpers ─────────────────────────────────────────────────────
-  const firstDay    = new Date(year, month, 1).getDay()
+  const firstDay = new Date(year, month, 1).getDay()
   const daysInMonth = new Date(year, month + 1, 0).getDate()
-  const cells       = Array.from({ length: firstDay + daysInMonth }, (_, i) =>
+  const cells = Array.from({ length: firstDay + daysInMonth }, (_, i) =>
     i < firstDay ? null : i - firstDay + 1,
   )
   while (cells.length % 7 !== 0) cells.push(null)
@@ -126,10 +126,10 @@ function DatePicker({
     else setMonth(m => m + 1)
   }
 
-  const maxYear  = today.getFullYear()
-  const minYear  = 1920
+  const maxYear = today.getFullYear()
+  const minYear = 1920
   const yearBase = Math.floor(year / 12) * 12
-  const years    = Array.from({ length: 12 }, (_, i) => yearBase + i)
+  const years = Array.from({ length: 12 }, (_, i) => yearBase + i)
 
   // ── Portal render ────────────────────────────────────────────────────────
   return createPortal(
@@ -137,9 +137,9 @@ function DatePicker({
       ref={pickerRef}
       style={{
         position: 'absolute',
-        top:      pos.top,
-        left:     pos.left,
-        zIndex:   9999,
+        top: pos.top,
+        left: pos.left,
+        zIndex: 9999,
         minWidth: 288,
       }}
       className="bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 select-none"
@@ -149,7 +149,7 @@ function DatePicker({
         <button
           type="button"
           onClick={() => {
-            if (view === 'day')  prevMonth()
+            if (view === 'day') prevMonth()
             if (view === 'year') setYear(y => y - 12)
           }}
           className="p-1.5 rounded-lg hover:bg-slate-100 transition text-slate-500"
@@ -204,7 +204,7 @@ function DatePicker({
         <button
           type="button"
           onClick={() => {
-            if (view === 'day')  nextMonth()
+            if (view === 'day') nextMonth()
             if (view === 'year') setYear(y => y + 12)
           }}
           className="p-1.5 rounded-lg hover:bg-slate-100 transition text-slate-500"
@@ -236,10 +236,10 @@ function DatePicker({
                       ${isSelected(day)
                         ? 'bg-blue-600 text-white shadow shadow-blue-200'
                         : isToday(day)
-                        ? 'border-2 border-blue-400 text-blue-600'
-                        : isFuture(day)
-                        ? 'text-slate-200 cursor-not-allowed'
-                        : 'text-slate-700 hover:bg-blue-50 hover:text-blue-600'}
+                          ? 'border-2 border-blue-400 text-blue-600'
+                          : isFuture(day)
+                            ? 'text-slate-200 cursor-not-allowed'
+                            : 'text-slate-700 hover:bg-blue-50 hover:text-blue-600'}
                     `}
                   >
                     {day}
@@ -286,8 +286,8 @@ function DatePicker({
                 ${y === year
                   ? 'bg-blue-600 text-white shadow shadow-blue-200'
                   : y > maxYear || y < minYear
-                  ? 'text-slate-200 cursor-not-allowed'
-                  : 'text-slate-700 hover:bg-blue-50 hover:text-blue-600'}
+                    ? 'text-slate-200 cursor-not-allowed'
+                    : 'text-slate-700 hover:bg-blue-50 hover:text-blue-600'}
               `}
             >
               {y}
@@ -328,15 +328,15 @@ export default function LoginPage() {
   const router = useRouter()
 
   const [formData, setFormData] = useState({
-    email:       '',
-    password:    '',
+    email: '',
+    password: '',
     dateOfBirth: '',
   })
   const [showPassword, setShowPassword] = useState(false)
   const [showCalendar, setShowCalendar] = useState(false)
-  const [isLoading,    setIsLoading]    = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [isRedirecting, setIsRedirecting] = useState(false)
-  const [error,        setError]        = useState('')
+  const [error, setError] = useState('')
 
   // SSR safety — portal needs document.body
   const [mounted, setMounted] = useState(false)
@@ -355,20 +355,20 @@ export default function LoginPage() {
       setError('Please fill in all fields.')
       return
     }
-    
+
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(formData.email)) {
       setError('Please enter a valid email address.')
       return
     }
-    
+
     // Date format validation
     if (!/^\d{2}\/\d{2}\/\d{4}$/.test(formData.dateOfBirth)) {
       setError('Date of birth must be in DD/MM/YYYY format.')
       return
     }
-    
+
     // Date validity check
     const [day, month, year] = formData.dateOfBirth.split('/')
     const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
@@ -384,26 +384,26 @@ export default function LoginPage() {
     setIsLoading(true)
     try {
       const res = await adminLogin({
-        email:       formData.email,
-        password:    formData.password,
+        email: formData.email,
+        password: formData.password,
         dateOfBirth: formData.dateOfBirth,
       })
-      
+
       // Store token and user data
       localStorage.setItem('adminToken', res.token)
       if (res.user) {
         localStorage.setItem('adminUser', JSON.stringify(res.user))
       }
-      
+
       // Set redirecting state for better UX
       setIsRedirecting(true)
-      
+
       // Small delay to show redirecting state (optional)
       setTimeout(() => {
         // Use replace to prevent going back to login page
         router.replace('/dashboard')
       }, 500)
-      
+
     } catch (err: any) {
       setError(
         err.response?.data?.message ||
@@ -449,7 +449,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
-        
+
         {/* Card */}
         <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
           <div className="p-8">
@@ -516,7 +516,7 @@ export default function LoginPage() {
                   >
                     {showPassword
                       ? <EyeOff className="h-4 w-4" />
-                      : <Eye    className="h-4 w-4" />}
+                      : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
@@ -614,27 +614,12 @@ export default function LoginPage() {
                   'Sign In to Dashboard'
                 )}
               </button>
-
             </form>
-
-            {/* Demo credentials hint (optional - remove in production) */}
             <div className="mt-6 pt-5 border-t border-slate-100">
             </div>
           </div>
         </div>
       </div>
-
-      {/* Add animation styles */}
-      <style jsx>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
-        }
-        .animate-shake {
-          animation: shake 0.3s ease-in-out;
-        }
-      `}</style>
     </div>
   )
 }

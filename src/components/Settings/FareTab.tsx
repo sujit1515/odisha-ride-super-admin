@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { DollarSign, Ruler, Save, CheckCircle, AlertCircle } from 'lucide-react'
+import { DollarSign, Ruler, Save, CheckCircle, AlertCircle, Car } from 'lucide-react'
 import { saveFareSettings } from '@/api/settings'
 import type { Settings } from './types'
 
@@ -72,6 +72,9 @@ export function FareTab({ settings, update }: {
         perMinuteRate:         settings.perMinuteRate,
         surgeMultiplier:       settings.surgeMultiplier,
         nightChargeMultiplier: settings.nightChargeMultiplier,
+        bikeRatePerKm:         settings.bikeRatePerKm,
+        autoRatePerKm:         settings.autoRatePerKm,
+        carRatePerKm:          settings.carRatePerKm,
       })
       setToast({ type: 'success', msg: res.message ?? 'Fare settings saved successfully.' })
     } catch {
@@ -127,6 +130,18 @@ export function FareTab({ settings, update }: {
           <Field label="Night Charge Multiplier" hint="Applied after 11 PM">
             <TextInput type="number" value={settings.nightChargeMultiplier}
                        onChange={update('nightChargeMultiplier')} />
+          </Field>
+        </Card>
+
+        <Card title="Vehicle Specific Rates" icon={Car}>
+          <Field label="Bike Rate Per KM (₹)" hint="Used for BIKE vehicle type estimations">
+            <TextInput type="number" value={settings.bikeRatePerKm} onChange={update('bikeRatePerKm')} />
+          </Field>
+          <Field label="Auto Rate Per KM (₹)" hint="Used for AUTO vehicle type estimations">
+            <TextInput type="number" value={settings.autoRatePerKm} onChange={update('autoRatePerKm')} />
+          </Field>
+          <Field label="Cab/Car Rate Per KM (₹)" hint="Used for CAR vehicle type estimations">
+            <TextInput type="number" value={settings.carRatePerKm} onChange={update('carRatePerKm')} />
           </Field>
         </Card>
       </div>

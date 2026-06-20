@@ -1,28 +1,30 @@
 'use client'
-
 import { useEffect, useState, useCallback } from 'react'
-import { APIProvider, Map, AdvancedMarker, Pin, InfoWindow } from '@vis.gl/react-google-maps'
+import { APIProvider, Map } from '@vis.gl/react-google-maps'
 import AdminShell from '@/components/Common/AdminShell'
-import adminApi from '@/api/axiosinstance'
-import type { OnlineDriver,LiveMapStats,} from '@/types/index'
+import type { OnlineDriver, LiveMapStats, } from '@/types/index'
+import { DriverMarker } from '@/components/Live-map/DriverMarker'
+import { fetchOnlineDriversApi } from '@/api/driver-location'
+
 
 
 export default function LiveMapPage() {
-  const [stats,         setStats        ] = useState<LiveMapStats>({
+  const [stats, setStats] = useState<LiveMapStats>({
     totalOnline: 0,
     drivers: [],
   })
-  const [lastUpdated,   setLastUpdated  ] = useState('')
-  const [isLoading,     setIsLoading    ] = useState(true)
+  const [lastUpdated, setLastUpdated] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
   const [selectedDriver, setSelectedDriver] = useState<OnlineDriver | null>(null)
 
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
 
-  // ── Fetch online drivers ────────────────────────────────────
+  
+  // inside the component:
   const fetchOnlineDrivers = useCallback(async () => {
     try {
-      const res = await adminApi.get('/admin/drivers/online')
-      setStats(res.data)
+      const data = await fetchOnlineDriversApi()
+      setStats(data)
       setLastUpdated(new Date().toLocaleTimeString())
     } catch (err) {
       console.error('Failed to fetch online drivers:', err)
@@ -111,49 +113,14 @@ export default function LiveMapPage() {
             >
               {/* ── Driver markers ── */}
               {stats.drivers.map(driver => (
-                <AdvancedMarker
+                <DriverMarker
                   key={driver._id}
-                  position={{ lat: driver.latitude, lng: driver.longitude }}
-                  onClick={() => setSelectedDriver(driver)}
-                >
-                  <Pin
-                    background="#2563eb"
-                    borderColor="#1d4ed8"
-                    glyphColor="#ffffff"
-                  />
-                </AdvancedMarker>
+                  driver={driver}
+                  isSelected={selectedDriver?._id === driver._id}
+                  onSelect={setSelectedDriver}
+                  onClose={() => setSelectedDriver(null)}
+                />
               ))}
-
-              {/* ── Info window on marker click ── */}
-              {selectedDriver && (
-                <InfoWindow
-                  position={{
-                    lat: selectedDriver.latitude,
-                    lng: selectedDriver.longitude,
-                  }}
-                  onCloseClick={() => setSelectedDriver(null)}
-                >
-                  <div className="p-1 min-w-[140px]">
-                    <p className="font-bold text-slate-800 text-sm">
-                      {selectedDriver.fullName}
-                    </p>
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      {selectedDriver.driverId}
-                    </p>
-                    <p className="text-xs text-slate-400 mt-1">
-                      Updated: {new Date(selectedDriver.updatedAt)
-                        .toLocaleTimeString()}
-                    </p>
-                    <div className="mt-2 flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                      <span className="text-xs text-emerald-600 font-medium">
-                        Online
-                      </span>
-                    </div>
-                  </div>
-                </InfoWindow>
-              )}
-
             </Map>
           </APIProvider>
         </div>
@@ -189,12 +156,55 @@ export default function LiveMapPage() {
       )}
 
       {/* ── Empty state ── */}
+      {/* ── Empty state ── */}
       {!isLoading && stats.totalOnline === 0 && (
-        <div className="mt-4 bg-white rounded-2xl p-8 border border-slate-100
-                        shadow-sm text-center">
-          <div className="text-slate-400 text-sm">
-            No drivers are currently online.
+        <div className="mt-4 bg-white rounded-2xl p-10 border border-slate-100
+                  shadow-sm text-center">
+          {/* Icon */}
+          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center
+                    justify-center mx-auto mb-4">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+              stroke="#94a3b8" strokeWidth="1.5">
+              <path strokeLinecap="round" strokeLinejoin="round"
+                d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3
+             0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25
+             4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621
+             0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193
+             2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177
+             v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0
+             00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677
+             m0 4.5v-4.5m0 0h-12" />
+            </svg>
           </div>
+
+          {/* Message */}
+          <p className="text-slate-700 font-semibold text-base mb-1">
+            No drivers online
+          </p>
+          <p className="text-slate-400 text-sm mb-1">
+            All drivers are currently offline or unavailable.
+          </p>
+          <p className="text-slate-300 text-xs mb-5">
+            Last checked: {lastUpdated || 'just now'}
+          </p>
+
+          {/* Refresh button */}
+          <button
+            onClick={fetchOnlineDrivers}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg
+                 bg-slate-900 text-white text-sm font-medium
+                 hover:bg-slate-700 transition-colors"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round"
+                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0
+             0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7
+             M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991
+             v4.99" />
+            </svg>
+            Refresh now
+          </button>
         </div>
       )}
 

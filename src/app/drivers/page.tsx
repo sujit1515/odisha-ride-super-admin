@@ -1,11 +1,12 @@
- 
+
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import AdminShell from '@/components/Common/AdminShell';
 import { Users, Wifi, WifiOff, Clock, ShieldOff } from 'lucide-react'
 import { getAllDrivers, approveDriver, rejectDriver, blockDriver, unblockDriver, } from "@/api/kyc";
-import type { Driver,DriverStatus,ToastState,ActionModalState, } from '@/types/index'
+import type { Driver, DriverStatus, ToastState, ActionModalState, } from '@/types/index'
+import { useRouter } from 'next/navigation'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -56,7 +57,7 @@ function Avatar({ name, avatarUrl, size = "md" }: {
       {initials}
     </div>
   );
-}
+} 
 
 function SkeletonRow() {
   return (
@@ -353,6 +354,7 @@ export default function DriversPage() {
     driver: Driver
   } | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
+  const router = useRouter()
 
   const LIMIT = 10
 
@@ -624,8 +626,14 @@ export default function DriversPage() {
                                 <button
                                   onClick={() => { setSelectedDriver(driver); setOpenMenuId(null); }}
                                   className="w-full text-left px-4 py-2 text-sm text-gray-700
-                                           hover:bg-gray-50 transition-colors">
+           hover:bg-gray-50 transition-colors">
                                   View Profile
+                                </button>
+                                <button
+                                  onClick={() => {router.push(`/drivers/${driver.driverId}`); setOpenMenuId(null); }}
+                                  className="w-full text-left px-4 py-2 text-sm text-blue-600
+           hover:bg-blue-50 transition-colors">
+                                  View Driver Detail
                                 </button>
                                 {!driver.isApproved && driver.status === 'pending' && (
                                   <>
@@ -693,8 +701,8 @@ export default function DriversPage() {
                 {Array.from({ length: clientTotalPages }).map((_, i) => (
                   <button key={i} onClick={() => setPage(i + 1)}
                     className={`w-7 h-7 text-xs font-medium rounded-lg transition-colors ${page === i + 1
-                        ? 'bg-blue-600 text-white'
-                        : 'border border-gray-200 hover:bg-gray-50 text-gray-600'
+                      ? 'bg-blue-600 text-white'
+                      : 'border border-gray-200 hover:bg-gray-50 text-gray-600'
                       }`}>
                     {i + 1}
                   </button>

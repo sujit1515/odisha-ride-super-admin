@@ -11,8 +11,9 @@ export default function SosCard({ count = 3, activeCount = 3 }: SosCardProps) {
 
   return (
     <div
-      onClick={() => router.push('/support')}
-      className="block bg-red-50 rounded-2xl p-5 border border-red-100 hover:shadow-md transition cursor-pointer"
+      onClick={() => router.push('/support/sos')}
+      className="block bg-red-50 rounded-2xl p-5 border border-red-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+
     >
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center gap-2 text-red-600 font-medium">
