@@ -1,9 +1,13 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import AdminShell from '@/components/Common/AdminShell'
 import { getActiveSosAlerts, resolveSosAlert } from '@/api/sos'
 import type { SosAlert } from '@/api/sos'
+import { useSosSocket } from '@/hooks/useSosSocket'
+import ResolveAlertModal from '@/components/SOS/ResolveAlertModal'
 
 function timeAgo(dateStr: string): string {
   const diffMs = Date.now() - new Date(dateStr).getTime()
@@ -19,6 +23,8 @@ export default function SosAlertsPage() {
   const [alerts, setAlerts] = useState<SosAlert[]>([])
   const [loading, setLoading] = useState(true)
   const [resolvingId, setResolvingId] = useState<string | null>(null)
+  const [targetAlert, setTargetAlert] = useState<SosAlert | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const fetchAlerts = useCallback(async () => {
@@ -38,26 +44,66 @@ export default function SosAlertsPage() {
     return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
   }, [fetchAlerts])
 
-  const handleResolve = async (id: string) => {
+  useSosSocket({
+    onNew: fetchAlerts,
+    onResolved: fetchAlerts,
+  })
+
+  const handleConfirmResolve = async (note?: string) => {
+    if (!targetAlert) return
+    const id = targetAlert._id
     setResolvingId(id)
+    setErrorMessage(null)
     try {
-      await resolveSosAlert(id)
+      await resolveSosAlert(id, note)
       setAlerts(prev => prev.filter(a => a._id !== id))
+      setTargetAlert(null)
+    } catch (err) {
+      console.error('Failed to resolve SOS alert:', err)
+      setErrorMessage('Could not resolve this alert. Please try again.')
     } finally {
       setResolvingId(null)
     }
   }
 
+  const router = useRouter()
+
   return (
     <AdminShell title="Emergency SOS Alerts">
       <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-semibold text-red-700">Active Emergencies</h2>
-          <p className="text-sm text-slate-500 mt-1">
-            {alerts.length} active right now &middot; refreshing every 10s
-          </p>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.back()}
+            className="h-9 w-9 flex items-center justify-center rounded-full border border-slate-200
+                       text-slate-600 hover:bg-slate-50 transition shrink-0"
+            aria-label="Go back"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <div>
+            <h2 className="text-xl font-semibold text-red-700">Active Emergencies</h2>
+            <p className="text-sm text-slate-500 mt-1">
+              {alerts.length} active right now &middot; refreshing every 10s
+            </p>
+          </div>
         </div>
+
+        <Link
+          href="/support/sos/resolved"
+          className="px-4 py-2 text-sm font-medium rounded-xl border border-slate-200 text-slate-600
+                     hover:bg-yellow-50 hover:border-yellow-200 hover:text-yellow-700 transition"
+        >
+          View Resolved
+        </Link>
       </div>
+
+      {errorMessage && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm px-4 py-3">
+          {errorMessage}
+        </div>
+      )}
 
       {loading ? (
         <div className="text-slate-400 text-sm">Loading alerts...</div>
@@ -99,7 +145,7 @@ export default function SosAlertsPage() {
               </div>
 
               <button
-                onClick={() => handleResolve(alert._id)}
+                onClick={() => setTargetAlert(alert)}
                 disabled={resolvingId === alert._id}
                 className="px-4 py-2 text-sm font-medium rounded-xl bg-red-600 text-white
                            hover:bg-red-700 transition disabled:opacity-50"
@@ -110,6 +156,14 @@ export default function SosAlertsPage() {
           ))}
         </div>
       )}
+
+      <ResolveAlertModal
+        open={targetAlert !== null}
+        alertName={targetAlert?.name ?? ''}
+        isSubmitting={resolvingId === targetAlert?._id}
+        onConfirm={handleConfirmResolve}
+        onCancel={() => setTargetAlert(null)}
+      />
     </AdminShell>
   )
 }

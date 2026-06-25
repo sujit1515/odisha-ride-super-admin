@@ -1,47 +1,47 @@
 // ── KYC types
-export type DocStatus    = 'uploaded' | 'missing' | 'rejected'
-export type KYCStatus    = 'Pending' | 'Approved' | 'Rejected'
+export type DocStatus = 'uploaded' | 'missing' | 'rejected'
+export type KYCStatus = 'Pending' | 'Approved' | 'Rejected'
 export type KYCDriverStatus = 'active' | 'blocked' | 'pending' | 'approved' | 'rejected'
 
 export interface Document {
-  key:        string
-  label:      string
-  filename:   string
-  status:     DocStatus
+  key: string
+  label: string
+  filename: string
+  status: DocStatus
   uploadedAt: string
-  imageUrl:   string | null
+  imageUrl: string | null
 }
 export interface DriverKYC {
-  id:            string
-  name:          string
-  phone:         string
-  email:         string
-  city:          string
-  vehicleType:   string
+  id: string
+  name: string
+  phone: string
+  email: string
+  city: string
+  vehicleType: string
   vehicleNumber: string
   aadhaarNumber: string
   licenseNumber: string
-  rcNumber:      string
-  submittedAt:   string
-  status:        KYCStatus
+  rcNumber: string
+  submittedAt: string
+  status: KYCStatus
   driverStatus?: KYCDriverStatus
-  documents:     Document[]
+  documents: Document[]
 }
 export interface KYCEntry {
-  id:           string
-  driverId:     string
-  driver:       string
-  email:        string
-  phone:        string
-  submitted:    string
-  docs:         string
+  id: string
+  driverId: string
+  driver: string
+  email: string
+  phone: string
+  submitted: string
+  docs: string
   aadhaarNumber: string
   vehicleNumber: string
   licenseNumber: string
   profilePhoto: string
-  aadhaarDoc:   string
-  licenseDoc:   string
-  status:       KYCStatus
+  aadhaarDoc: string
+  licenseDoc: string
+  status: KYCStatus
 }
 // ── Driver types
 export interface BlockedDriver {
@@ -53,11 +53,11 @@ export interface BlockedDriver {
   blockedAt: string
   blockedReason: string
   blockedBy: string
-} 
+}
 
 // Drivers Types
 
-export type DriverStatus = | 'Online'| 'On Ride'| 'Offline'| 'Blocked'| 'Pending'| 'Approved'| 'Rejected'
+export type DriverStatus = | 'Online' | 'On Ride' | 'Offline' | 'Blocked' | 'Pending' | 'Approved' | 'Rejected'
 export interface Driver {
   _id: string
   driverId: string
@@ -139,9 +139,9 @@ export interface DeactivatedUser {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type TicketPriority = 'High' | 'Medium' | 'Low'
-export type TicketStatus   = 'Open' | 'In Progress' | 'Resolved' | 'Closed'
-export type UserType       = 'passenger' | 'driver'
-export type SenderType     = 'admin' | 'user'
+export type TicketStatus = 'Open' | 'In Progress' | 'Resolved' | 'Closed'
+export type UserType = 'passenger' | 'driver'
+export type SenderType = 'admin' | 'user'
 
 export type TicketCategory =
   | 'Payment Issues'
@@ -156,158 +156,158 @@ export type TicketCategory =
   | 'Other'
 
 export interface SupportTicket {
-  _id:         string
-  ticketId:    string
-  userId:      string
-  userType:    UserType
-  name:        string
-  email:       string
-  phone:       string
-  category:    TicketCategory
-  subject:     string
+  _id: string
+  ticketId: string
+  userId: string
+  userType: UserType
+  name: string
+  email: string
+  phone: string
+  category: TicketCategory
+  subject: string
   description: string
-  priority:    TicketPriority
-  status:      TicketStatus
+  priority: TicketPriority
+  status: TicketStatus
   assignedTo?: string
   assignedAt?: string
   assignedBy?: string
   attachments?: string[]
-  rideId?:     string
+  rideId?: string
   rideInfo?: {
-    rideId:         string
+    rideId: string
     pickupLocation: string
-    dropLocation:   string
-    driverName?:    string
-    driverPhone?:   string
+    dropLocation: string
+    driverName?: string
+    driverPhone?: string
   }
-  createdAt:   string
-  updatedAt:   string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface TicketMessage {
-  _id:          string
-  ticketId:     string
-  senderId:     string
-  senderType:   SenderType
-  senderName:   string
-  message:      string
+  _id: string
+  ticketId: string
+  senderId: string
+  senderType: SenderType
+  senderName: string
+  message: string
   attachments?: string[]
-  createdAt:    string
+  createdAt: string
 }
 
 export interface TicketStats {
-  total:              number
-  open:               number
-  inProgress:         number
-  resolvedToday:      number
-  closed:             number
-  highPriority:       number
-  driverComplaints:   number
+  total: number
+  open: number
+  inProgress: number
+  resolvedToday: number
+  closed: number
+  highPriority: number
+  driverComplaints: number
   passengerComplaints: number
-  avgResponseTime:    string
+  avgResponseTime: string
 }
 
 export interface TicketsResponse {
-  tickets:    SupportTicket[]
-  total:      number
-  page:       number
-  limit:      number
+  tickets: SupportTicket[]
+  total: number
+  page: number
+  limit: number
   totalPages: number
 }
 
 export interface TicketFilters {
-  search?:   string
-  status?:   TicketStatus | 'All'
+  search?: string
+  status?: TicketStatus | 'All'
   priority?: TicketPriority | 'All'
   userType?: UserType | 'All'
   category?: TicketCategory | 'All'
   dateFrom?: string
-  dateTo?:   string
-  page?:     number
-  limit?:    number
+  dateTo?: string
+  page?: number
+  limit?: number
 }
 
 // ── Settings Interface  
 export interface Settings {
   // General
-  platformName:          string
-  commission:            number
-  supportEmail:          string
-  supportPhone:          string
+  platformName: string
+  commission: number
+  supportEmail: string
+  supportPhone: string
 
   // Fare
-  baseFare:              number
-  perKmRate:             number
-  minFare:               number
-  perMinuteRate:         number
-  cancellationFee:       number
-  surgeMultiplier:       number
+  baseFare: number
+  perKmRate: number
+  minFare: number
+  perMinuteRate: number
+  cancellationFee: number
+  surgeMultiplier: number
   nightChargeMultiplier: number
-  bikeRatePerKm:         number
-  autoRatePerKm:         number
-  carRatePerKm:          number
+  bikeRatePerKm: number
+  autoRatePerKm: number
+  carRatePerKm: number
 
   // Ride
-  maxSearchRadius:       number
-  maxWaitingTime:        number
-  autoAssignDriver:      boolean
-  maxRidesPerDay:        number
+  maxSearchRadius: number
+  maxWaitingTime: number
+  autoAssignDriver: boolean
+  maxRidesPerDay: number
 
   // Driver
-  autoApproveDrivers:    boolean
-  kycMandatory:          boolean
-  minDriverRating:       number
-  backgroundCheck:       boolean
+  autoApproveDrivers: boolean
+  kycMandatory: boolean
+  minDriverRating: number
+  backgroundCheck: boolean
 
   // Payout
-  payoutFrequency:       string
-  minPayoutAmount:       number
+  payoutFrequency: string
+  minPayoutAmount: number
 
   // Notifications
-  emailPushNotif:        boolean
-  smsNotif:              boolean
-  sosAlerts:             boolean
-  notifyOnSignup:        boolean
-  notifyOnComplaint:     boolean
+  emailPushNotif: boolean
+  smsNotif: boolean
+  sosAlerts: boolean
+  notifyOnSignup: boolean
+  notifyOnComplaint: boolean
 
   // Admin
-  adminName:             string
-  adminEmail:            string
-  twoFactorAuth:         boolean
+  adminName: string
+  adminEmail: string
+  twoFactorAuth: boolean
 }
 
 // ── Default Values 
 export const DEFAULTS: Settings = {
-  platformName:          'Odisha Ride',
-  commission:            15,
-  supportEmail:          'support@odisharide.com',
-  supportPhone:          '+91 9999999999',
-  baseFare:              50,
-  perKmRate:             12,
-  minFare:               30,
-  perMinuteRate:         1.5,
-  cancellationFee:       25,
-  surgeMultiplier:       2,
+  platformName: 'Odisha Ride',
+  commission: 15,
+  supportEmail: 'support@odisharide.com',
+  supportPhone: '+91 9999999999',
+  baseFare: 50,
+  perKmRate: 12,
+  minFare: 30,
+  perMinuteRate: 1.5,
+  cancellationFee: 25,
+  surgeMultiplier: 2,
   nightChargeMultiplier: 1.25,
-  bikeRatePerKm:         8,
-  autoRatePerKm:         12,
-  carRatePerKm:          18,
-  maxSearchRadius:       10,
-  maxWaitingTime:        5,
-  autoAssignDriver:      true,
-  maxRidesPerDay:        20,
-  autoApproveDrivers:    false,
-  kycMandatory:          true,
-  minDriverRating:       3.5,
-  backgroundCheck:       true,
-  payoutFrequency:       'weekly',
-  minPayoutAmount:       500,
-  emailPushNotif:        true,
-  smsNotif:              true,
-  sosAlerts:             true,
-  notifyOnSignup:        true,
-  notifyOnComplaint:     true,
-  adminName:             'Super Admin',
-  adminEmail:            'admin@odisharide.com',
-  twoFactorAuth:         false,
+  bikeRatePerKm: 8,
+  autoRatePerKm: 12,
+  carRatePerKm: 18,
+  maxSearchRadius: 10,
+  maxWaitingTime: 5,
+  autoAssignDriver: true,
+  maxRidesPerDay: 20,
+  autoApproveDrivers: false,
+  kycMandatory: true,
+  minDriverRating: 3.5,
+  backgroundCheck: true,
+  payoutFrequency: 'weekly',
+  minPayoutAmount: 500,
+  emailPushNotif: true,
+  smsNotif: true,
+  sosAlerts: true,
+  notifyOnSignup: true,
+  notifyOnComplaint: true,
+  adminName: 'Super Admin',
+  adminEmail: 'admin@odisharide.com',
+  twoFactorAuth: false,
 }

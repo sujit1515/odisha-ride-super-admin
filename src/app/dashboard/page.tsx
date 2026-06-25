@@ -8,6 +8,8 @@ import DriverStatus from '@/components/Dashboard/Driverstatus'
 import AlertsAndPending from '@/components/Dashboard/Alertsandpending'
 import { useDriverStatusSummary } from '@/hooks/useDriverStatusSummary'
 import { useRegistrationStats } from '@/hooks/useRegistrationStats'
+import { useSosStats } from '@/hooks/useSosStats'
+import { useSosSocket } from '@/hooks/useSosSocket'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type RideStatus = 'Completed' | 'Ongoing' | 'Cancelled' | 'Pending'
@@ -38,6 +40,12 @@ export default function DashboardPage() {
   const { data: driverSummary } = useDriverStatusSummary(15_000)
   const driversOnlineNow = driverSummary ? driverSummary.online : null
   const { data: registrationStats } = useRegistrationStats()
+  const { data: sosStats, refetch: refetchSos } = useSosStats()
+
+  useSosSocket({
+    onNew: refetchSos,
+    onResolved: refetchSos,
+  })
 
   return (
     <AdminShell title="Odisha Ride Admin">
@@ -50,7 +58,10 @@ export default function DashboardPage() {
           value={driversOnlineNow !== null ? String(driversOnlineNow) : '—'}
         />
         <LiveCard label="Passengers waiting right now" value="84" dotClass="bg-amber-400" />
-        <SosCard count={3} activeCount={3} />
+       <SosCard
+  count={sosStats?.active ?? 0}
+  activeCount={sosStats?.active ?? 0}
+/>
       </div>
 
       {/* ── Row 2: Mini Stats ── */}
