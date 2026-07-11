@@ -1,6 +1,8 @@
 'use client'
 
-import { Car, MapPin } from 'lucide-react'
+import { useState } from 'react'
+import { Car, MapPin, Gauge, Scale, Save, CheckCircle, AlertCircle } from 'lucide-react'
+import { saveRideSettings } from '@/api/settings'
 import type { Settings } from './types'
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
@@ -13,22 +15,30 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
   )
 }
 
-function TextInput({ value, onChange, placeholder, type = 'text' }: {
+function TextInput({ value, onChange, placeholder, type = 'text', suffix }: {
   value: string | number
   onChange: (v: any) => void
   placeholder?: string
   type?: string
+  suffix?: string
 }) {
   return (
-    <input
-      type={type}
-      value={value}
-      placeholder={placeholder}
-      onChange={e => onChange(type === 'number' ? Number(e.target.value) : e.target.value)}
-      className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm
-                 focus:outline-none focus:ring-2 focus:ring-blue-500
-                 focus:border-transparent transition"
-    />
+    <div className="relative">
+      <input
+        type={type}
+        value={value}
+        placeholder={placeholder}
+        onChange={e => onChange(type === 'number' ? Number(e.target.value) : e.target.value)}
+        className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm
+                   focus:outline-none focus:ring-2 focus:ring-blue-500
+                   focus:border-transparent transition"
+      />
+      {suffix && (
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">
+          {suffix}
+        </span>
+      )}
+    </div>
   )
 }
 
@@ -92,36 +102,131 @@ function ToggleRow({ label, desc, value, onChange, badge, disabled }: {
   )
 }
 
+// ── Search radius escalation — 4 steps, matching DriverMatchingService exactly ──
+function SearchRadiusEscalation({ value, onChange }: {
+  value: number[]
+  onChange: (v: number[]) => void
+}) {
+  const steps = value.length === 4 ? value : [3, 5, 8, 10]
+
+  const updateStep = (index: number, newVal: number) => {
+    const next = [...steps]
+    next[index] = newVal
+    onChange(next)
+  }
+
+  const isAscending = steps.every((v, i) => i === 0 || v >= steps[i - 1])
+
+  return (
+    <div>
+      <label className="text-sm font-medium text-slate-700">Search Radius Escalation (km)</label>
+      <p className="text-xs text-slate-400 mb-2">
+        We search in expanding circles — if no driver is found at Step 1, we try Step 2, then Step 3, then Step 4.
+      </p>
+      <div className="grid grid-cols-4 gap-2">
+        {steps.map((radius, i) => (
+          <div key={i}>
+            <span className="text-[11px] text-slate-400 block mb-1">Step {i + 1}</span>
+            <TextInput
+              type="number"
+              value={radius}
+              suffix="km"
+              onChange={(v) => updateStep(i, v)}
+            />
+          </div>
+        ))}
+      </div>
+      {!isAscending && (
+        <p className="text-xs text-amber-600 mt-2">
+          Steps should increase in order, or later steps may never be reached.
+        </p>
+      )}
+    </div>
+  )
+}
+
 export function RideTab({ settings, update }: {
   settings: Settings
   update: (key: keyof Settings) => (val: any) => void
 }) {
+  const [saving, setSaving] = useState(false)
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
+
+  const handleSave = async () => {
+    setSaving(true)
+    setToast(null)
+    try {
+      const payload = {
+        searchRadiiKm: settings.searchRadiiKm,
+        avgSpeedKmh: settings.avgSpeedKmh,
+        etaTieThresholdMin: settings.etaTieThresholdMin,
+        maxWaitingTime: settings.maxWaitingTime,
+      }
+      const res = await saveRideSettings(payload)
+      setToast({ type: 'success', msg: res.message ?? 'Ride settings saved.' })
+    } catch (err: any) {
+      setToast({ type: 'error', msg: err.response?.data?.message || 'Failed to save. Please try again.' })
+    } finally {
+      setSaving(false)
+      setTimeout(() => setToast(null), 3500)
+    }
+  }
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card title="Ride Rules" icon={Car}>
-        <Field label="Max Driver Search Radius (km)"
-               hint="How far to search for drivers">
-          <TextInput type="number" value={settings.maxSearchRadius}
-                     onChange={update('maxSearchRadius')} />
-        </Field>
-        <Field label="Max Waiting Time (minutes)"
-               hint="Auto-cancel if driver not found within this time">
-          <TextInput type="number" value={settings.maxWaitingTime}
-                     onChange={update('maxWaitingTime')} />
-        </Field>
-        <Field label="Max Rides Per Driver Per Day">
-          <TextInput type="number" value={settings.maxRidesPerDay}
-                     onChange={update('maxRidesPerDay')} />
-        </Field>
-      </Card>
-      <Card title="Assignment" icon={MapPin}>
-        <ToggleRow
-          label="Auto Assign Driver"
-          desc="Automatically assign nearest available driver"
-          value={settings.autoAssignDriver}
-          onChange={update('autoAssignDriver')}
-        />
-      </Card>
-    </div>
+    <>
+      {/* ── Toast ── */}
+      {toast && (
+        <div className={`fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-3
+                         rounded-xl shadow-lg text-sm font-semibold text-white
+                         ${toast.type === 'success' ? 'bg-[#1A73E8]' : 'bg-red-500'}`}>
+          {toast.type === 'success' ? <CheckCircle size={16}/> : <AlertCircle size={16}/>}
+          {toast.msg}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card title="Ride Rules" icon={Car}>
+          <SearchRadiusEscalation
+            value={settings.searchRadiiKm}
+            onChange={update('searchRadiiKm')}
+          />
+
+          <Field label="Max Waiting Time Per Driver (minutes)"
+                 hint="How long to wait for a driver to respond before offering the ride to the next one">
+            <TextInput type="number" value={settings.maxWaitingTime}
+                       onChange={update('maxWaitingTime')} suffix="min" />
+          </Field>
+        </Card>
+
+        <div className="space-y-6">
+          <Card title="Matching & ETA" icon={Gauge}>
+            <Field label="Average City Speed (km/h)"
+                   hint="Used to estimate driver arrival time (ETA) for ranking and dispatch">
+              <TextInput type="number" value={settings.avgSpeedKmh}
+                         onChange={update('avgSpeedKmh')} suffix="km/h" />
+            </Field>
+
+            <Field label="ETA Tie Threshold (minutes)"
+                   hint="If two or more drivers' ETAs are within this many minutes of each other, the ride is offered to all of them at once instead of one at a time">
+              <TextInput type="number" value={settings.etaTieThresholdMin}
+                         onChange={update('etaTieThresholdMin')} suffix="min" />
+            </Field>
+          </Card>
+        </div>
+      </div>
+
+      {/* ── Save Button ── */}
+      <div className="mt-8 flex justify-end">
+        <button onClick={handleSave} disabled={saving}
+          className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#1A73E8] text-white
+                     text-sm font-semibold hover:bg-blue-700 disabled:opacity-40
+                     disabled:cursor-not-allowed transition">
+          {saving
+            ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+            : <Save size={15} />}
+          {saving ? 'Saving...' : 'Save Changes'}
+        </button>
+      </div>
+    </>
   )
 }

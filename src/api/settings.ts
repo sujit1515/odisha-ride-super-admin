@@ -14,28 +14,59 @@ export const updateAutoApprove = async (autoApproveDrivers: boolean) => {
 
 // PATCH /api/v1/admin/settings/general
 export const saveGeneralSettings = async (data: {
-  platformName:  string
-  commission:    number
-  supportEmail:  string
-  supportPhone:  string
-}) => {
-  const res = await adminApi.patch("/admin/settings/general", data);
+  platformName?: string | null
+  commission?: number
+  supportEmail?: string | null
+  supportPhone?: string | null
+  platformFee?: number
+  taxPercentage?: number
+}) => {                   
+  // Filter out null/undefined values
+  const cleanData: Record<string, string | number> = {}; 
+
+  if (data.platformName !== null && data.platformName !== undefined) {
+    cleanData.platformName = data.platformName;
+  }
+  if (data.commission !== null && data.commission !== undefined) {
+    cleanData.commission = data.commission;
+  }
+  if (data.supportEmail !== null && data.supportEmail !== undefined) {
+    cleanData.supportEmail = data.supportEmail;
+  }
+  if (data.supportPhone !== null && data.supportPhone !== undefined) {
+    cleanData.supportPhone = data.supportPhone;
+  }
+  if (data.platformFee !== null && data.platformFee !== undefined) {
+    cleanData.platformFee = data.platformFee;
+  }
+  if (data.taxPercentage !== null && data.taxPercentage !== undefined) {
+    cleanData.taxPercentage = data.taxPercentage;
+  }
+
+  const res = await adminApi.patch("/admin/settings/general", cleanData);
   return res.data; // { message: string, settings: Settings }
 };
 
 // PATCH /api/v1/admin/settings/fare
-export const saveFareSettings = async (data: {
-  baseFare:              number
-  minFare:               number
-  cancellationFee:       number
-  perKmRate:             number
-  perMinuteRate:         number
-  surgeMultiplier:       number
-  nightChargeMultiplier: number
-  bikeRatePerKm:         number
-  autoRatePerKm:         number
-  carRatePerKm:          number
-}) => {
+export const saveFareSettings = async (data: any) => {
   const res = await adminApi.patch("/admin/settings/fare", data);
+  return res.data; // { message: string, settings: Settings }
+};
+
+// PATCH /api/v1/admin/settings/ride
+// Save Ride Configuration (Driver Matching & ETA settings)
+export const saveRideSettings = async (data: {
+  searchRadiiKm?: number[];
+  avgSpeedKmh?: number;
+  etaTieThresholdMin?: number;
+  maxWaitingTime?: number;
+  bikeSettings?: any;
+  autoSettings?: any;
+  nonacSettings?: any;
+  acSettings?: any;
+  xlSettings?: any;
+  vehicles?: any[];
+}) => {
+  const res = await adminApi.patch("/admin/settings/ride", data);
   return res.data; // { message: string, settings: Settings }
 };

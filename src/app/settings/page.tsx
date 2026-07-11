@@ -15,8 +15,7 @@ import { RideTab }          from '@/components/Settings/RideTab'
 import { DriverTab }        from '@/components/Settings/DriverTab'
 import { PayoutTab }        from '@/components/Settings/PayoutTab'
 import { NotificationsTab } from '@/components/Settings/NotificationsTab'
-import { AdminTab }         from '@/components/Settings/AdminTab'
-
+ 
 const tabs = [
   { id: 'general',       label: 'General',        Icon: Building2   },
   { id: 'fare',          label: 'Fare & Pricing', Icon: DollarSign  },
@@ -24,8 +23,7 @@ const tabs = [
   { id: 'driver',        label: 'Driver',         Icon: UserCheck   },
   { id: 'payout',        label: 'Payout',         Icon: Wallet      },
   { id: 'notifications', label: 'Notifications',  Icon: Bell        },
-  { id: 'admin',         label: 'Admin Account',  Icon: ShieldCheck },
-]
+ ]
 
 export default function SettingsPage() {
   const [settings,        setSettings       ] = useState<Settings>(DEFAULTS)
@@ -135,8 +133,7 @@ export default function SettingsPage() {
         )}
         {activeTab === 'payout'        && <PayoutTab        settings={settings} update={update} />}
         {activeTab === 'notifications' && <NotificationsTab settings={settings} update={update} />}
-        {activeTab === 'admin'         && <AdminTab         settings={settings} update={update} />}
-      </div>
+       </div>
 
     </AdminShell>
   )

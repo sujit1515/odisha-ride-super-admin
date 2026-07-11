@@ -52,12 +52,12 @@ export default function DashboardPage() {
 
       {/* ── Row 1: Live Cards + SOS ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <LiveCard label="Active rides right now" value="142" />
+        <LiveCard label="Ongoing rides right now" value="142" />
         <LiveCard
           label="Drivers online right now"
-          value={driversOnlineNow !== null ? String(driversOnlineNow) : '—'}
+          value={driversOnlineNow !== null ? String(driversOnlineNow) : '0'}
         />
-        <LiveCard label="Passengers waiting right now" value="84" dotClass="bg-amber-400" />
+        <LiveCard label="Passengers waiting for ride" value="84" dotClass="bg-amber-400" />
        <SosCard
   count={sosStats?.active ?? 0}
   activeCount={sosStats?.active ?? 0}

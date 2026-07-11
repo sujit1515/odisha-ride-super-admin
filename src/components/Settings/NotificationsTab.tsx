@@ -76,9 +76,7 @@ export function NotificationsTab({ settings, update }: {
         <ToggleRow label="SMS Notifications"
                    desc="Send SMS alerts to drivers and passengers"
                    value={settings.smsNotif} onChange={update('smsNotif')} />
-        <ToggleRow label="SOS / Emergency Alerts"
-                   desc="Receive alerts when SOS is triggered"
-                   value={settings.sosAlerts} onChange={update('sosAlerts')} />
+        
       </Card>
       <Card title="Events" icon={Clock}>
         <ToggleRow label="Notify on Driver Signup"

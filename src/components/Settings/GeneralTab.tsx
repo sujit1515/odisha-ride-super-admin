@@ -63,9 +63,10 @@ export function GeneralTab({ settings, update }: {
     try {
       const res = await saveGeneralSettings({
         platformName: settings.platformName,
-        commission:   settings.commission,
         supportEmail: settings.supportEmail,
         supportPhone: settings.supportPhone,
+        platformFee: settings.platformFee,
+        taxPercentage: settings.taxPercentage,
       })
       setToast({ type: 'success', msg: res.message ?? 'Settings saved successfully.' })
     } catch {
@@ -96,10 +97,6 @@ export function GeneralTab({ settings, update }: {
           <Field label="Platform Name">
             <TextInput value={settings.platformName} onChange={update('platformName')} />
           </Field>
-          <Field label="Platform Commission (%)"
-                 hint="% of each ride fare taken by platform">
-            <TextInput type="number" value={settings.commission} onChange={update('commission')} />
-          </Field>
         </Card>
         <Card title="Support Contact" icon={Phone}>
           <Field label="Support Email">
@@ -109,6 +106,16 @@ export function GeneralTab({ settings, update }: {
           <Field label="Support Phone">
             <TextInput value={settings.supportPhone} onChange={update('supportPhone')}
                        placeholder="+91 9999999999" />
+          </Field>
+        </Card>
+        <Card title="Fare Adjustments" icon={Building2}>
+          <Field label="Platform Fee (₹)" hint="Fixed fee added to every ride">
+            <TextInput type="number" value={settings.platformFee ?? 0} onChange={update('platformFee')}
+                       placeholder="0" />
+          </Field>
+          <Field label="Tax Percentage (%)" hint="Applied to fare + platform fee">
+            <TextInput type="number" value={settings.taxPercentage ?? 5} onChange={update('taxPercentage')}
+                       placeholder="5" />
           </Field>
         </Card>
       </div>

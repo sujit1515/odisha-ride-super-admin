@@ -1,14 +1,7 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// FILE: components/Support/TicketDrawer.tsx
-// ─────────────────────────────────────────────────────────────────────────────
-
-'use client'
+'use client';
 
 import { useState, useEffect, useRef } from 'react'
-import {
-  X, Send, Paperclip, User, Car, MessageSquare,
-  FileText, Clock, Tag, AlertCircle,
-} from 'lucide-react'
+import { X, Send, Paperclip, User, Car, MessageSquare,FileText, Clock, Tag, AlertCircle } from 'lucide-react'
 import type { SupportTicket, TicketMessage, TicketStatus, TicketPriority } from '@/types/index'
 import { getTicketMessages, replyToTicket, assignTicket } from '@/api/support'
 import { priorityStyles, statusStyles, userTypeStyles } from '@/app/support/page'

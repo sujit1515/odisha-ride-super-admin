@@ -234,6 +234,9 @@ export interface Settings {
   commission: number
   supportEmail: string
   supportPhone: string
+  platformFee: number
+  taxPercentage: number
+  driverCommissionPercentage: number
 
   // Fare
   baseFare: number
@@ -241,11 +244,16 @@ export interface Settings {
   minFare: number
   perMinuteRate: number
   cancellationFee: number
+  maxSurgeMultiplier: number
+  freeCancellationWindow: number
   surgeMultiplier: number
   nightChargeMultiplier: number
   bikeRatePerKm: number
   autoRatePerKm: number
   carRatePerKm: number
+  tollChargeEnabled: boolean
+  tollGstPercentage: number
+  tollRounding: string
 
   // Ride
   maxSearchRadius: number
@@ -282,16 +290,24 @@ export const DEFAULTS: Settings = {
   commission: 15,
   supportEmail: 'support@odisharide.com',
   supportPhone: '+91 9999999999',
+  platformFee: 10,
+  taxPercentage: 5,
+  driverCommissionPercentage: 15,
   baseFare: 50,
   perKmRate: 12,
   minFare: 30,
   perMinuteRate: 1.5,
   cancellationFee: 25,
+  maxSurgeMultiplier: 2,
+  freeCancellationWindow: 3,
   surgeMultiplier: 2,
   nightChargeMultiplier: 1.25,
   bikeRatePerKm: 8,
   autoRatePerKm: 12,
   carRatePerKm: 18,
+  tollChargeEnabled: false,
+  tollGstPercentage: 0,
+  tollRounding: 'none',
   maxSearchRadius: 10,
   maxWaitingTime: 5,
   autoAssignDriver: true,
