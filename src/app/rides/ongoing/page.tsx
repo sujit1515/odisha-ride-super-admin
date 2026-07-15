@@ -4,10 +4,10 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Eye, RefreshCw, Radio, Clock } from 'lucide-react'
 import AdminShell from '@/components/Common/AdminShell'
+import { getOngoingRides } from '@/api/rides'
 
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
-
+ 
 type OngoingStatus = 'requested' | 'accepted' | 'arrived' | 'started'
 
 interface Ride {
@@ -101,20 +101,9 @@ export default function OngoingRidesPage() {
     if (!silent) setLoading(true)
     setError('')
     try {
-      const token = localStorage.getItem('adminToken')
-      // Fetch all 4 ongoing statuses
-      const statuses: OngoingStatus[] = ['requested', 'accepted', 'arrived', 'started']
-      const results = await Promise.all(
-        statuses.map(s =>
-          fetch(`${API_BASE}/admin/rides?status=${s}&limit=50`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }).then(r => r.json() as Promise<RidesResponse>)
-        )
-      )
-      const all = results.flatMap(r => r.rides ?? [])
-      all.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      setRides(all)
-      setTotal(all.length)
+      const res = await getOngoingRides()
+      setRides(res.rides as unknown as Ride[])
+      setTotal(res.total)
       setLastRefresh(new Date())
       setCountdown(AUTO_REFRESH_SEC)
     } catch (err: any) {

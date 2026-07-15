@@ -84,7 +84,7 @@ export default function Navbar({ title = 'Odisha Ride Admin', onMenuClick }: Nav
   return (
     <header className="sticky top-0 z-20 bg-slate-50/80 backdrop-blur border-b border-slate-200">
       <div className="flex items-center gap-3 md:gap-6 px-4 md:px-8 py-4">
-        <button onClick={onMenuClick} className="lg:hidden p-2 rounded-md hover:bg-slate-100">
+        <button onClick={onMenuClick} className="p-2 rounded-md hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer flex items-center justify-center">
           <Menu className="h-5 w-5" />
         </button>
         <h2 className="text-lg md:text-2xl font-bold text-blue-600 leading-tight whitespace-pre-line">{title}</h2>

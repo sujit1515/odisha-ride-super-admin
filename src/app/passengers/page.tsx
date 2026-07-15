@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import AdminShell from '@/components/Common/AdminShell'
 import {
@@ -12,7 +12,7 @@ import {
   Passenger,
   PassengerStats,
 } from '@/api/passengers'
-import { Eye } from 'lucide-react'
+import { Eye, MoreVertical, UserX, UserCheck, Trash2 } from 'lucide-react'
 
 // ── Delete Confirm Modal ──────────────────────────────────────────────────────
 function DeleteModal({
@@ -200,6 +200,21 @@ export default function PassengersPage() {
   const [deactivateTarget,  setDeactivateTarget ] = useState<Passenger | null>(null)
   const [deactivateLoading, setDeactivateLoading] = useState(false)
 
+  // Three-dot dropdown menu state
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const menuRef = useRef<HTMLDivElement | null>(null)
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpenMenuId(null)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
   const LIMIT = 10
 
   // ── Fetch stats ────────────────────────────────────────────
@@ -385,8 +400,8 @@ export default function PassengersPage() {
             />
             <button
               onClick={handleSearch}
-              className="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm
-                         font-medium hover:bg-slate-700 transition-colors"
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm
+                         font-medium hover:bg-blue-700 transition-colors"
             >
               Search
             </button>
@@ -472,53 +487,82 @@ export default function PassengersPage() {
                       </span>
                     </td>
 
-                    {/* Actions */}
+                    {/* Actions — Three-dot dropdown */}
                     <td className="px-3 py-3">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        {/* View Profile Button */}
+                      <div className="relative" ref={openMenuId === p._id ? menuRef : undefined}>
+                        {/* Trigger */}
                         <button
-                          // onClick={() => handleViewProfile(p._id)}
-                          onClick={() => handleViewProfile(p.passengerId || p._id)}
-
-                          className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 
-                                     rounded-lg bg-blue-100 text-blue-700 
-                                     hover:bg-blue-200 font-medium transition-colors"
+                          onClick={() => setOpenMenuId(openMenuId === p._id ? null : p._id)}
+                          className="p-2 rounded-lg text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          aria-label="Actions"
                         >
-                          <Eye className="h-3.5 w-3.5" />
-                          View Profile
+                          <MoreVertical className="h-4 w-4" />
                         </button>
 
-                        {p.isActive ? (
-                          <button
-                            onClick={() => setDeactivateTarget(p)}
-                            disabled={actionLoading === p._id}
-                            className="text-xs px-3 py-1.5 rounded-lg bg-amber-100
-                                       text-amber-700 hover:bg-amber-200 font-medium
-                                       disabled:opacity-50 transition-colors"
-                          >
-                            Deactivate
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleActivate(p._id, p.fullName)}
-                            disabled={actionLoading === p._id}
-                            className="text-xs px-3 py-1.5 rounded-lg bg-emerald-100
-                                       text-emerald-700 hover:bg-emerald-200 font-medium
-                                       disabled:opacity-50 transition-colors"
-                          >
-                            {actionLoading === p._id ? '...' : 'Activate'}
-                          </button>
+                        {/* Dropdown */}
+                        {openMenuId === p._id && (
+                          <div className="absolute right-0 top-9 z-20 w-44 rounded-xl border border-slate-100 bg-white shadow-lg py-1 animate-in fade-in slide-in-from-top-1">
+
+                            {/* View Profile */}
+                            <button
+                              onClick={() => {
+                                setOpenMenuId(null)
+                                handleViewProfile(p.passengerId || p._id)
+                              }}
+                              className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                            >
+                              <Eye className="h-4 w-4 text-blue-500" />
+                              View Profile
+                            </button>
+
+                            {/* Divider */}
+                            <div className="my-1 border-t border-slate-100" />
+
+                            {/* Deactivate / Activate */}
+                            {p.isActive ? (
+                              <button
+                                onClick={() => {
+                                  setOpenMenuId(null)
+                                  setDeactivateTarget(p)
+                                }}
+                                disabled={actionLoading === p._id}
+                                className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm text-amber-700 hover:bg-amber-50 disabled:opacity-50 transition-colors"
+                              >
+                                <UserX className="h-4 w-4 text-amber-500" />
+                                Deactivate
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => {
+                                  setOpenMenuId(null)
+                                  handleActivate(p._id, p.fullName)
+                                }}
+                                disabled={actionLoading === p._id}
+                                className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 transition-colors"
+                              >
+                                <UserCheck className="h-4 w-4 text-emerald-500" />
+                                {actionLoading === p._id ? 'Activating…' : 'Activate'}
+                              </button>
+                            )}
+
+                            {/* Divider */}
+                            <div className="my-1 border-t border-slate-100" />
+
+                            {/* Delete */}
+                            <button
+                              onClick={() => {
+                                setOpenMenuId(null)
+                                setDeleteTarget(p)
+                              }}
+                              disabled={actionLoading === p._id}
+                              className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm text-red-700 hover:bg-red-50 disabled:opacity-50 transition-colors"
+                            >
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                              Delete
+                            </button>
+
+                          </div>
                         )}
-
-                        <button
-                          onClick={() => setDeleteTarget(p)}
-                          disabled={actionLoading === p._id}
-                          className="text-xs px-3 py-1.5 rounded-lg bg-red-100
-                                     text-red-700 hover:bg-red-200 font-medium
-                                     disabled:opacity-50 transition-colors"
-                        >
-                          Delete
-                        </button>
                       </div>
                     </td>
 

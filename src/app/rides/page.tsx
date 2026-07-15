@@ -1,34 +1,14 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import AdminShell from '@/components/Common/AdminShell'
 import {
   Search, Trash2, Eye, ChevronLeft, ChevronRight, RefreshCw
 } from 'lucide-react'
-
+import { getAllRides, deleteRide, type Ride } from '@/api/rides'
 
 type RideStatus = 'requested' | 'accepted' | 'arrived' | 'started' | 'completed' | 'cancelled' | 'all'
-
-interface Ride {
-  _id: string
-  userId: { fullName: string; phoneNumber: string }
-  driverId: { fullName: string; phone: string; vehicleNumber: string } | null
-  pickup: { address: string }
-  destination: { address: string }
-  finalFare: number | null
-  estimatedFare: number | null
-  status: RideStatus
-  createdAt: string
-}
-
-interface RidesResponse {
-  rides: Ride[]
-  total: number
-  page: number
-  limit: number
-  totalPages: number
-}
 
 const STATUS_STYLES: Record<string, string> = {
   completed: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
@@ -36,7 +16,7 @@ const STATUS_STYLES: Record<string, string> = {
   requested: 'bg-blue-50 text-blue-700 border border-blue-200',
   accepted: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
   arrived: 'bg-purple-50 text-purple-700 border border-purple-200',
-  started: 'bg-amber-50 text-amber-700 border border-amber-200',
+ started: 'bg-amber-50 text-amber-700 border border-amber-200',
 }
 
 const STATUS_LABEL: Record<string, string> = {
@@ -49,10 +29,11 @@ const STATUS_LABEL: Record<string, string> = {
 }
 
 function StatusBadge({ status }: { status: string }) {
+  const key = status.toLowerCase()
   return (
     <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
-                      ${STATUS_STYLES[status] ?? 'bg-slate-100 text-slate-600'}`}>
-      {STATUS_LABEL[status] ?? status}
+                      ${STATUS_STYLES[key] ?? 'bg-slate-100 text-slate-600'}`}>
+      {STATUS_LABEL[key] ?? status}
     </span>
   )
 }
@@ -86,51 +67,46 @@ export default function AllRidesPage() {
 
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
-
   const limit = 10
 
-  const STATIC_RIDES: Ride[] = [
-    { _id: '6650a1b2c3d4e5f6a7b8c001', userId: { fullName: 'John Doe', phoneNumber: '+91 98765 43210' }, driverId: { fullName: 'Rajesh Kumar', phone: '+91 91234 56789', vehicleNumber: 'OD-05-AB-1234' }, pickup: { address: 'MG Road, Bhubaneswar' }, destination: { address: 'Infocity, Bhubaneswar' }, finalFare: 245, estimatedFare: 230, status: 'completed', createdAt: '2024-01-15T10:30:00Z' },
-    { _id: '6650a1b2c3d4e5f6a7b8c002', userId: { fullName: 'Jane Smith', phoneNumber: '+91 98765 43211' }, driverId: { fullName: 'Suresh Patel', phone: '+91 91234 56790', vehicleNumber: 'OD-05-CD-5678' }, pickup: { address: 'Patia, Bhubaneswar' }, destination: { address: 'Esplanade, Bhubaneswar' }, finalFare: null, estimatedFare: 189, status: 'accepted', createdAt: '2024-01-15T11:15:00Z' },
-    { _id: '6650a1b2c3d4e5f6a7b8c003', userId: { fullName: 'Mike Johnson', phoneNumber: '+91 98765 43212' }, driverId: { fullName: 'Amit Singh', phone: '+91 91234 56791', vehicleNumber: 'OD-05-EF-9012' }, pickup: { address: 'Cuttack Road, Bhubaneswar' }, destination: { address: 'Airport, Bhubaneswar' }, finalFare: 320, estimatedFare: 310, status: 'completed', createdAt: '2024-01-15T09:45:00Z' },
-    { _id: '6650a1b2c3d4e5f6a7b8c004', userId: { fullName: 'Sarah Williams', phoneNumber: '+91 98765 43213' }, driverId: { fullName: 'Vikram Reddy', phone: '+91 91234 56792', vehicleNumber: 'OD-05-GH-3456' }, pickup: { address: 'Jaydev Vihar, Bhubaneswar' }, destination: { address: 'Ram Mandir, Bhubaneswar' }, finalFare: null, estimatedFare: 156, status: 'cancelled', createdAt: '2024-01-14T08:30:00Z' },
-    { _id: '6650a1b2c3d4e5f6a7b8c005', userId: { fullName: 'David Brown', phoneNumber: '+91 98765 43214' }, driverId: { fullName: 'Manish Gupta', phone: '+91 91234 56793', vehicleNumber: 'OD-05-IJ-7890' }, pickup: { address: 'Saheed Nagar, Bhubaneswar' }, destination: { address: 'Rasulgarh, Bhubaneswar' }, finalFare: 278, estimatedFare: 260, status: 'completed', createdAt: '2024-01-14T14:30:00Z' },
-    { _id: '6650a1b2c3d4e5f6a7b8c006', userId: { fullName: 'Emma Wilson', phoneNumber: '+91 98765 43215' }, driverId: { fullName: 'Rahul Verma', phone: '+91 91234 56794', vehicleNumber: 'OD-05-KL-2345' }, pickup: { address: 'Khandagiri, Bhubaneswar' }, destination: { address: 'Nayapalli, Bhubaneswar' }, finalFare: 342, estimatedFare: 330, status: 'requested', createdAt: '2024-01-13T18:45:00Z' },
-    { _id: '6650a1b2c3d4e5f6a7b8c007', userId: { fullName: 'James Taylor', phoneNumber: '+91 98765 43216' }, driverId: { fullName: 'Pankaj Singh', phone: '+91 91234 56795', vehicleNumber: 'OD-05-MN-6789' }, pickup: { address: 'Unit-4, Bhubaneswar' }, destination: { address: 'Bomikhal, Bhubaneswar' }, finalFare: null, estimatedFare: 198, status: 'arrived', createdAt: '2024-01-13T19:20:00Z' },
-    { _id: '6650a1b2c3d4e5f6a7b8c008', userId: { fullName: 'Lisa Anderson', phoneNumber: '+91 98765 43217' }, driverId: { fullName: 'Deepak Sharma', phone: '+91 91234 56796', vehicleNumber: 'OD-05-OP-0123' }, pickup: { address: 'Bapuji Nagar, Bhubaneswar' }, destination: { address: 'Sundarpada, Bhubaneswar' }, finalFare: 267, estimatedFare: 250, status: 'completed', createdAt: '2024-01-12T12:15:00Z' },
-    { _id: '6650a1b2c3d4e5f6a7b8c009', userId: { fullName: 'Robert Taylor', phoneNumber: '+91 98765 43218' }, driverId: { fullName: 'Anil Kumar', phone: '+91 91234 56797', vehicleNumber: 'OD-05-QR-4567' }, pickup: { address: 'Vani Vihar, Bhubaneswar' }, destination: { address: 'Mancheswar, Bhubaneswar' }, finalFare: null, estimatedFare: 185, status: 'cancelled', createdAt: '2024-01-12T16:30:00Z' },
-    { _id: '6650a1b2c3d4e5f6a7b8c010', userId: { fullName: 'Maria Garcia', phoneNumber: '+91 98765 43219' }, driverId: { fullName: 'Sunil Reddy', phone: '+91 91234 56798', vehicleNumber: 'OD-05-ST-8901' }, pickup: { address: 'Airport Road, Bhubaneswar' }, destination: { address: 'Domlur, Bhubaneswar' }, finalFare: 412, estimatedFare: 400, status: 'completed', createdAt: '2024-01-11T09:00:00Z' },
-  ]
-
-  const allRides = useMemo(() => STATIC_RIDES, [])
-
-  const filtered = useMemo(() => {
-    return allRides.filter(r => {
-      const matchStatus = status === 'all' || r.status === status
-      const matchDate = !date || r.createdAt.startsWith(date)
-      const matchSearch = !search ||
-        r.userId.fullName.toLowerCase().includes(search.toLowerCase()) ||
-        r._id.toLowerCase().includes(search.toLowerCase()) ||
-        (r.driverId?.fullName ?? '').toLowerCase().includes(search.toLowerCase())
-      return matchStatus && matchDate && matchSearch
-    })
-  }, [allRides, status, date, search])
+  // ── Fetch rides from API ─────────────────────────────────
+  const fetchRides = useCallback(async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await getAllRides({ status, search, date, page, limit })
+      setRides(res.rides)
+      setTotal(res.total)
+      setTotalPages(res.totalPages)
+    } catch (err) {
+      console.error(err)
+      setError('Failed to load rides')
+    } finally {
+      setLoading(false)
+    }
+  }, [status, search, date, page])
 
   useEffect(() => {
-    const start = (page - 1) * limit
-    setRides(filtered.slice(start, start + limit))
-    setTotal(filtered.length)
-    setTotalPages(Math.max(1, Math.ceil(filtered.length / limit)))
-    setLoading(false)
-  }, [filtered, page, limit])
+    // debounce only when typing a search term, fetch immediately otherwise
+    const t = setTimeout(fetchRides, search ? 400 : 0)
+    return () => clearTimeout(t)
+  }, [fetchRides])
 
   useEffect(() => { setPage(1) }, [status, date, search])
 
   // ── Delete ────────────────────────────────────────────────
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!deleteId) return
-    setRides(prev => prev.filter(r => r._id !== deleteId))
-    setDeleteId(null)
+    try {
+      await deleteRide(deleteId)
+      setRides(prev => prev.filter(r => r._id !== deleteId))
+      setTotal(prev => prev - 1)
+    } catch (err) {
+      console.error(err)
+      setError('Failed to delete ride')
+    } finally {
+      setDeleteId(null)
+    }
   }
 
   const formatDate = (iso: string) =>
@@ -189,6 +165,9 @@ export default function AllRidesPage() {
               <option value="requested">Requested</option>
               <option value="accepted">Accepted</option>
               <option value="arrived">Arrived</option>
+              <option value="started">Ongoing</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
             </select>
 
             {/* Count + Refresh */}
@@ -197,7 +176,7 @@ export default function AllRidesPage() {
                 Rides ({total})
               </span>
               <button
-                onClick={() => { }}
+                onClick={fetchRides}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-lg border
                            border-slate-200 text-sm text-slate-600 hover:bg-slate-50
                            transition-colors"

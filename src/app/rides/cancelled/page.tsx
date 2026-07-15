@@ -4,30 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, Eye, ChevronLeft, ChevronRight, RefreshCw, XCircle } from 'lucide-react'
 import AdminShell from '@/components/Common/AdminShell'
-
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
-
-interface Ride {
-  _id: string
-  userId: { fullName: string; phoneNumber: string }
-  driverId: { fullName: string; phone: string } | null
-  pickup: { address: string }
-  destination: { address: string }
-  finalFare: number | null
-  estimatedFare: number | null
-  cancellationReason: string | null
-  cancelledBy: string | null
-  createdAt: string
-}
-
-interface RidesResponse {
-  rides: Ride[]
-  total: number
-  page: number
-  limit: number
-  totalPages: number
-}
+import { getCancelledRides, type Ride } from '@/api/rides'
 
 function SkeletonRow() {
   return (
@@ -61,23 +38,16 @@ export default function CancelledRidesPage() {
 
   const limit = 10
 
-  const fetchRides = useCallback(async () => {
+ const fetchRides = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      const token = localStorage.getItem('adminToken')
-      const params = new URLSearchParams({
-        status: 'cancelled',
-        page: String(page),
-        limit: String(limit),
+      const data = await getCancelledRides({
+        page,
+        limit,
         ...(date && { date }),
         ...(search && { search }),
       })
-      const res = await fetch(`${API_BASE}/admin/rides?${params}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (!res.ok) throw new Error('Failed to fetch')
-      const data: RidesResponse = await res.json()
       setRides(data.rides)
       setTotal(data.total)
       setTotalPages(data.totalPages)

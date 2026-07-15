@@ -4,31 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, Eye, ChevronLeft, ChevronRight, RefreshCw, CheckCircle2 } from 'lucide-react'
 import AdminShell from '@/components/Common/AdminShell'
-
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
-
-interface Ride {
-  _id: string
-  userId: { fullName: string; phoneNumber: string }
-  driverId: { fullName: string; phone: string; vehicleNumber: string } | null
-  pickup: { address: string }
-  destination: { address: string }
-  finalFare: number | null
-  estimatedFare: number | null
-  distance: string | null
-  duration: string | null
-  completedAt: string | null
-  createdAt: string
-}
-
-interface RidesResponse {
-  rides: Ride[]
-  total: number
-  page: number
-  limit: number
-  totalPages: number
-}
+import { getCompletedRides, type Ride } from '@/api/rides'
 
 function SkeletonRow() {
   return (
@@ -60,23 +36,16 @@ export default function CompletedRidesPage() {
   const totalFare = rides.reduce((sum, r) => sum + (r.finalFare ?? r.estimatedFare ?? 0), 0)
   const avgFare = rides.length ? Math.round(totalFare / rides.length) : 0
 
-  const fetchRides = useCallback(async () => {
+ const fetchRides = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      const token = localStorage.getItem('adminToken')
-      const params = new URLSearchParams({
-        status: 'completed',
-        page: String(page),
-        limit: String(limit),
+      const data = await getCompletedRides({
+        page,
+        limit,
         ...(date && { date }),
         ...(search && { search }),
       })
-      const res = await fetch(`${API_BASE}/admin/rides?${params}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (!res.ok) throw new Error('Failed to fetch')
-      const data: RidesResponse = await res.json()
       setRides(data.rides)
       setTotal(data.total)
       setTotalPages(data.totalPages)

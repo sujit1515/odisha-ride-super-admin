@@ -17,3 +17,17 @@
   70%  { transform: scale(2.2); opacity: 0;   }
   100% { transform: scale(2.2); opacity: 0;   }
 }
+
+/* Ride route pickup/drop pulse animation */
+@keyframes ridePing {
+  0%   { transform: scale(1); opacity: 0.75; }
+  75%, 100% { transform: scale(2); opacity: 0; }
+}
+
+.animate-ping-slow {
+  animation: ridePing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-ping-fast {
+  animation: ridePing 0.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}

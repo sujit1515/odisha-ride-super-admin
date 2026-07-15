@@ -1,155 +1,39 @@
-// 'use client'
-
-// import Link from 'next/link'
-// import { usePathname, useRouter } from 'next/navigation'
-// import {
-//   LayoutGrid, Car, User, Users, Wallet, Map,
-//   ShieldCheck, Ticket, Headphones, Settings,
-//   X, LogOut, UserX, LucideIcon
-// } from 'lucide-react'
-// import { adminLogout } from '@/api/auth'
-
-// interface NavItem {
-//   href: string
-//   label: string
-//   icon: LucideIcon
-// }
-
-// const nav: NavItem[] = [
-//   { href: '/dashboard',           label: 'Dashboard',               icon: LayoutGrid  },
-//   { href: '/rides',               label: 'Rides',                   icon: Car         },
-//   { href: '/drivers',             label: 'Drivers',                 icon: User        },
-//   { href: '/passengers',          label: 'Passengers',              icon: Users       },
-//   { href: '/earnings',            label: 'Earnings',                icon: Wallet      },
-//   { href: '/live-map',            label: 'Live Map',                icon: Map         },
-//   { href: '/kyc-review',          label: 'KYC Review',              icon: ShieldCheck },
-//   { href: '/blocked-drivers',     label: 'Blocked Drivers',         icon: UserX       },
-//   { href: '/deactivate-users',    label: 'Deactivated Passengers',  icon: UserX       }, 
-//   { href: '/promo-codes',         label: 'Promo Codes',             icon: Ticket      },
-//   { href: '/support',             label: 'Support',                 icon: Headphones  },
-//   { href: '/settings',            label: 'Settings',                icon: Settings    },
-// ]
-
-// interface SidebarProps {
-//   open: boolean
-//   onClose: () => void
-// }
-
-// export default function Sidebar({ open, onClose }: SidebarProps) {
-//   const pathname = usePathname()
-//   const router   = useRouter()
-
-//   const handleLogout = async () => {
-//     try {
-//       await adminLogout()
-//     } catch (error) {
-//       console.error('Logout failed:', error)
-//     } finally {
-//       localStorage.removeItem('adminToken')
-//       sessionStorage.clear()
-//       router.push('/login')
-//     }
-//   }
-
-//   return (
-//     <>
-//       {open && (
-//         <div
-//           className="fixed inset-0 z-30 bg-black/40 lg:hidden"
-//           onClick={onClose}
-//         />
-//       )}
-
-//       <aside
-//         className={`fixed top-0 left-0 z-40 h-screen w-64 bg-white border-r
-//                     border-slate-200 flex flex-col transition-transform duration-200
-//                     lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}
-//       >
-//         {/* Logo */}
-//         <div className="px-6 pt-6 pb-4 flex items-start justify-between">
-//           <div>
-//             <h1 className="text-xl font-bold text-blue-600 leading-tight">
-//               Odisha Ride
-//             </h1>
-//             <p className="text-xs text-slate-500 mt-1">Super Admin</p>
-//           </div>
-//           <button onClick={onClose} className="lg:hidden p-1 text-slate-500">
-//             <X className="h-5 w-5" />
-//           </button>
-//         </div>
-
-//         {/* Nav */}
-//         <nav className="flex-1 px-3 pt-4 space-y-1 overflow-y-auto">
-//           {nav.map(({ href, label, icon: Icon }) => {
-//             const active    = pathname === href
-//             const isDanger  = href === '/blocked-drivers' || href === '/blocked-users'
-
-//             return (
-//               <Link
-//                 key={href}
-//                 href={href}
-//                 onClick={onClose}
-//                 className={`relative flex items-center gap-3 px-4 py-3 rounded-lg
-//                             text-sm font-medium transition-colors ${
-//                   active
-//                     ? isDanger
-//                       ? 'bg-red-50 text-red-700'
-//                       : 'bg-blue-50 text-blue-700'
-//                     : isDanger
-//                       ? 'text-red-500 hover:bg-red-50 hover:text-red-700'
-//                       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-//                 }`}
-//               >
-//                 {active && (
-//                   <span
-//                     className={`absolute -right-3 top-1/2 -translate-y-1/2 h-8 w-1.5
-//                                 rounded-l ${isDanger ? 'bg-red-600' : 'bg-blue-600'}`}
-//                   />
-//                 )}
-//                 <Icon className="h-5 w-5" />
-//                 {label}
-//               </Link>
-//             )
-//           })}
-//         </nav>
-
-//         {/* Logout */}
-//         <div className="p-3 border-t border-slate-200">
-//           <button
-//             onClick={handleLogout}
-//             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm
-//                        font-medium text-red-600 hover:bg-red-50 transition-colors"
-//           >
-//             <LogOut className="h-5 w-5" />
-//             Logout
-//           </button>
-//         </div>
-//       </aside>
-//     </>
-//   )
-// }
-
-
 'use client'
 
-import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import {
-  LayoutGrid, Car, User, Users, Wallet, Map,
-  ShieldCheck, Ticket, Headphones, Settings,
-  X, LogOut, UserX, LucideIcon, ChevronRight,
-  List, Radio, CheckCircle2, XCircle,
+  LayoutGrid,
+  Car,
+  User,
+  Users,
+  Wallet,
+  Map,
+  ShieldCheck,
+  Ticket,
+  Headphones,
+  Settings,
+  X,
+  LogOut,
+  UserX,
+  LucideIcon,
+  List,
+  Radio,
+  CheckCircle2,
+  XCircle,
   ShieldAlert,
   CalendarClock,
 } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect } from 'react'
 import { adminLogout } from '@/api/auth'
+import SidebarItem from './SidebarItem'
 
 interface NavItem {
-  href: string
+  href?: string
   label: string
   icon: LucideIcon
   children?: { href: string; label: string; icon: LucideIcon }[]
+  isDanger?: boolean
 }
 
 const nav: NavItem[] = [
@@ -172,28 +56,39 @@ const nav: NavItem[] = [
   { href: '/earnings', label: 'Earnings', icon: Wallet },
   { href: '/live-map', label: 'Live Map', icon: Map },
   { href: '/kyc-review', label: 'KYC Review', icon: ShieldCheck },
-  { href: '/blocked-drivers', label: 'Blocked Drivers', icon: UserX },
-  { href: '/deactivate-users', label: 'Deactivated Passengers', icon: UserX },
+  { href: '/blocked-drivers', label: 'Blocked Drivers', icon: UserX, isDanger: true },
+  { href: '/deactivate-users', label: 'Deactivated Passengers', icon: UserX, isDanger: true },
   { href: '/promo-codes', label: 'Promo Codes', icon: Ticket },
   { href: '/support', label: 'Support', icon: Headphones },
   { href: '/settings', label: 'Settings', icon: Settings },
 ]
 
 interface SidebarProps {
-  open: boolean
-  onClose: () => void
+  isCollapsed: boolean
+  isMobileOpen: boolean
+  onCloseMobile: () => void
+  onExpandRequest: () => void
 }
 
-export default function Sidebar({ open, onClose }: SidebarProps) {
-  const pathname = usePathname()
+export default function Sidebar({
+  isCollapsed,
+  isMobileOpen,
+  onCloseMobile,
+  onExpandRequest,
+}: SidebarProps) {
   const router = useRouter()
+  const pathname = usePathname()
 
-  // Auto-expand rides submenu if current path is under /rides
-  const [ridesOpen, setRidesOpen] = useState(pathname.startsWith('/rides'))
-
+  // Handle Escape key to close mobile sidebar
   useEffect(() => {
-    if (pathname.startsWith('/rides')) setRidesOpen(true)
-  }, [pathname])
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMobileOpen) {
+        onCloseMobile()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isMobileOpen, onCloseMobile])
 
   const handleLogout = async () => {
     try {
@@ -207,135 +102,125 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
     }
   }
 
-  return (
-    <>
-      {open && (
-        <div
-          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
-          onClick={onClose}
-        />
-      )}
+  // Animation variants for desktop width
+  const sidebarWidthVariants = {
+    expanded: { width: 220 },
+    collapsed: { width: 80 },
+  }
 
-      <aside
-        className={`fixed top-0 left-0 z-40 h-screen w-64 bg-white border-r
-                    border-slate-200 flex flex-col transition-transform duration-200
-                    lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}
-      >
-        {/* Logo */}
-        <div className="px-6 pt-6 pb-4 flex items-start justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-blue-600 leading-tight">Odisha Ride</h1>
-            <p className="text-xs text-slate-500 mt-1">Super Admin</p>
-          </div>
-          <button onClick={onClose} className="lg:hidden p-1 text-slate-500">
+  // Animation variants for mobile slide-in
+  const mobileSlideVariants = {
+    closed: { x: '-100%' },
+    open: { x: 0 },
+  }
+
+  // Helper to render sidebar content for both mobile and desktop
+  const renderSidebarContent = (collapsed: boolean, isMobile: boolean = false) => (
+    <div className="h-full flex flex-col bg-white border-r border-slate-200 shadow-sm select-none overflow-x-hidden">
+      {/* Logo Area */}
+      <div className={`px-6 pt-6 pb-4 flex items-center ${collapsed ? 'justify-center px-0' : 'justify-between'}`}>
+        <AnimatePresence mode="wait">
+          {collapsed ? (
+            <motion.div
+              key="collapsed-logo"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="flex items-center justify-center h-10 w-10 rounded-xl bg-blue-600 text-white font-bold text-lg shadow-md cursor-pointer"
+              onClick={onExpandRequest}
+            >
+              OR
+            </motion.div>
+          ) : (
+            <motion.div
+              key="expanded-logo"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex-1"
+            >
+              <h1 className="text-xl font-bold text-blue-600 leading-tight">Odisha Ride</h1>
+              <p className="text-xs text-slate-500 mt-0.5 font-medium">Super Admin Panel</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {!collapsed && isMobile && (
+          <button
+            onClick={onCloseMobile}
+            className="p-1.5 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors"
+          >
             <X className="h-5 w-5" />
           </button>
-        </div>
+        )}
+      </div>
 
-        {/* Nav */}
-        <nav className="flex-1 px-3 pt-4 space-y-1 overflow-y-auto">
-          {nav.map(({ href, label, icon: Icon, children }) => {
-            const isDanger = href === '/blocked-drivers' || href === '/deactivate-users'
-            const isRidesGroup = !!children
+      {/* Nav Link List */}
+      <nav className={`flex-1 px-3 pt-6 space-y-1 overflow-y-auto overflow-x-hidden ${collapsed ? 'px-2' : 'px-3'}`}>
+        {nav.map((item) => (
+          <SidebarItem
+            key={item.label}
+            href={item.href}
+            label={item.label}
+            icon={item.icon}
+            isCollapsed={collapsed}
+            onClick={isMobile ? onCloseMobile : undefined}
+            isDanger={item.isDanger}
+            children={item.children}
+            onExpandRequest={onExpandRequest}
+          />
+        ))}
+      </nav>
 
-            // ── Rides group with submenu ──────────────────
-            if (isRidesGroup && children) {
-              const isGroupActive = pathname.startsWith('/rides')
+      {/* Logout Row at bottom */}
+      <div className={`p-3 border-t border-slate-150 ${collapsed ? 'p-2' : 'p-3'}`}>
+        <SidebarItem
+          label="Logout"
+          icon={LogOut}
+          isCollapsed={collapsed}
+          onClick={handleLogout}
+          isDanger={true}
+        />
+      </div>
+    </div>
+  )
 
-              return (
-                <div key={href}>
-                  {/* Parent row */}
-                  <button
-                    onClick={() => setRidesOpen(o => !o)}
-                    className={`w-full relative flex items-center gap-3 px-4 py-3 rounded-lg
-                                text-sm font-medium transition-colors ${isGroupActive
-                        ? 'bg-blue-50 text-blue-700'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                      }`}
-                  >
-                    {isGroupActive && (
-                      <span className="absolute -right-3 top-1/2 -translate-y-1/2 h-8 w-1.5 rounded-l bg-blue-600" />
-                    )}
-                    <Icon className="h-5 w-5 shrink-0" />
-                    <span className="flex-1 text-left">{label}</span>
-                    <ChevronRight
-                      className={`h-4 w-4 shrink-0 transition-transform duration-200 ${ridesOpen ? 'rotate-90' : ''
-                        }`}
-                    />
-                  </button>
+  return (
+    <>
+      {/* Mobile Dark Backdrop */}
+      <AnimatePresence>
+        {isMobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.4 }}
+            exit={{ opacity: 0 }}
+            onClick={onCloseMobile}
+            className="fixed inset-0 z-45 bg-black lg:hidden"
+          />
+        )}
+      </AnimatePresence>
 
-                  {/* Submenu */}
-                  <div
-                    className={`overflow-hidden transition-all duration-200 ${ridesOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'
-                      }`}
-                  >
-                    <div className="ml-4 mt-1 space-y-0.5 border-l-2 border-slate-100 pl-3">
-                      {children.map(({ href: cHref, label: cLabel, icon: CIcon }) => {
-                        const childActive = pathname === cHref
-                        return (
-                          <Link
-                            key={cHref}
-                            href={cHref}
-                            onClick={onClose}
-                            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg
-                                        text-sm transition-colors ${childActive
-                                ? 'bg-blue-50 text-blue-700 font-medium'
-                                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
-                              }`}
-                          >
-                            <CIcon className="h-4 w-4 shrink-0" />
-                            {cLabel}
-                          </Link>
-                        )
-                      })}
-                    </div>
-                  </div>
-                </div>
-              )
-            }
+      {/* Mobile Drawer (Visible < 1024px) */}
+      <motion.aside
+        initial="closed"
+        animate={isMobileOpen ? 'open' : 'closed'}
+        variants={mobileSlideVariants}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        className="fixed top-0 left-0 z-50 h-screen w-[220px] lg:hidden flex flex-col shadow-2xl"
+      >
+        {/* On mobile, it's always expanded visually (width 260px) */}
+        {renderSidebarContent(false, true)}
+      </motion.aside>
 
-            // ── Regular nav item ──────────────────────────
-            const active = pathname === href
-            return (
-              <Link
-                key={href}
-                href={href}
-                onClick={onClose}
-                className={`relative flex items-center gap-3 px-4 py-3 rounded-lg
-                            text-sm font-medium transition-colors ${active
-                    ? isDanger
-                      ? 'bg-red-50 text-red-700'
-                      : 'bg-blue-50 text-blue-700'
-                    : isDanger
-                      ? 'text-red-500 hover:bg-red-50 hover:text-red-700'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                  }`}
-              >
-                {active && (
-                  <span
-                    className={`absolute -right-3 top-1/2 -translate-y-1/2 h-8 w-1.5
-                                rounded-l ${isDanger ? 'bg-red-600' : 'bg-blue-600'}`}
-                  />
-                )}
-                <Icon className="h-5 w-5" />
-                {label}
-              </Link>
-            )
-          })}
-        </nav>
-
-        {/* Logout */}
-        <div className="p-3 border-t border-slate-200">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm
-                       font-medium text-red-600 hover:bg-red-50 transition-colors"
-          >
-            <LogOut className="h-5 w-5" />
-            Logout
-          </button>
-        </div>
-      </aside>
+      {/* Desktop Sidebar (Docked >= 1024px) */}
+      <motion.aside
+        initial={isCollapsed ? 'collapsed' : 'expanded'}
+        animate={isCollapsed ? 'collapsed' : 'expanded'}
+        variants={sidebarWidthVariants}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className="fixed top-0 left-0 z-30 h-screen hidden lg:block overflow-hidden"
+      >
+        {renderSidebarContent(isCollapsed, false)}
+      </motion.aside>
     </>
   )
 }
