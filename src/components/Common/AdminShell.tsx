@@ -1,7 +1,7 @@
 'use client'
 
-import { ReactNode } from 'react'
-import DashboardLayout from './DashboardLayout'
+import { ReactNode, useEffect } from 'react'
+import { useSidebar } from '@/components/Context/SidebarContext'
 
 interface AdminShellProps {
   title?: string
@@ -9,9 +9,13 @@ interface AdminShellProps {
 }
 
 export default function AdminShell({ title, children }: AdminShellProps) {
-  return (
-    <DashboardLayout title={title}>
-      {children}
-    </DashboardLayout>
-  )
+  const { setTitle } = useSidebar()
+
+  useEffect(() => {
+    if (title !== undefined) {
+      setTitle(title)
+    }
+  }, [title, setTitle])
+
+  return <>{children}</>
 }

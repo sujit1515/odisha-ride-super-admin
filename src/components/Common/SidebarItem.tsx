@@ -21,6 +21,7 @@ interface SidebarItemProps {
   isDanger?: boolean
   children?: SubMenuItem[]
   onExpandRequest?: () => void // Request sidebar to expand on click
+  transitionEnabled?: boolean
 }
 
 export default function SidebarItem({
@@ -32,6 +33,7 @@ export default function SidebarItem({
   isDanger = false,
   children,
   onExpandRequest,
+  transitionEnabled = false,
 }: SidebarItemProps) {
   const pathname = usePathname()
   const hasSubmenu = children && children.length > 0
@@ -119,7 +121,7 @@ export default function SidebarItem({
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -10 }}
-            transition={{ duration: 0.2 }}
+            transition={transitionEnabled ? { duration: 0.2 } : { duration: 0 }}
             className="whitespace-nowrap text-left flex-1"
           >
             {label}
@@ -163,7 +165,7 @@ export default function SidebarItem({
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.2 }}
+                transition={transitionEnabled ? { duration: 0.2 } : { duration: 0 }}
                 className="flex-1 text-left whitespace-nowrap"
               >
                 {label}
@@ -205,6 +207,7 @@ export default function SidebarItem({
               animate="open"
               exit="closed"
               variants={submenuVariants}
+              transition={transitionEnabled ? undefined : { duration: 0 }}
               className="overflow-hidden"
             >
               <div className="ml-4 mt-1.5 space-y-0.5 border-l-2 border-slate-100 pl-3">

@@ -5,8 +5,7 @@ import AdminShell from '@/components/Common/AdminShell'
 import type { OnlineDriver, LiveMapStats, } from '@/types/index'
 import { DriverMarker } from '@/components/Live-map/DriverMarker'
 import { fetchOnlineDriversApi } from '@/api/driver-location'
-
-
+import { io } from 'socket.io-client'
 
 export default function LiveMapPage() {
   const [stats, setStats] = useState<LiveMapStats>({
@@ -33,11 +32,91 @@ export default function LiveMapPage() {
     }
   }, [])
 
-  // ── Poll every 10 seconds ────────────────────────────────────
+  // ── WebSocket Real-time Sync & Polling Fallback ────────────────────────────────
   useEffect(() => {
+    // Initial fetch
     fetchOnlineDrivers()
-    const interval = setInterval(fetchOnlineDrivers, 10000)
-    return () => clearInterval(interval)
+
+    // 1. WebSocket listener (instant updates)
+    if (typeof window === 'undefined') return
+
+    const token = localStorage.getItem('adminToken')
+    if (!token) return
+
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000/api/v1'
+    const socketUrl = baseUrl.replace('/api/v1', '')
+
+    const socket = io(`${socketUrl}/admin`, {
+      auth: { token },
+      transports: ['websocket'],
+    })
+
+    socket.on('connect', () => {
+      console.log('[LiveMap] Connected to admin real-time socket')
+    })
+
+    socket.on('driver:location-update', (data: any) => {
+      setStats((prev) => {
+        const exists = prev.drivers.some(d => d._id === data._id)
+        let updatedDrivers = []
+        if (exists) {
+          updatedDrivers = prev.drivers.map(d => d._id === data._id ? { ...d, ...data } : d)
+        } else {
+          updatedDrivers = [...prev.drivers, data]
+        }
+        return {
+          totalOnline: updatedDrivers.length,
+          drivers: updatedDrivers,
+        }
+      })
+      setLastUpdated(new Date().toLocaleTimeString())
+    })
+
+    socket.on('driver:status-change', (data: any) => {
+      const { driverId, isOnline, ...details } = data
+      if (isOnline) {
+        if (details.latitude && details.longitude) {
+          setStats((prev) => {
+            const exists = prev.drivers.some(d => d._id === driverId)
+            if (exists) return prev
+            const newDriver: OnlineDriver = {
+              _id: driverId,
+              driverId: details.driverId,
+              fullName: details.fullName,
+              latitude: details.latitude,
+              longitude: details.longitude,
+              updatedAt: new Date().toISOString(),
+            }
+            const updatedDrivers = [...prev.drivers, newDriver]
+            return {
+              totalOnline: updatedDrivers.length,
+              drivers: updatedDrivers,
+            }
+          })
+        }
+      } else {
+        setStats((prev) => {
+          const updatedDrivers = prev.drivers.filter(d => d._id !== driverId)
+          return {
+            totalOnline: updatedDrivers.length,
+            drivers: updatedDrivers,
+          }
+        })
+      }
+      setLastUpdated(new Date().toLocaleTimeString())
+    })
+
+    socket.on('disconnect', () => {
+      console.log('[LiveMap] Disconnected from admin socket')
+    })
+
+    // 2. Poll every 30 seconds as background backup/sync
+    const interval = setInterval(fetchOnlineDrivers, 30000)
+
+    return () => {
+      socket.disconnect()
+      clearInterval(interval)
+    }
   }, [fetchOnlineDrivers])
 
   return (

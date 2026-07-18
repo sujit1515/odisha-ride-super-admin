@@ -8,8 +8,9 @@ import {
 } from 'lucide-react'
 import { fetchOnlineDriversApi } from '@/api/driver-location'
 import type { OnlineDriver } from '@/types/index'
+import { io } from 'socket.io-client'
 
-const AUTO_REFRESH_SEC = 15
+const AUTO_REFRESH_SEC = 30
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -126,11 +127,74 @@ export default function DriversOnlinePage() {
     }
   }, [])
 
-  // Initial load + polling
+  // Initial load + WebSocket Real-time Sync & Polling Fallback
   useEffect(() => {
     fetchData()
+
+    if (typeof window === 'undefined') return
+
+    const token = localStorage.getItem('adminToken')
+    if (!token) return
+
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000/api/v1'
+    const socketUrl = baseUrl.replace('/api/v1', '')
+
+    const socket = io(`${socketUrl}/admin`, {
+      auth: { token },
+      transports: ['websocket'],
+    })
+
+    socket.on('connect', () => {
+      console.log('[OnlineDrivers] Connected to admin real-time socket')
+    })
+
+    socket.on('driver:location-update', (data: any) => {
+      setDrivers((prev) => {
+        const exists = prev.some(d => d._id === data._id)
+        if (exists) {
+          return prev.map(d => d._id === data._id ? { ...d, ...data } : d)
+        } else {
+          return [...prev, data]
+        }
+      })
+      setLastRefresh(new Date())
+      setCountdown(AUTO_REFRESH_SEC)
+    })
+
+    socket.on('driver:status-change', (data: any) => {
+      const { driverId, isOnline, ...details } = data
+      if (isOnline) {
+        if (details.latitude && details.longitude) {
+          setDrivers((prev) => {
+            const exists = prev.some(d => d._id === driverId)
+            if (exists) return prev
+            return [...prev, {
+              _id: driverId,
+              driverId: details.driverId,
+              fullName: details.fullName,
+              latitude: details.latitude,
+              longitude: details.longitude,
+              updatedAt: new Date().toISOString(),
+            }]
+          })
+        }
+      } else {
+        setDrivers((prev) => prev.filter(d => d._id !== driverId))
+      }
+      setLastRefresh(new Date())
+      setCountdown(AUTO_REFRESH_SEC)
+    })
+
+    socket.on('disconnect', () => {
+      console.log('[OnlineDrivers] Disconnected from admin socket')
+    })
+
     intervalRef.current = setInterval(() => fetchData(), AUTO_REFRESH_SEC * 1000)
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+
+    return () => {
+      socket.disconnect()
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
   }, [fetchData])
 
   // Countdown tick

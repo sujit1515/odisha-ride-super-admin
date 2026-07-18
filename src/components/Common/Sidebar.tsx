@@ -22,6 +22,7 @@ import {
   XCircle,
   ShieldAlert,
   CalendarClock,
+  Clock,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect } from 'react'
@@ -51,8 +52,24 @@ const nav: NavItem[] = [
       { href: '/rides/disputed', label: 'Disputed', icon: ShieldAlert },
     ],
   },
-  { href: '/drivers', label: 'Drivers', icon: User },
-  { href: '/passengers', label: 'Passengers', icon: Users },
+  {
+    href: '/drivers',
+    label: 'Drivers',
+    icon: User,
+    children: [
+      { href: '/drivers', label: 'All Drivers', icon: List },
+      { href: '/drivers/online', label: 'Online Drivers', icon: Radio },
+    ],
+  },
+  {
+    href: '/passengers',
+    label: 'Passengers',
+    icon: Users,
+    children: [
+      { href: '/passengers', label: 'All Passengers', icon: List },
+      { href: '/passengers/waiting', label: 'Passengers Waiting', icon: Clock },
+    ],
+  },
   { href: '/earnings', label: 'Earnings', icon: Wallet },
   { href: '/live-map', label: 'Live Map', icon: Map },
   { href: '/kyc-review', label: 'KYC Review', icon: ShieldCheck },
@@ -68,6 +85,7 @@ interface SidebarProps {
   isMobileOpen: boolean
   onCloseMobile: () => void
   onExpandRequest: () => void
+  transitionEnabled?: boolean
 }
 
 export default function Sidebar({
@@ -75,6 +93,7 @@ export default function Sidebar({
   isMobileOpen,
   onCloseMobile,
   onExpandRequest,
+  transitionEnabled = false,
 }: SidebarProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -126,6 +145,7 @@ export default function Sidebar({
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
+              transition={transitionEnabled ? undefined : { duration: 0 }}
               className="flex items-center justify-center h-10 w-10 rounded-xl bg-blue-600 text-white font-bold text-lg shadow-md cursor-pointer"
               onClick={onExpandRequest}
             >
@@ -137,6 +157,7 @@ export default function Sidebar({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={transitionEnabled ? undefined : { duration: 0 }}
               className="flex-1"
             >
               <h1 className="text-xl font-bold text-blue-600 leading-tight">Odisha Ride</h1>
@@ -167,6 +188,7 @@ export default function Sidebar({
             isDanger={item.isDanger}
             children={item.children}
             onExpandRequest={onExpandRequest}
+            transitionEnabled={transitionEnabled}
           />
         ))}
       </nav>
@@ -179,6 +201,7 @@ export default function Sidebar({
           isCollapsed={collapsed}
           onClick={handleLogout}
           isDanger={true}
+          transitionEnabled={transitionEnabled}
         />
       </div>
     </div>
@@ -216,7 +239,11 @@ export default function Sidebar({
         initial={isCollapsed ? 'collapsed' : 'expanded'}
         animate={isCollapsed ? 'collapsed' : 'expanded'}
         variants={sidebarWidthVariants}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        transition={
+          transitionEnabled
+            ? { duration: 0.3, ease: 'easeInOut' }
+            : { duration: 0 }
+        }
         className="fixed top-0 left-0 z-30 h-screen hidden lg:block overflow-hidden"
       >
         {renderSidebarContent(isCollapsed, false)}
