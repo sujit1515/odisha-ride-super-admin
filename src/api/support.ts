@@ -1,17 +1,5 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// FILE: api/support.ts
-// ─────────────────────────────────────────────────────────────────────────────
-
 import adminApi from './axiosinstance'
-import type {
-  SupportTicket,
-  TicketMessage,
-  TicketStats,
-  TicketsResponse,
-  TicketFilters,
-  TicketStatus,
-  TicketPriority,
-} from '@/types/index'
+import type { SupportTicket,TicketMessage,TicketStats,TicketsResponse,TicketFilters,TicketStatus,TicketPriority } from '@/types/index'
 
 // ── GET /support/tickets ──────────────────────────────────────────────────────
 export const getTickets = async (

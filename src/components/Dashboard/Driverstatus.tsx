@@ -153,7 +153,7 @@ export default function DriverStatus({ pollInterval = 30_000 }: DriverStatusProp
           </div>
           <div className="mt-2 h-2 rounded-full bg-slate-100 overflow-hidden">
             <div
-              className="h-full bg-slate-400 transition-all duration-700"
+              className="h-full bg-red-500 transition-all duration-700"
               style={{ width: `${Math.round((offline / barMax) * 100)}%` }}
             />
           </div>

@@ -25,7 +25,7 @@ import {
   Clock,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { adminLogout } from '@/api/auth'
 import SidebarItem from './SidebarItem'
 
@@ -98,6 +98,18 @@ export default function Sidebar({
   const router = useRouter()
   const pathname = usePathname()
 
+  // Delay icon-only layout until width animation finishes — prevents vertical jump on close
+  const [contentCollapsed, setContentCollapsed] = useState(isCollapsed)
+
+  useEffect(() => {
+    if (!isCollapsed) {
+      setContentCollapsed(false)
+      return
+    }
+    const timer = window.setTimeout(() => setContentCollapsed(true), 280)
+    return () => window.clearTimeout(timer)
+  }, [isCollapsed])
+
   // Handle Escape key to close mobile sidebar
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -136,35 +148,25 @@ export default function Sidebar({
   // Helper to render sidebar content for both mobile and desktop
   const renderSidebarContent = (collapsed: boolean, isMobile: boolean = false) => (
     <div className="h-full flex flex-col bg-white border-r border-slate-200 shadow-sm select-none overflow-x-hidden">
-      {/* Logo Area */}
-      <div className={`px-6 pt-6 pb-4 flex items-center ${collapsed ? 'justify-center px-0' : 'justify-between'}`}>
-        <AnimatePresence mode="wait">
-          {collapsed ? (
-            <motion.div
-              key="collapsed-logo"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={transitionEnabled ? undefined : { duration: 0 }}
-              className="flex items-center justify-center h-10 w-10 rounded-xl bg-blue-600 text-white font-bold text-lg shadow-md cursor-pointer"
-              onClick={onExpandRequest}
-            >
-              OR
-            </motion.div>
-          ) : (
-            <motion.div
-              key="expanded-logo"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={transitionEnabled ? undefined : { duration: 0 }}
-              className="flex-1"
-            >
-              <h1 className="text-xl font-bold text-blue-600 leading-tight">Odisha Ride</h1>
-              <p className="text-xs text-slate-500 mt-0.5 font-medium">Super Admin Panel</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+      {/* Logo Area — fixed height so open/close does not jump vertically */}
+      <div
+        className={`h-[72px] pt-6 pb-4 flex items-center shrink-0 ${
+          collapsed ? 'justify-center px-2' : 'justify-between px-6'
+        }`}
+      >
+        {collapsed ? (
+          <div
+            className="flex items-center justify-center h-10 w-10 rounded-xl bg-blue-600 text-white font-bold text-lg shadow-md cursor-pointer"
+            onClick={onExpandRequest}
+          >
+            OR
+          </div>
+        ) : (
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl font-bold text-blue-600 leading-tight truncate">Odisha Ride</h1>
+            <p className="text-xs text-slate-500 mt-0.5 font-medium truncate">Super Admin Panel</p>
+          </div>
+        )}
         {!collapsed && isMobile && (
           <button
             onClick={onCloseMobile}
@@ -241,12 +243,12 @@ export default function Sidebar({
         variants={sidebarWidthVariants}
         transition={
           transitionEnabled
-            ? { duration: 0.3, ease: 'easeInOut' }
+            ? { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
             : { duration: 0 }
         }
         className="fixed top-0 left-0 z-30 h-screen hidden lg:block overflow-hidden"
       >
-        {renderSidebarContent(isCollapsed, false)}
+        {renderSidebarContent(contentCollapsed, false)}
       </motion.aside>
     </>
   )

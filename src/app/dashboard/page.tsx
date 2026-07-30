@@ -7,6 +7,7 @@ import MiniStat from '@/components/Dashboard/Ministat'
 import RecentRides from '@/components/Dashboard/Recentrides'
 import DriverStatus from '@/components/Dashboard/Driverstatus'
 import AlertsAndPending from '@/components/Dashboard/Alertsandpending'
+import WelcomeHeader from '@/components/Dashboard/WelcomeHeader'
 import { useDriverStatusSummary } from '@/hooks/useDriverStatusSummary'
 import { useRegistrationStats } from '@/hooks/useRegistrationStats'
 import { useSosStats } from '@/hooks/useSosStats'
@@ -98,6 +99,8 @@ export default function DashboardPage() {
   return (
     <AdminShell title="Odisha Ride Admin">
 
+      <WelcomeHeader />
+
       {/* ── Row 1: Live Cards + SOS ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <LiveCard
@@ -110,22 +113,22 @@ export default function DashboardPage() {
           value={driversOnlineNow !== null ? String(driversOnlineNow) : '0'}
           href="/drivers/online"
         />
-       <LiveCard
+        <LiveCard
           label="Passengers waiting for ride"
           value={statsLoading ? '0' : String(rideStats?.waiting ?? 0)}
           dotClass="bg-amber-400"
         />
-       <SosCard
-  count={sosStats?.active ?? 0}
-  activeCount={sosStats?.active ?? 0}
-/>
+        <SosCard
+          count={sosStats?.active ?? 0}
+          activeCount={sosStats?.active ?? 0}
+        />
       </div>
 
       {/* ── Row 2: Mini Stats ── */}
       <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <MiniStat
           label="Total rides completed"
-          value={statsLoading ? '—' : (rideStats?.completed ?? 0).toLocaleString('en-IN')}
+          value={statsLoading ? '0' : (rideStats?.completed ?? 0).toLocaleString('en-IN')}
           live
         />
         <MiniStat
@@ -166,9 +169,9 @@ export default function DashboardPage() {
       {/* ── Row 4: Alerts & Pending ── */}
       <div className="mt-6">
         <AlertsAndPending
-          disputedCount={4}
-          failedPaymentsCount={12}
-          pendingKycCount={24}
+          disputedCount={0}
+          failedPaymentsCount={0}
+          pendingKycCount={0}
         />
       </div>
 

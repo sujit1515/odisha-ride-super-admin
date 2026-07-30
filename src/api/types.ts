@@ -1,4 +1,3 @@
-//PASSENGERS TYPES
 export interface Passenger {
   _id: string;
   passengerId: string | null;

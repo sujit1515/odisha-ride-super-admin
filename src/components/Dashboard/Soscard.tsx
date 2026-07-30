@@ -30,4 +30,4 @@ export default function SosCard({ count = 3, activeCount = 3 }: SosCardProps) {
       </div>
     </div>
   )
-}
+} 

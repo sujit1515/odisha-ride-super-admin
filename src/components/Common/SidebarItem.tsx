@@ -95,8 +95,12 @@ export default function SidebarItem({
     },
   }
 
-  // If sidebar is collapsed, force submenu closed
-  const showSubmenu = hasSubmenu && isOpen && !isCollapsed
+  // Close submenu when sidebar collapses
+  useEffect(() => {
+    if (isCollapsed && isOpen) {
+      setIsOpen(false)
+    }
+  }, [isCollapsed, isOpen])
 
   // Common inner content for link/button (no submenu)
   const renderInnerContent = () => (
@@ -110,28 +114,22 @@ export default function SidebarItem({
       )}
 
       <Icon
-        className={`h-5 w-5 shrink-0 transition-transform duration-200 ${
+        className={`h-5 w-5 shrink-0 ${
           active ? (isDanger ? 'text-red-600' : 'text-blue-600') : ''
         }`}
       />
 
-      <AnimatePresence initial={false}>
-        {!isCollapsed && (
-          <motion.span
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
-            transition={transitionEnabled ? { duration: 0.2 } : { duration: 0 }}
-            className="whitespace-nowrap text-left flex-1"
-          >
-            {label}
-          </motion.span>
-        )}
-      </AnimatePresence>
+      <span
+        className={`whitespace-nowrap text-left flex-1 overflow-hidden transition-opacity duration-200 ${
+          isCollapsed ? 'opacity-0 w-0 flex-none' : 'opacity-100'
+        }`}
+      >
+        {label}
+      </span>
     </>
   )
 
-  const commonClasses = `relative flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 w-full ${
+  const commonClasses = `relative flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 w-full h-11 ${
     active
       ? isDanger
         ? 'bg-red-50 text-red-700'
@@ -139,7 +137,7 @@ export default function SidebarItem({
       : isDanger
       ? 'text-red-500 hover:bg-red-50 hover:text-red-700'
       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-  } ${isCollapsed ? 'justify-center px-0 h-11' : ''}`
+  } ${isCollapsed ? 'justify-center px-0' : ''}`
 
   return (
     <div className="relative group w-full">
@@ -147,31 +145,25 @@ export default function SidebarItem({
       {hasSubmenu ? (
         <button
           onClick={handleParentClick}
-          className={`w-full relative flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${
+          className={`w-full relative flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 cursor-pointer h-11 ${
             active
               ? 'bg-blue-50 text-blue-700'
               : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-          } ${isCollapsed ? 'justify-center px-0 h-11' : ''}`}
+          } ${isCollapsed ? 'justify-center px-0' : ''}`}
         >
           {active && !isCollapsed && (
             <span className="absolute -right-3 top-1/2 -translate-y-1/2 h-8 w-1.5 rounded-l bg-blue-600" />
           )}
 
-          <Icon className={`h-5 w-5 shrink-0 transition-transform duration-200 ${active ? 'text-blue-600' : ''}`} />
+          <Icon className={`h-5 w-5 shrink-0 ${active ? 'text-blue-600' : ''}`} />
 
-          <AnimatePresence initial={false}>
-            {!isCollapsed && (
-              <motion.span
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                transition={transitionEnabled ? { duration: 0.2 } : { duration: 0 }}
-                className="flex-1 text-left whitespace-nowrap"
-              >
-                {label}
-              </motion.span>
-            )}
-          </AnimatePresence>
+          <span
+            className={`flex-1 text-left whitespace-nowrap overflow-hidden transition-opacity duration-200 ${
+              isCollapsed ? 'opacity-0 w-0 flex-none' : 'opacity-100'
+            }`}
+          >
+            {label}
+          </span>
 
           {!isCollapsed && (
             <ChevronRight
@@ -198,10 +190,10 @@ export default function SidebarItem({
         </div>
       )}
 
-      {/* Collapsible Submenu */}
-      {hasSubmenu && (
+      {/* Collapsible Submenu — unmount instantly on sidebar collapse to avoid vertical jump */}
+      {hasSubmenu && !isCollapsed && (
         <AnimatePresence initial={false}>
-          {showSubmenu && (
+          {isOpen && (
             <motion.div
               initial="closed"
               animate="open"
@@ -219,7 +211,7 @@ export default function SidebarItem({
                       key={child.href}
                       href={child.href}
                       onClick={onClick}
-                      className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all duration-150 ${
+                      className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors duration-150 ${
                         childActive
                           ? 'bg-blue-50/70 text-blue-700 font-medium shadow-xs'
                           : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'

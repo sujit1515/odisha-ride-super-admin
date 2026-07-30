@@ -1,5 +1,5 @@
 'use client'
-import { Search, Bell, HelpCircle, Menu, User, LogOut } from 'lucide-react'
+import { Search, Bell, HelpCircle, ChevronLeft, ChevronRight, User, LogOut } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -8,9 +8,10 @@ import { adminLogout } from '@/api/auth'
 interface NavbarProps {
   title?: string
   onMenuClick: () => void
+  isSidebarCollapsed?: boolean
 }
 
-export default function Navbar({ title = 'Odisha Ride Admin', onMenuClick }: NavbarProps) {
+export default function Navbar({ title = 'Odisha Ride Admin', onMenuClick, isSidebarCollapsed = false }: NavbarProps) {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const router = useRouter()
   const menuRef = useRef<HTMLDivElement>(null)
@@ -84,8 +85,16 @@ export default function Navbar({ title = 'Odisha Ride Admin', onMenuClick }: Nav
   return (
     <header className="sticky top-0 z-20 bg-slate-50/80 backdrop-blur border-b border-slate-200">
       <div className="flex items-center gap-3 md:gap-6 px-4 md:px-8 py-4">
-        <button onClick={onMenuClick} className="p-2 rounded-md hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer flex items-center justify-center">
-          <Menu className="h-5 w-5" />
+        <button
+          onClick={onMenuClick}
+          aria-label={isSidebarCollapsed ? 'Open sidebar' : 'Close sidebar'}
+          className="p-2 rounded-md hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer flex items-center justify-center"
+        >
+          {isSidebarCollapsed ? (
+            <ChevronRight className="h-5 w-5" />
+          ) : (
+            <ChevronLeft className="h-5 w-5" />
+          )}
         </button>
         <h2 className="text-lg md:text-2xl font-bold text-blue-600 leading-tight whitespace-pre-line">{title}</h2>
         <div className="flex-1 max-w-xl hidden sm:block">

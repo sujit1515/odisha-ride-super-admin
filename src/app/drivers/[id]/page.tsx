@@ -15,8 +15,6 @@ import { DriverDocuments } from './components/DriverDocuments'
 import { DriverBanking } from './components/DriverBanking'
 import { BlockModal } from './components/BlockModal'
 import { RejectModal } from './components/RejectModal'
-
-// API  ← update this path to match your project
 import { getDriverProfile } from '@/api/driver';
 import { blockDriver, unblockDriver, approveDriver, rejectDriver } from '@/api/kyc'
 

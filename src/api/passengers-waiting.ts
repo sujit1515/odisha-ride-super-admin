@@ -1,7 +1,6 @@
 import adminApi from './axiosinstance'
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
+ 
 /** A passenger who requested a ride but no driver has accepted yet */
 export interface SearchingPassenger {
   _id: string
@@ -11,7 +10,7 @@ export interface SearchingPassenger {
   estimatedFare: number
   vehicleType: string
   paymentMethod: string
-  waitSeconds: number   // seconds since ride was created
+  waitSeconds: number   
   createdAt: string
 }
 
