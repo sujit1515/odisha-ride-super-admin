@@ -8,7 +8,7 @@ import {
   RefreshCw, X
 } from 'lucide-react'
 import { getBlockedDrivers, unblockDriver } from '@/api/kyc'
-import type { BlockedDriver } from '@/types/index'
+import type { BlockedDriver } from '@/api/types/types'
 
 
 // ── Unblock Confirm Modal ─────────────────────────────────────────────────────

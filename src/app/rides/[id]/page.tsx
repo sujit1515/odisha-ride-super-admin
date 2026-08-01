@@ -71,6 +71,7 @@ export default function RideDetailPage() {
   const [ride, setRide] = useState<Ride | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [downloadingInvoice, setDownloadingInvoice] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -128,7 +129,7 @@ export default function RideDetailPage() {
           <div>
             <div className="flex items-center gap-3">
               <h2 className="text-2xl font-bold text-slate-800">Ride {ride._id.slice(-6).toUpperCase()}</h2>
-            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${STATUS_STYLES[statusKey] ?? 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${STATUS_STYLES[statusKey] ?? 'bg-slate-100 text-slate-600 border-slate-200'}`}>
                 {statusIcon(statusKey)} {STATUS_LABEL[statusKey] ?? ride.status}
               </span>
             </div>
@@ -140,10 +141,26 @@ export default function RideDetailPage() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => downloadInvoice(ride._id)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-medium transition-all duration-200 hover:bg-indigo-100 hover:border-indigo-300 hover:shadow-sm"
+            onClick={async () => {
+              if (downloadingInvoice) return
+              setDownloadingInvoice(true)
+              try {
+                await downloadInvoice(ride._id)
+              } catch (err) {
+                console.error('Invoice download failed:', err)
+              } finally {
+                setDownloadingInvoice(false)
+              }
+            }}
+            disabled={downloadingInvoice}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-medium transition-all duration-200 hover:bg-indigo-100 hover:border-indigo-300 hover:shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <Download className="h-4 w-4" /> Invoice
+            {downloadingInvoice ? (
+              <span className="h-4 w-4 border-2 border-indigo-300 border-t-indigo-700 rounded-full animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+            {downloadingInvoice ? 'Downloading...' : 'Invoice'}
           </button>
 
         </div>
@@ -325,7 +342,7 @@ export default function RideDetailPage() {
               {ride.otp && (
                 <div className="flex justify-between"><span className="text-slate-500">OTP</span><span className="font-medium">{ride.otp}</span></div>
               )}
-            <div className="flex justify-between items-center"><span className="text-slate-500">Status</span>
+              <div className="flex justify-between items-center"><span className="text-slate-500">Status</span>
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${STATUS_STYLES[statusKey] ?? 'bg-slate-100 text-slate-600 border-slate-200'}`}>{STATUS_LABEL[statusKey] ?? ride.status}</span>
               </div>
             </div>

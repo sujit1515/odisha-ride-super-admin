@@ -1,10 +1,25 @@
 @import "tailwindcss";
 
+:root,
+html {
+  font-size: 90%;
+}
+
 /* Login page styles */
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25%       { transform: translateX(-5px); }
-  75%       { transform: translateX(5px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-5px);
+  }
+
+  75% {
+    transform: translateX(5px);
+  }
 }
 
 .animate-shake {
@@ -13,15 +28,34 @@
 
 /* Driver live tracking pulse animation */
 @keyframes driverPulse {
-  0%   { transform: scale(0.8); opacity: 0.8; }
-  70%  { transform: scale(2.2); opacity: 0;   }
-  100% { transform: scale(2.2); opacity: 0;   }
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+
+  70% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
 }
 
 /* Ride route pickup/drop pulse animation */
 @keyframes ridePing {
-  0%   { transform: scale(1); opacity: 0.75; }
-  75%, 100% { transform: scale(2); opacity: 0; }
+  0% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+
+  75%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 
 .animate-ping-slow {

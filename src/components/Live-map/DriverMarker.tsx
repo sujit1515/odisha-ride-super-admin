@@ -1,6 +1,6 @@
 'use client';
 import { AdvancedMarker, InfoWindow } from '@vis.gl/react-google-maps'
-import type { OnlineDriver } from '@/types/index'
+import type { OnlineDriver } from '@/api/types/types'
 
 interface Props {
   driver:     OnlineDriver

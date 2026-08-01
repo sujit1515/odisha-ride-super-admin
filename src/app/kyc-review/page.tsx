@@ -4,7 +4,7 @@ import AdminShell from '@/components/Common/AdminShell'
 import { Check, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { getAllDrivers, approveDriver, rejectDriver } from '../../api/kyc'
-import type { KYCStatus, KYCEntry } from '../../types/index'
+import type { KYCStatus, KYCEntry } from '@/api/types/types'
 
 // ── Helper 
 const pill = (s: KYCStatus): string => {

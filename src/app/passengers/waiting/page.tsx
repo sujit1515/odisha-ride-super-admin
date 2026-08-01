@@ -10,9 +10,8 @@ import AdminShell from '@/components/Common/AdminShell'
 import {
   getWaitingPassengers,
   adminCancelRide,
-  type SearchingPassenger,
-  type MatchedPassenger,
 } from '@/api/passengers-waiting'
+import { SearchingPassenger, MatchedPassenger } from '@/api/types/types';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 

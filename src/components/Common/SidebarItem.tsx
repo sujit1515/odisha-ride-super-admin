@@ -105,39 +105,42 @@ export default function SidebarItem({
   // Common inner content for link/button (no submenu)
   const renderInnerContent = () => (
     <>
+      {active && (
+        <motion.div
+          layoutId="sidebar-pill-main"
+          className={`absolute inset-0 rounded-lg -z-10 ${isDanger ? 'bg-red-50' : 'bg-blue-50'}`}
+          transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+        />
+      )}
       {active && !isCollapsed && (
         <span
-          className={`absolute -right-3 top-1/2 -translate-y-1/2 h-8 w-1.5 rounded-l ${
-            isDanger ? 'bg-red-600' : 'bg-blue-600'
-          }`}
+          className={`absolute -right-3 top-1/2 -translate-y-1/2 h-8 w-1.5 rounded-l ${isDanger ? 'bg-red-600' : 'bg-blue-600'
+            }`}
         />
       )}
 
       <Icon
-        className={`h-5 w-5 shrink-0 ${
-          active ? (isDanger ? 'text-red-600' : 'text-blue-600') : ''
-        }`}
+        className={`h-5 w-5 shrink-0 ${active ? (isDanger ? 'text-red-600' : 'text-blue-600') : ''
+          }`}
       />
 
       <span
-        className={`whitespace-nowrap text-left flex-1 overflow-hidden transition-opacity duration-200 ${
-          isCollapsed ? 'opacity-0 w-0 flex-none' : 'opacity-100'
-        }`}
+        className={`whitespace-nowrap text-left flex-1 overflow-hidden transition-opacity duration-200 ${isCollapsed ? 'opacity-0 w-0 flex-none' : 'opacity-100'
+          }`}
       >
         {label}
       </span>
     </>
   )
 
-  const commonClasses = `relative flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 w-full h-11 ${
-    active
-      ? isDanger
-        ? 'bg-red-50 text-red-700'
-        : 'bg-blue-50 text-blue-700'
-      : isDanger
+  const commonClasses = `relative flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 w-full h-11 ${active
+    ? isDanger
+      ? 'text-red-700'
+      : 'text-blue-700'
+    : isDanger
       ? 'text-red-500 hover:bg-red-50 hover:text-red-700'
       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-  } ${isCollapsed ? 'justify-center px-0' : ''}`
+    } ${isCollapsed ? 'justify-center px-0' : ''}`
 
   return (
     <div className="relative group w-full">
@@ -145,12 +148,18 @@ export default function SidebarItem({
       {hasSubmenu ? (
         <button
           onClick={handleParentClick}
-          className={`w-full relative flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 cursor-pointer h-11 ${
-            active
-              ? 'bg-blue-50 text-blue-700'
-              : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-          } ${isCollapsed ? 'justify-center px-0' : ''}`}
+          className={`w-full relative flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 cursor-pointer h-11 ${active
+            ? 'text-blue-700'
+            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+            } ${isCollapsed ? 'justify-center px-0' : ''}`}
         >
+          {active && (
+            <motion.div
+              layoutId="sidebar-pill-main"
+              className="absolute inset-0 rounded-lg -z-10 bg-blue-50"
+              transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+            />
+          )}
           {active && !isCollapsed && (
             <span className="absolute -right-3 top-1/2 -translate-y-1/2 h-8 w-1.5 rounded-l bg-blue-600" />
           )}
@@ -158,18 +167,16 @@ export default function SidebarItem({
           <Icon className={`h-5 w-5 shrink-0 ${active ? 'text-blue-600' : ''}`} />
 
           <span
-            className={`flex-1 text-left whitespace-nowrap overflow-hidden transition-opacity duration-200 ${
-              isCollapsed ? 'opacity-0 w-0 flex-none' : 'opacity-100'
-            }`}
+            className={`flex-1 text-left whitespace-nowrap overflow-hidden transition-opacity duration-200 ${isCollapsed ? 'opacity-0 w-0 flex-none' : 'opacity-100'
+              }`}
           >
             {label}
           </span>
 
           {!isCollapsed && (
             <ChevronRight
-              className={`h-4 w-4 shrink-0 transition-transform duration-250 ${
-                isOpen ? 'rotate-90 text-blue-600' : 'text-slate-400'
-              }`}
+              className={`h-4 w-4 shrink-0 transition-transform duration-250 ${isOpen ? 'rotate-90 text-blue-600' : 'text-slate-400'
+                }`}
             />
           )}
         </button>
@@ -211,12 +218,18 @@ export default function SidebarItem({
                       key={child.href}
                       href={child.href}
                       onClick={onClick}
-                      className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors duration-150 ${
-                        childActive
-                          ? 'bg-blue-50/70 text-blue-700 font-medium shadow-xs'
+                      className={`relative flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors duration-150 ${childActive
+                          ? 'text-blue-700 font-medium'
                           : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
-                      }`}
+                        }`}
                     >
+                      {childActive && (
+                        <motion.div
+                          layoutId="sidebar-pill-sub"
+                          className="absolute inset-0 rounded-lg -z-10 bg-blue-50/70 shadow-xs"
+                          transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                        />
+                      )}
                       <CIcon className={`h-4 w-4 shrink-0 ${childActive ? 'text-blue-600' : 'text-slate-400'}`} />
                       <span className="whitespace-nowrap">{child.label}</span>
                     </Link>

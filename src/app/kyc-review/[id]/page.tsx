@@ -5,7 +5,7 @@ import { ArrowLeft, Check, X, Download, User, FileText, Eye, Ban, Unlock, AlertT
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { getDriverById, approveDriver, rejectDriver, blockDriver, unblockDriver } from '../../../api/kyc'
-import type { DocStatus, KYCStatus,  KYCDriverStatus, Document, DriverKYC } from '../../../types/index'
+import type { DocStatus, KYCStatus,  KYCDriverStatus, Document, DriverKYC } from '@/api/types/types'
 
 // ── Helper: safely format a date string ──────────────────────────────────────
 function formatDate(raw: string | null | undefined): string {

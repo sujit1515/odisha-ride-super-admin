@@ -1,5 +1,5 @@
 import adminApi from './axiosinstance';
-import { Passenger,PassengersResponse,PassengerStats,} from './types';
+import { Passenger,PassengersResponse,PassengerStats,} from './types/types';
 export type { Passenger, PassengersResponse, PassengerStats };
 
 // GET all passengers

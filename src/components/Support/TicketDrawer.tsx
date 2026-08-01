@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { X, Send, Paperclip, User, Car, MessageSquare,FileText, Clock, Tag, AlertCircle } from 'lucide-react'
-import type { SupportTicket, TicketMessage, TicketStatus, TicketPriority } from '@/types/index'
+import type { SupportTicket, TicketMessage, TicketStatus, TicketPriority } from '@/api/types/types'
 import { getTicketMessages, replyToTicket, assignTicket } from '@/api/support'
 import { priorityStyles, statusStyles, userTypeStyles } from '@/app/support/page'
 

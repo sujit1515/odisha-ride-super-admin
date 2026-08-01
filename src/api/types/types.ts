@@ -24,4 +24,14 @@ export interface PassengerStats {
   verified: number;
 }
 
+export * from "./ride.type";
+export * from "./support.type";
+export * from "./sos.type";
+export * from "./passengers-waiting";
+
+
+
+
+
+
  

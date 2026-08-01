@@ -8,7 +8,7 @@ import {
   RefreshCw, X, Users
 } from 'lucide-react'
 import { getPassengers, activatePassenger } from '@/api/passengers' 
-import type { DeactivatedUser } from '@/types/index'
+import type { DeactivatedUser } from '@/api/types/types'
 
 
 // ── Activate Confirm Modal ────────────────────────────────────────────────────

@@ -7,7 +7,7 @@ import {
   MapPin, Wifi, WifiOff, AlertCircle, Loader2, ChevronRight,
 } from 'lucide-react'
 import { fetchOnlineDriversApi } from '@/api/driver-location'
-import type { OnlineDriver } from '@/types/index'
+import type { OnlineDriver } from '@/api/types/types'
 import { io } from 'socket.io-client'
 
 const AUTO_REFRESH_SEC = 30

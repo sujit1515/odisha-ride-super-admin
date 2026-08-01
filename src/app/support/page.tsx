@@ -10,7 +10,7 @@ import {
   deleteTicket,
   exportTickets,
 } from '@/api/support'
-import type {
+import  {
   SupportTicket,
   TicketStats,
   TicketFilters,
@@ -18,8 +18,8 @@ import type {
   TicketPriority,
   TicketCategory,
   UserType,
-} from '@/types/index'
-import {
+} from '@/api/types/types'
+ import {
   Ticket, CircleDot, Clock, CheckCircle, XCircle,
   AlertTriangle, Car, User, Timer,
 } from 'lucide-react'

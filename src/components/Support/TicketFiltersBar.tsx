@@ -2,7 +2,7 @@
 // FILE: components/Support/TicketFiltersBar.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 
-import type { TicketFilters, TicketCategory } from '@/types/index'
+import type { TicketFilters, TicketCategory } from '@/api/types/types'
 import { Download } from 'lucide-react'
 
 const STATUSES   = ['All', 'Open', 'In Progress', 'Resolved', 'Closed']

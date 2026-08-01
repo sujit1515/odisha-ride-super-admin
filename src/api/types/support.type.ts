@@ -1,4 +1,3 @@
-// ── KYC types
 export type DocStatus = 'uploaded' | 'missing' | 'rejected'
 export type KYCStatus = 'Pending' | 'Approved' | 'Rejected'
 export type KYCDriverStatus = 'active' | 'blocked' | 'pending' | 'approved' | 'rejected'

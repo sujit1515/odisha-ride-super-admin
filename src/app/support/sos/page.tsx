@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import AdminShell from '@/components/Common/AdminShell'
 import { getActiveSosAlerts, resolveSosAlert } from '@/api/sos'
-import type { SosAlert } from '@/api/sos'
+import type { SosAlert } from '@/api/types/types'
 import { useSosSocket } from '@/hooks/useSosSocket'
 import ResolveAlertModal from '@/components/SOS/ResolveAlertModal'
 

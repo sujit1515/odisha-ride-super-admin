@@ -5,7 +5,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import AdminShell from '@/components/Common/AdminShell';
 import { Users, Wifi, WifiOff, Clock, ShieldOff } from 'lucide-react'
 import { getAllDrivers, approveDriver, rejectDriver, blockDriver, unblockDriver, } from "@/api/kyc";
-import type { Driver, DriverStatus, ToastState, ActionModalState, } from '@/types/index'
+import type { Driver, DriverStatus, ToastState, ActionModalState, } from '@/api/types/types'
 import { useRouter } from 'next/navigation'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

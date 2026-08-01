@@ -1,5 +1,5 @@
   import adminApi from '@/api/axiosinstance'
-  import type { LiveMapStats } from '@/types/index'
+  import type { LiveMapStats } from './types/types'
 
 
   export const fetchOnlineDriversApi = async (): Promise<LiveMapStats> => {

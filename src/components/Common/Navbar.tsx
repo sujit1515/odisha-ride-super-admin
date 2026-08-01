@@ -1,9 +1,9 @@
 'use client'
-import { Search, Bell, HelpCircle, ChevronLeft, ChevronRight, User, LogOut } from 'lucide-react'
+import { Search, Bell, HelpCircle, PanelLeft, User, LogOut } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { adminLogout } from '@/api/auth'  
+import { adminLogout } from '@/api/auth'
 
 interface NavbarProps {
   title?: string
@@ -62,19 +62,19 @@ export default function Navbar({ title = 'Odisha Ride Admin', onMenuClick, isSid
   }, [isProfileOpen])
 
   const menuVariants = {
-    hidden: { 
+    hidden: {
       opacity: 0,
       scale: 0.95,
       y: -10,
       transition: { duration: 0.2 }
     },
-    visible: { 
+    visible: {
       opacity: 1,
       scale: 1,
       y: 0,
       transition: { duration: 0.2 }
     },
-    exit: { 
+    exit: {
       opacity: 0,
       scale: 0.95,
       y: -10,
@@ -87,14 +87,11 @@ export default function Navbar({ title = 'Odisha Ride Admin', onMenuClick, isSid
       <div className="flex items-center gap-3 md:gap-6 px-4 md:px-8 py-4">
         <button
           onClick={onMenuClick}
-          aria-label={isSidebarCollapsed ? 'Open sidebar' : 'Close sidebar'}
-          className="p-2 rounded-md hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer flex items-center justify-center"
+          aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          className="p-1.5 rounded-lg hover:bg-slate-100 text-blue-600 hover:text-blue-700 transition-colors cursor-pointer flex items-center justify-center border border-blue-200/80 bg-blue-50/40"
+          title={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
-          {isSidebarCollapsed ? (
-            <ChevronRight className="h-5 w-5" />
-          ) : (
-            <ChevronLeft className="h-5 w-5" />
-          )}
+          <PanelLeft className="h-5 w-5" />
         </button>
         <h2 className="text-lg md:text-2xl font-bold text-blue-600 leading-tight whitespace-pre-line">{title}</h2>
         <div className="flex-1 max-w-xl hidden sm:block">
@@ -122,7 +119,7 @@ export default function Navbar({ title = 'Odisha Ride Admin', onMenuClick, isSid
               <div className="text-xs text-slate-500">Super Admin</div>
             </div>
             <div className="relative" ref={menuRef}>
-              <button 
+              <button
                 onClick={toggleProfile}
                 className="focus:outline-none"
               >
@@ -144,7 +141,7 @@ export default function Navbar({ title = 'Odisha Ride Admin', onMenuClick, isSid
                   >
                     {/* Menu Items - Only Profile and Logout */}
                     <div className="py-2">
-                      <button 
+                      <button
                         onClick={handleProfileClick}
                         className="w-full px-4 py-3 flex items-center gap-3 hover:bg-slate-50 transition-colors"
                       >
@@ -154,10 +151,10 @@ export default function Navbar({ title = 'Odisha Ride Admin', onMenuClick, isSid
                           <div className="text-xs text-slate-400">View and edit your profile</div>
                         </div>
                       </button>
-                      
+
                       <div className="border-t border-slate-100 my-1"></div>
-                      
-                      <button 
+
+                      <button
                         onClick={handleLogout}
                         className="w-full px-4 py-3 flex items-center gap-3 hover:bg-red-50 transition-colors"
                       >

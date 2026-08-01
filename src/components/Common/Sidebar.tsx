@@ -73,8 +73,8 @@ const nav: NavItem[] = [
   { href: '/earnings', label: 'Earnings', icon: Wallet },
   { href: '/live-map', label: 'Live Map', icon: Map },
   { href: '/kyc-review', label: 'KYC Review', icon: ShieldCheck },
-  { href: '/blocked-drivers', label: 'Blocked Drivers', icon: UserX, isDanger: true },
-  { href: '/deactivate-users', label: 'Deactivated Passengers', icon: UserX, isDanger: true },
+  { href: '/blocked-drivers', label: 'Drivers', icon: UserX, isDanger: true },
+  { href: '/deactivate-users', label: 'Passengers', icon: UserX, isDanger: true },
   { href: '/promo-codes', label: 'Promo Codes', icon: Ticket },
   { href: '/support', label: 'Support', icon: Headphones },
   { href: '/settings', label: 'Settings', icon: Settings },
@@ -100,6 +100,9 @@ export default function Sidebar({
 
   // Delay icon-only layout until width animation finishes — prevents vertical jump on close
   const [contentCollapsed, setContentCollapsed] = useState(isCollapsed)
+
+  // Logout confirmation popup state
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
   useEffect(() => {
     if (!isCollapsed) {
@@ -150,9 +153,8 @@ export default function Sidebar({
     <div className="h-full flex flex-col bg-white border-r border-slate-200 shadow-sm select-none overflow-x-hidden">
       {/* Logo Area — fixed height so open/close does not jump vertically */}
       <div
-        className={`h-[72px] pt-6 pb-4 flex items-center shrink-0 ${
-          collapsed ? 'justify-center px-2' : 'justify-between px-6'
-        }`}
+        className={`h-[72px] pt-6 pb-4 flex items-center shrink-0 ${collapsed ? 'justify-center px-2' : 'justify-between px-6'
+          }`}
       >
         {collapsed ? (
           <div
@@ -181,7 +183,7 @@ export default function Sidebar({
       <nav className={`flex-1 px-3 pt-6 space-y-1 overflow-y-auto overflow-x-hidden ${collapsed ? 'px-2' : 'px-3'}`}>
         {nav.map((item) => (
           <SidebarItem
-            key={item.label}
+            key={item.href ?? item.label}
             href={item.href}
             label={item.label}
             icon={item.icon}
@@ -201,7 +203,7 @@ export default function Sidebar({
           label="Logout"
           icon={LogOut}
           isCollapsed={collapsed}
-          onClick={handleLogout}
+          onClick={() => setShowLogoutConfirm(true)}
           isDanger={true}
           transitionEnabled={transitionEnabled}
         />
@@ -250,6 +252,45 @@ export default function Sidebar({
       >
         {renderSidebarContent(contentCollapsed, false)}
       </motion.aside>
+
+      {/* Logout Confirmation Popup */}
+      <AnimatePresence>
+        {showLogoutConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-sm"
+            >
+              <h2 className="text-lg font-semibold text-slate-900 mb-2">Log out?</h2>
+              <p className="text-sm text-slate-500 mb-6">Are you sure you want to log out?</p>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setShowLogoutConfirm(false)}
+                  className="px-4 py-2 text-sm rounded-lg text-slate-700 hover:bg-slate-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setShowLogoutConfirm(false)
+                    handleLogout()
+                  }}
+                  className="px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700"
+                >
+                  Logout
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

@@ -5,7 +5,7 @@ import AdminShell from '@/components/Common/AdminShell'
 import { User, Mail, Phone, Shield, Camera, Edit3,Key, Save, X, Check, Globe, Lock,Activity, Clock, LogOut, Eye, EyeOff, AlertCircle, } from 'lucide-react'
 import { getAdminProfile, updateAdminProfile, changeAdminPassword, adminLogout } from '@/api/auth'
 import { useRouter } from 'next/navigation' 
-import type { Tab,FormState,PasswordState,ProfileMeta, } from '@/types/index'
+import type { Tab,FormState,PasswordState,ProfileMeta, } from '@/api/types/types'
 
 
 export default function ProfilePage() {

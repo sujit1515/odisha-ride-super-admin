@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { APIProvider, Map } from '@vis.gl/react-google-maps'
 import AdminShell from '@/components/Common/AdminShell'
-import type { OnlineDriver, LiveMapStats, } from '@/types/index'
+import type { OnlineDriver, LiveMapStats, } from '@/api/types/types'
 import { DriverMarker } from '@/components/Live-map/DriverMarker'
 import { fetchOnlineDriversApi } from '@/api/driver-location'
 import { io } from 'socket.io-client'

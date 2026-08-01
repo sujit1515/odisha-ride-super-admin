@@ -47,9 +47,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Main Panel Content Area */}
       <div
-        className={`flex flex-col min-h-screen ${
-          transitionEnabled ? 'transition-[padding-left] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]' : ''
-        } ${mounted ? sidebarWidthClass : 'lg:pl-[220px]'}`}
+        className={`flex flex-col min-h-screen ${transitionEnabled ? 'transition-[padding-left] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]' : ''
+          } ${mounted ? sidebarWidthClass : 'lg:pl-[220px]'}`}
       >
         <Navbar title={title} onMenuClick={toggleSidebar} isSidebarCollapsed={isCollapsed} />
         <main className="flex-1 p-4 md:p-8 w-full">

@@ -2,7 +2,7 @@
 // FILE: components/Support/TicketTable.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 
-import type { SupportTicket, TicketStatus, TicketPriority } from '@/types/index'
+import type { SupportTicket, TicketStatus, TicketPriority } from '@/api/types/types';
 import { priorityStyles, statusStyles, userTypeStyles } from '@/app/support/page'
 import { Trash2, ChevronRight } from 'lucide-react'
 
