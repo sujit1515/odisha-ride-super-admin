@@ -15,8 +15,7 @@ function formatDate(raw: string | null | undefined): string {
   return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
-// ── Sub-components ────────────────────────────────────────────────────────────
-const StatusBadge = ({ status }: { status: KYCStatus }) => {
+ const StatusBadge = ({ status }: { status: KYCStatus }) => {
   const styles: Record<KYCStatus, string> = {
     Pending:  'bg-amber-100 text-amber-700',
     Approved: 'bg-emerald-100 text-emerald-700',
@@ -59,8 +58,7 @@ const docBg = (s: DocStatus) => {
   return 'bg-red-50 border-red-100'
 }
 
-// ── Block Confirm Modal ───────────────────────────────────────────────────────
-const BlockConfirmModal = ({
+ const BlockConfirmModal = ({
   driverName,
   blockReason,
   onConfirm,
@@ -81,27 +79,23 @@ const BlockConfirmModal = ({
       className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl"
       onClick={e => e.stopPropagation()}
     >
-      {/* Icon */}
-      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-orange-100 mx-auto mb-4">
+       <div className="flex items-center justify-center w-12 h-12 rounded-full bg-orange-100 mx-auto mb-4">
         <AlertTriangle className="h-6 w-6 text-orange-600" />
       </div>
 
-      {/* Title */}
-      <h3 className="text-base font-semibold text-slate-800 text-center mb-1">
+       <h3 className="text-base font-semibold text-slate-800 text-center mb-1">
         Block this driver?
       </h3>
       <p className="text-sm text-slate-500 text-center mb-4">
         <span className="font-medium text-slate-700">{driverName}</span> will lose access to the platform immediately.
       </p>
 
-      {/* Reason preview */}
-      <div className="bg-orange-50 border border-orange-100 rounded-xl p-3 mb-5">
+       <div className="bg-orange-50 border border-orange-100 rounded-xl p-3 mb-5">
         <p className="text-xs text-orange-600 font-medium mb-1">Reason</p>
         <p className="text-sm text-slate-700 break-words">{blockReason}</p>
       </div>
 
-      {/* Actions */}
-      <div className="flex gap-3">
+       <div className="flex gap-3">
         <button
           onClick={onCancel}
           disabled={loading}
@@ -124,8 +118,7 @@ const BlockConfirmModal = ({
   </div>
 )
 
-// ── Main Page ─────────────────────────────────────────────────────────────────
-export default function KYCDetailPage() {
+ export default function KYCDetailPage() {
   const router = useRouter()
   const params = useParams()
   const id = params.id as string
@@ -141,6 +134,7 @@ export default function KYCDetailPage() {
   const [previewDoc, setPreviewDoc]           = useState<Document | null>(null)
   const [status, setStatus]                   = useState<KYCStatus>('Pending')
   const [driverStatus, setDriverStatus]       = useState<KYCDriverStatus>('active')
+  const [rejectionReasonSaved, setRejectionReasonSaved] = useState<string | null>(null)
   const [actionLoading, setActionLoading]     = useState(false)
 
   const rejectBoxRef = useRef<HTMLDivElement>(null)
@@ -168,6 +162,7 @@ export default function KYCDetailPage() {
       setDriver(driverData)
       setStatus(driverData.status)
       setDriverStatus(driverData.driverStatus || 'active')
+      setRejectionReasonSaved((response.driver || response).rejectionReason || null)
       setError(null)
     } catch (err) {
       console.error('Error fetching driver details:', err)
@@ -246,8 +241,7 @@ export default function KYCDetailPage() {
     }
   }
 
-  // ── Action handlers ───────────────────────────────────────────────────────
-  const handleApprove = async () => {
+   const handleApprove = async () => {
     setActionLoading(true)
     try {
       await approveDriver(id, { note: 'Approved by admin' })
@@ -276,14 +270,12 @@ export default function KYCDetailPage() {
     }
   }
 
-  // Opens the confirm modal (only if reason is filled)
-  const handleBlockSubmit = () => {
+   const handleBlockSubmit = () => {
     if (!blockReason.trim()) { alert('Please provide a reason for blocking'); return }
     setShowBlockConfirm(true)
   }
 
-  // Actually calls the API after confirmation
-  const handleBlockConfirmed = async () => {
+   const handleBlockConfirmed = async () => {
     setActionLoading(true)
     try {
       await blockDriver(id, { reason: blockReason })
@@ -316,8 +308,7 @@ export default function KYCDetailPage() {
     if (doc.imageUrl) window.open(doc.imageUrl, '_blank')
   }
 
-  // ── Loading / error states ────────────────────────────────────────────────
-  if (loading) {
+   if (loading) {
     return (
       <AdminShell title="KYC Review">
         <div className="flex justify-center items-center h-96">
@@ -353,8 +344,7 @@ export default function KYCDetailPage() {
 
   return (
     <AdminShell title="KYC Review">
-      {/* ── Top bar ─────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             onClick={() => router.back()}
@@ -418,8 +408,14 @@ export default function KYCDetailPage() {
         </div>
       </div>
 
-      {/* ── Two-column grid ──────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+      {status === 'Rejected' && rejectionReasonSaved && (
+        <div className="bg-red-50 border border-red-100 rounded-2xl p-4 sm:p-5 mb-5">
+          <p className="text-xs font-medium text-red-600 mb-1">Rejection reason</p>
+          <p className="text-sm text-slate-700 break-words">{rejectionReasonSaved}</p>
+        </div>
+      )}
+
+       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
         {/* Personal details */}
         <div className="bg-white rounded-2xl border border-slate-100 p-4 sm:p-5 shadow-sm">
           <h3 className="text-sm font-semibold text-slate-800 mb-4 flex items-center gap-2">
@@ -530,8 +526,7 @@ export default function KYCDetailPage() {
         </div>
       )}
 
-      {/* ── Reject reason box ────────────────────────────────────────────────── */}
-      {showRejectBox && (
+       {showRejectBox && (
         <div ref={rejectBoxRef} className="bg-white rounded-2xl border border-red-100 p-4 sm:p-5 shadow-sm mb-5">
           <h3 className="text-sm font-semibold text-red-700 mb-3">
             Rejection reason <span className="text-xs font-normal text-slate-400">(required)</span>
@@ -565,8 +560,7 @@ export default function KYCDetailPage() {
         </div>
       )}
 
-      {/* ── Block reason box ─────────────────────────────────────────────────── */}
-      {showBlockBox && (
+       {showBlockBox && (
         <div ref={blockBoxRef} className="bg-white rounded-2xl border border-orange-100 p-4 sm:p-5 shadow-sm mb-5">
           <h3 className="text-sm font-semibold text-orange-700 mb-3">
             Block reason <span className="text-xs font-normal text-slate-400">(required)</span>
@@ -598,8 +592,7 @@ export default function KYCDetailPage() {
         </div>
       )}
 
-      {/* ── Block confirmation modal ─────────────────────────────────────────── */}
-      {showBlockConfirm && (
+       {showBlockConfirm && (
         <BlockConfirmModal
           driverName={driver.name}
           blockReason={blockReason}
@@ -609,8 +602,7 @@ export default function KYCDetailPage() {
         />
       )}
 
-      {/* ── Document preview modal ───────────────────────────────────────────── */}
-      {previewDoc && (
+       {previewDoc && (
         <div
           className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 sm:p-6"
           onClick={() => setPreviewDoc(null)}

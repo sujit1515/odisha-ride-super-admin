@@ -1,9 +1,9 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import AdminShell from '@/components/Common/AdminShell'
-import { Check, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { getAllDrivers, approveDriver, rejectDriver } from '../../api/kyc'
+import { MoreVertical } from 'lucide-react'
+import { useEffect, useState, useRef } from 'react'
+import { getAllDrivers } from '../../api/kyc'
 import type { KYCStatus, KYCEntry } from '@/api/types/types'
 
 // ── Helper 
@@ -13,15 +13,25 @@ const pill = (s: KYCStatus): string => {
   return 'bg-amber-100 text-amber-700'
 }
 
-// ── Main Page ─────────────────────────────────────────────────────────────────
-export default function KYCPage() {
+ export default function KYCPage() {
   const router = useRouter()
-  const [drivers, setDrivers]           = useState<KYCEntry[]>([])
-  const [loading, setLoading]           = useState(true)
-  const [error, setError]               = useState<string | null>(null)
-  const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [drivers, setDrivers] = useState<KYCEntry[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [openMenu, setOpenMenu] = useState<string | null>(null)
+  const menuRef = useRef<HTMLTableCellElement>(null)
 
   useEffect(() => { fetchDrivers() }, [])
+
+  useEffect(() => {
+  const handleClickOutside = (e: MouseEvent) => {
+    if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+      setOpenMenu(null)
+    }
+  }
+  document.addEventListener('mousedown', handleClickOutside)
+  return () => document.removeEventListener('mousedown', handleClickOutside)
+}, [])
 
   const fetchDrivers = async () => {
     try {
@@ -40,63 +50,31 @@ export default function KYCPage() {
 
   const transformDriverData = (apiData: any[]): KYCEntry[] => {
     return apiData.map((driver: any) => ({
-      id:            driver._id,
-      driverId:      driver.driverId,
-      driver:        driver.fullName,
-      email:         driver.email,
-      phone:         driver.phone,
-      submitted:     new Date(driver.createdAt).toLocaleDateString(),
-      docs:          'Aadhaar, DL',
+      id: driver._id,
+      driverId: driver.driverId,
+      driver: driver.fullName,
+      email: driver.email,
+      phone: driver.phone,
+      submitted: new Date(driver.createdAt).toLocaleDateString(),
+      docs: 'Aadhaar, DL',
       aadhaarNumber: driver.aadhaarNumber,
       vehicleNumber: driver.vehicleNumber,
       licenseNumber: driver.licenseNumber,
-      profilePhoto:  driver.profileImage  || '',
-      aadhaarDoc:    driver.aadhaarImage  || '',
-      licenseDoc:    driver.licenseImage  || '',
+      profilePhoto: driver.profileImage || '',
+      aadhaarDoc: driver.aadhaarImage || '',
+      licenseDoc: driver.licenseImage || '',
       status:
         driver.status === 'approved' ? 'Approved'
-        : driver.status === 'rejected' ? 'Rejected'
-        : 'Pending',
+          : driver.status === 'rejected' ? 'Rejected'
+            : 'Pending',
     }))
   }
 
-  const handleApprove = async (e: React.MouseEvent, driverId: string) => {
-    e.stopPropagation()
-    setActionLoading(driverId)
-    try {
-      await approveDriver(driverId, { note: 'Approved by admin' })
-      setDrivers(prev => prev.map(d =>
-        d.driverId === driverId ? { ...d, status: 'Approved' as KYCStatus } : d
-      ))
-    } catch (error) {
-      console.error('Error approving driver:', error)
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const handleReject = async (e: React.MouseEvent, driverId: string) => {
-    e.stopPropagation()
-    const reason = prompt('Please enter rejection reason:')
-    if (!reason) return
-    setActionLoading(driverId)
-    try {
-      await rejectDriver(driverId, { reason })
-      setDrivers(prev => prev.map(d =>
-        d.driverId === driverId ? { ...d, status: 'Rejected' as KYCStatus } : d
-      ))
-    } catch (error) {
-      console.error('Error rejecting driver:', error)
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
+   
   const handleRowClick = (driverId: string) => {
     router.push(`/kyc-review/${driverId}`)
   }
 
-  // ── Loading ───────────────────────────────────────────────────────────────
   if (loading) {
     return (
       <AdminShell title="KYC Review">
@@ -112,8 +90,7 @@ export default function KYCPage() {
     )
   }
 
-  // ── Error ─────────────────────────────────────────────────────────────────
-  if (error) {
+   if (error) {
     return (
       <AdminShell title="KYC Review">
         <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
@@ -131,8 +108,8 @@ export default function KYCPage() {
     )
   }
 
-  // ── Main render ───────────────────────────────────────────────────────────
-  return (
+  
+   return (
     <AdminShell title="KYC Review">
       <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 overflow-x-auto">
         <div className="flex justify-between items-center mb-4">
@@ -176,29 +153,23 @@ export default function KYCPage() {
                       {k.status}
                     </span>
                   </td>
-                  <td className="px-3 py-3" onClick={e => e.stopPropagation()}>
-                    {k.status === 'Pending' ? (
-                      <div className="flex gap-2">
+                  <td className="px-3 py-3 relative" ref={openMenu === k.driverId ? menuRef : null} onClick={e => e.stopPropagation()}>
+                    <button
+                      onClick={() => setOpenMenu(openMenu === k.driverId ? null : k.driverId)}
+                      className="p-1.5 rounded-md hover:bg-slate-100"
+                    >
+                      <MoreVertical className="h-4 w-4 text-slate-500" />
+                    </button>
+
+                    {openMenu === k.driverId && (
+                      <div className="absolute right-3 top-10 z-10 bg-white border border-slate-100 rounded-lg shadow-md py-1 w-40">
                         <button
-                          onClick={e => handleApprove(e, k.driverId)}
-                          disabled={actionLoading === k.driverId}
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-emerald-600 text-white text-xs font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          onClick={() => { setOpenMenu(null); router.push(`/kyc-review/${k.driverId}`) }}
+                          className="w-full text-left px-3 py-2 text-xs text-blue-600 hover:bg-blue-50"
                         >
-                          {actionLoading === k.driverId
-                            ? <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white" />
-                            : <Check className="h-3.5 w-3.5" />}
-                          Approve
-                        </button>
-                        <button
-                          onClick={e => handleReject(e, k.driverId)}
-                          disabled={actionLoading === k.driverId}
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-red-600 text-white text-xs font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <X className="h-3.5 w-3.5" /> Reject
+                          View driver detail
                         </button>
                       </div>
-                    ) : (
-                      <span className="text-xs text-slate-400">—</span>
                     )}
                   </td>
                 </tr>
