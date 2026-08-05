@@ -1,9 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import {
-  Save, CheckCircle, AlertCircle,
-  Bike, Car, Zap, Moon, CloudRain,
+import { Save, CheckCircle, AlertCircle,Bike, Car, Zap, Moon, CloudRain,
   Clock, IndianRupee, TrendingUp, Slash,
   Plus, Trash2, Settings2, Pencil, Users,
   Percent, Timer, Wallet, Receipt,
@@ -12,7 +10,7 @@ import { saveFareSettings, saveRideSettings } from '@/api/settings'
 import type { Settings } from './types'
 
 
-type TabId = 'global' | string
+type TabId = 'global' | string 
 
 interface Vehicle {
   id: string
@@ -185,7 +183,7 @@ function AddVehicleModal({ onAdd, onClose }: {
 }) {
   const [label, setLabel] = useState('')
   const [desc, setDesc] = useState('')
-  const [maxPassengers, setMaxPassengers] = useState(4)
+  const [maxPassengers, setMaxPassengers] = useState(4) 
 
   const handleAdd = () => {
     if (!label.trim()) return
@@ -370,8 +368,7 @@ export function FareTab({ settings, update }: {
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
 
 
-  // ── Sync vehicle list from API response (settings prop) ────────────────────
-  // The backend always provides settings.vehicles — no frontend defaults needed.
+   // The backend always provides settings.vehicles — no frontend defaults needed.
   useEffect(() => {
     setVehicles(settings.vehicles ?? [])
   }, [settings.vehicles])
@@ -395,9 +392,7 @@ export function FareTab({ settings, update }: {
     setVehicles(updated)
     if (activeTab === deleteConfirm.id) setActiveTab('global')
     setDeleteConfirm(null)
-    // Auto-save immediately so the deletion persists
-    // We call handleSave via a small timeout so React state is flushed first
-    setTimeout(() => handleSave(updated), 50)
+     setTimeout(() => handleSave(updated), 50)
   }
 
   // ── helper ───────────────────────────────────────────
@@ -418,8 +413,6 @@ export function FareTab({ settings, update }: {
 
 
   // ── Save ─────────────────────────────────────────────
-  // Accepts an optional `overrideVehicles` so confirmDelete can pass
-  // the already-filtered list before React re-renders.
   const handleSave = async (overrideVehicles?: Vehicle[]) => {
     const vehiclesToSave = overrideVehicles ?? vehicles
     setSaving(true)

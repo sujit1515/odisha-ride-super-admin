@@ -23,6 +23,10 @@ import {
   ShieldAlert,
   CalendarClock,
   Clock,
+  CreditCard,
+  History,
+  Receipt,
+  TrendingUp,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect, useState } from 'react'
@@ -71,6 +75,18 @@ const nav: NavItem[] = [
     ],
   },
   { href: '/earnings', label: 'Earnings', icon: Wallet },
+  {
+    href: '/payments',
+    label: 'Payments',
+    icon: CreditCard,
+    children: [
+      { href: '/payments', label: 'Commission Dashboard', icon: List },
+      { href: '/payments/history', label: 'Payment History', icon: History },
+      { href: '/payments/transactions', label: 'Ride Commissions', icon: Receipt },
+      { href: '/payments/analytics', label: 'Analytics', icon: TrendingUp },
+      { href: '/payments/settings', label: 'Payment Settings', icon: Settings },
+    ],
+  },
   { href: '/live-map', label: 'Live Map', icon: Map },
   { href: '/kyc-review', label: 'KYC Review', icon: ShieldCheck },
   { href: '/blocked-drivers', label: 'Drivers', icon: UserX, isDanger: true },
