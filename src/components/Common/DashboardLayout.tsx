@@ -32,7 +32,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   // To prevent visual jump/flicker during initial page hydration,
   // we align with the default expanded layout (220px) and transition smoothly only after mount/transition activation.
-  const sidebarWidthClass = isCollapsed ? 'lg:pl-[80px]' : 'lg:pl-[220px]'
+  const sidebarWidthClass = isCollapsed ? 'lg:pl-[80px]' : 'lg:pl-[190px]'
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 overflow-x-hidden">
@@ -48,7 +48,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Main Panel Content Area */}
       <div
         className={`flex flex-col min-h-screen ${transitionEnabled ? 'transition-[padding-left] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]' : ''
-          } ${mounted ? sidebarWidthClass : 'lg:pl-[220px]'}`}
+          } ${mounted ? sidebarWidthClass : 'lg:pl-[190px]'}`}
       >
         <Navbar title={title} onMenuClick={toggleSidebar} isSidebarCollapsed={isCollapsed} />
         <main className="flex-1 p-4 md:p-8 w-full">

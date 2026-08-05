@@ -71,7 +71,7 @@ const nav: NavItem[] = [
     icon: Users,
     children: [
       { href: '/passengers', label: 'All Passengers', icon: List },
-      { href: '/passengers/waiting', label: 'Passengers Waiting', icon: Clock },
+      { href: '/passengers/waiting', label: 'Waiting List', icon: Clock },
     ],
   },
   { href: '/earnings', label: 'Earnings', icon: Wallet },
@@ -80,11 +80,11 @@ const nav: NavItem[] = [
     label: 'Payments',
     icon: CreditCard,
     children: [
-      { href: '/payments', label: 'Commission Dashboard', icon: List },
+      { href: '/payments', label: 'Commission Hub', icon: List },
       { href: '/payments/history', label: 'Payment History', icon: History },
       { href: '/payments/transactions', label: 'Ride Commissions', icon: Receipt },
       { href: '/payments/analytics', label: 'Analytics', icon: TrendingUp },
-      { href: '/payments/settings', label: 'Payment Settings', icon: Settings },
+      { href: '/payments/settings', label: 'Settings', icon: Settings },
     ],
   },
   { href: '/live-map', label: 'Live Map', icon: Map },
@@ -150,11 +150,9 @@ export default function Sidebar({
       sessionStorage.clear()
       router.push('/login')
     }
-  }
-
-  // Animation variants for desktop width
+  }  // Animation variants for desktop width
   const sidebarWidthVariants = {
-    expanded: { width: 220 },
+    expanded: { width: 190 },
     collapsed: { width: 80 },
   }
 
@@ -169,20 +167,20 @@ export default function Sidebar({
     <div className="h-full flex flex-col bg-white border-r border-slate-200 shadow-sm select-none overflow-x-hidden">
       {/* Logo Area — fixed height so open/close does not jump vertically */}
       <div
-        className={`h-[72px] pt-6 pb-4 flex items-center shrink-0 ${collapsed ? 'justify-center px-2' : 'justify-between px-6'
+        className={`h-[64px] pt-4 pb-3 flex items-center shrink-0 ${collapsed ? 'justify-center px-2' : 'justify-between px-4'
           }`}
       >
         {collapsed ? (
           <div
-            className="flex items-center justify-center h-10 w-10 rounded-xl bg-blue-600 text-white font-bold text-lg shadow-md cursor-pointer"
+            className="flex items-center justify-center h-9 w-9 rounded-xl bg-blue-600 text-white font-bold text-base shadow-md cursor-pointer"
             onClick={onExpandRequest}
           >
             OR
           </div>
         ) : (
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-bold text-blue-600 leading-tight truncate">Odisha Ride</h1>
-            <p className="text-xs text-slate-500 mt-0.5 font-medium truncate">Super Admin Panel</p>
+            <h1 className="text-lg font-bold text-blue-600 leading-tight truncate">Odisha Ride</h1>
+            <p className="text-[11px] text-slate-500 mt-0.5 font-medium truncate">Super Admin Panel</p>
           </div>
         )}
         {!collapsed && isMobile && (
@@ -190,13 +188,13 @@ export default function Sidebar({
             onClick={onCloseMobile}
             className="p-1.5 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         )}
       </div>
 
       {/* Nav Link List */}
-      <nav className={`flex-1 px-3 pt-6 space-y-1 overflow-y-auto overflow-x-hidden ${collapsed ? 'px-2' : 'px-3'}`}>
+      <nav className={`flex-1 px-2.5 pt-4 space-y-1 overflow-y-auto overflow-x-hidden ${collapsed ? 'px-2' : 'px-2.5'}`}>
         {nav.map((item) => (
           <SidebarItem
             key={item.href ?? item.label}
@@ -214,7 +212,7 @@ export default function Sidebar({
       </nav>
 
       {/* Logout Row at bottom */}
-      <div className={`p-3 border-t border-slate-150 ${collapsed ? 'p-2' : 'p-3'}`}>
+      <div className={`p-2.5 border-t border-slate-150 ${collapsed ? 'p-2' : 'p-2.5'}`}>
         <SidebarItem
           label="Logout"
           icon={LogOut}
@@ -248,7 +246,7 @@ export default function Sidebar({
         animate={isMobileOpen ? 'open' : 'closed'}
         variants={mobileSlideVariants}
         transition={{ duration: 0.3, ease: 'easeOut' }}
-        className="fixed top-0 left-0 z-50 h-screen w-[220px] lg:hidden flex flex-col shadow-2xl"
+        className="fixed top-0 left-0 z-50 h-screen w-[190px] lg:hidden flex flex-col shadow-2xl"
       >
         {/* On mobile, it's always expanded visually (width 260px) */}
         {renderSidebarContent(false, true)}

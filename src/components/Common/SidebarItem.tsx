@@ -133,7 +133,7 @@ export default function SidebarItem({
     </>
   )
 
-  const commonClasses = `relative flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 w-full h-11 ${active
+  const commonClasses = `relative flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 w-full h-10 ${active
     ? isDanger
       ? 'text-red-700'
       : 'text-blue-700'
@@ -148,7 +148,7 @@ export default function SidebarItem({
       {hasSubmenu ? (
         <button
           onClick={handleParentClick}
-          className={`w-full relative flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 cursor-pointer h-11 ${active
+          className={`w-full relative flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 cursor-pointer h-10 ${active
             ? 'text-blue-700'
             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
             } ${isCollapsed ? 'justify-center px-0' : ''}`}
@@ -209,7 +209,7 @@ export default function SidebarItem({
               transition={transitionEnabled ? undefined : { duration: 0 }}
               className="overflow-hidden"
             >
-              <div className="ml-4 mt-1.5 space-y-0.5 border-l-2 border-slate-100 pl-3">
+              <div className="ml-4 mt-1 space-y-0.5 border-l border-slate-200 pl-2">
                 {children.map((child) => {
                   const childActive = pathname === child.href
                   const CIcon = child.icon
@@ -218,8 +218,8 @@ export default function SidebarItem({
                       key={child.href}
                       href={child.href}
                       onClick={onClick}
-                      className={`relative flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors duration-150 ${childActive
-                          ? 'text-blue-700 font-medium'
+                      className={`relative flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs transition-colors duration-150 ${childActive
+                          ? 'text-blue-700 font-semibold'
                           : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
                         }`}
                     >
