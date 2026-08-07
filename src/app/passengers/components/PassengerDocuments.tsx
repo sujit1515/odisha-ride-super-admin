@@ -1,7 +1,7 @@
 'use client'
 
 import { FileText, CheckCircle2, Clock, XCircle } from 'lucide-react'
-import { Document } from '../types'
+import { Document } from '../[id]/types'
 
 interface PassengerDocumentsProps {
   documents: Document[]

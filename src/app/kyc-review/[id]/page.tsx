@@ -127,6 +127,7 @@ const docBg = (s: DocStatus) => {
   const [loading, setLoading]                 = useState(true)
   const [error, setError]                     = useState<string | null>(null)
   const [rejectReason, setRejectReason]       = useState('')
+  const [flaggedDocuments, setFlaggedDocuments] = useState<string[]>([])
   const [showRejectBox, setShowRejectBox]     = useState(false)
   const [showBlockBox, setShowBlockBox]       = useState(false)
   const [blockReason, setBlockReason]         = useState('')
@@ -255,13 +256,15 @@ const docBg = (s: DocStatus) => {
   }
 
   const handleReject = async () => {
+    if (flaggedDocuments.length === 0) { alert('Please select at least one document that needs re-upload'); return }
     if (!rejectReason.trim()) { alert('Please provide a rejection reason'); return }
     setActionLoading(true)
     try {
-      await rejectDriver(id, { reason: rejectReason })
+      await rejectDriver(id, { reason: rejectReason, flaggedDocuments })
       setStatus('Rejected')
       setShowRejectBox(false)
       setRejectReason('')
+      setFlaggedDocuments([])
       await fetchDriverDetails()
     } catch {
       alert('Failed to reject driver. Please try again.')
@@ -528,8 +531,48 @@ const docBg = (s: DocStatus) => {
 
        {showRejectBox && (
         <div ref={rejectBoxRef} className="bg-white rounded-2xl border border-red-100 p-4 sm:p-5 shadow-sm mb-5">
-          <h3 className="text-sm font-semibold text-red-700 mb-3">
-            Rejection reason <span className="text-xs font-normal text-slate-400">(required)</span>
+          <h3 className="text-sm font-semibold text-red-700 mb-2">
+            Reject Driver Application
+          </h3>
+          <p className="text-xs text-slate-500 mb-3">Select which document(s) need to be re-uploaded:</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+            {[
+              { id: 'profileImage', label: 'Profile Photo' },
+              { id: 'aadhaarImage', label: 'Aadhaar Image' },
+              { id: 'licenseImage', label: 'License Image' },
+              { id: 'rcImage', label: 'RC Document' },
+            ].map(doc => {
+              const isChecked = flaggedDocuments.includes(doc.id)
+              return (
+                <label
+                  key={doc.id}
+                  onClick={() => {
+                    if (isChecked) {
+                      setFlaggedDocuments(flaggedDocuments.filter(id => id !== doc.id))
+                    } else {
+                      setFlaggedDocuments([...flaggedDocuments, doc.id])
+                    }
+                  }}
+                  className={`flex items-center gap-2 p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${
+                    isChecked
+                      ? 'border-red-300 bg-red-50 text-red-900 font-medium'
+                      : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => {}}
+                    className="w-3.5 h-3.5 text-red-600 rounded border-slate-300"
+                  />
+                  <span>{doc.label}</span>
+                </label>
+              )
+            })}
+          </div>
+
+          <h3 className="text-xs font-semibold text-slate-700 mb-1">
+            Rejection reason explanation <span className="text-xs font-normal text-slate-400">(required)</span>
           </h3>
           <textarea
             value={rejectReason}
@@ -542,7 +585,7 @@ const docBg = (s: DocStatus) => {
           <div className="flex flex-col sm:flex-row gap-3 mt-3">
             <button
               onClick={handleReject}
-              disabled={!rejectReason.trim() || actionLoading}
+              disabled={flaggedDocuments.length === 0 || !rejectReason.trim() || actionLoading}
               className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {actionLoading
@@ -551,7 +594,7 @@ const docBg = (s: DocStatus) => {
               Confirm rejection
             </button>
             <button
-              onClick={() => { setShowRejectBox(false); setRejectReason('') }}
+              onClick={() => { setShowRejectBox(false); setRejectReason(''); setFlaggedDocuments([]) }}
               className="px-4 py-2 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50"
             >
               Cancel

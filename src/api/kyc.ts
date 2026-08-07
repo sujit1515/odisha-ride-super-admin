@@ -26,8 +26,13 @@ export const approveDriver = async (driverId: string, data: { note?: string }) =
     return res.data;
 };
 
+export const getResubmittedDrivers = async () => {
+    const res = await adminApi.get("/admin/drivers/resubmitted");
+    return res.data;
+};
+
 // changed: /admin/drivers/reject/by-driver-id/ODR-DRV-000003
-export const rejectDriver = async (driverId: string, data: { reason: string }) => {
+export const rejectDriver = async (driverId: string, data: { reason: string; flaggedDocuments?: string[] }) => {
     const res = await adminApi.put(`/admin/drivers/reject/by-driver-id/${driverId}`, data);
     return res.data;
 };

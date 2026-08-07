@@ -1,32 +1,32 @@
 'use client'
 
 import { Clock, Car, CheckCircle2, XCircle } from 'lucide-react'
-import { RecentRide } from '../types'
+import { RecentRide } from '../[id]/types'
 
-interface PassengerRideHistoryProps {
+interface DriverRideHistoryProps {
   rides: RecentRide[]
 }
 
-export function PassengerRideHistory({ rides }: PassengerRideHistoryProps) {
+export function DriverRideHistory({ rides }: DriverRideHistoryProps) {
   return (
     <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
       <div className="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
         <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
           <Clock className="h-4 w-4 text-blue-500" />
-          Ride History ({rides.length} rides)
+          Recent Ride History ({rides.length} rides)
         </h3>
       </div>
       {rides.length === 0 ? (
         <div className="text-center py-12">
           <Car className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-          <p className="text-sm text-slate-500">No ride history found for this passenger</p>
+          <p className="text-sm text-slate-500">No ride history found for this driver</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-slate-50">
               <tr className="border-b border-slate-200">
-                {['Ride ID', 'Driver', 'Pickup', 'Drop', 'Distance', 'Fare', 'Date', 'Status'].map(h => (
+                {['Ride ID', 'Customer', 'Pickup', 'Drop', 'Distance', 'Fare', 'Date', 'Status'].map(h => (
                   <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wide">
                     {h}
                   </th>
@@ -39,7 +39,7 @@ export function PassengerRideHistory({ rides }: PassengerRideHistoryProps) {
                   <td className="px-4 py-3 text-xs font-mono font-medium text-blue-600">
                     {ride.rideId}
                    </td>
-                  <td className="px-4 py-3 text-sm text-slate-700">{ride.driverName || '—'}</td>
+                  <td className="px-4 py-3 text-sm text-slate-700">{ride.customerName || '—'}</td>
                   <td className="px-4 py-3 text-sm text-slate-600 max-w-[150px] truncate" title={ride.pickup}>{ride.pickup}</td>
                   <td className="px-4 py-3 text-sm text-slate-600 max-w-[150px] truncate" title={ride.drop}>{ride.drop}</td>
                   <td className="px-4 py-3 text-sm text-slate-600">{ride.distance ? `${ride.distance} km` : '—'}</td>

@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowLeft, User, Car, FileText, CreditCard, CheckCircle2, XCircle, Ban, Unlock } from 'lucide-react'
-import { Passenger } from '../types'
+import { Passenger } from '../[id]/types'
 
 interface PassengerHeaderProps {
   passenger: Passenger

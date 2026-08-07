@@ -1,7 +1,7 @@
 'use client'
 
 import { Phone, Mail, MapPin, Calendar, Star } from 'lucide-react'
-import { Driver } from '../types'
+import { Driver } from '../[id]/types'
 
 interface DriverProfileCardProps {
   driver: Driver

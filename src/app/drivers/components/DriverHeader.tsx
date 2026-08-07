@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowLeft, CheckCircle2, XCircle, Ban, Unlock, User, Car, FileText, CreditCard } from 'lucide-react'
-import { Driver } from '../types'
+import { Driver } from '../[id]/types'
 
 interface DriverHeaderProps {
   driver: Driver

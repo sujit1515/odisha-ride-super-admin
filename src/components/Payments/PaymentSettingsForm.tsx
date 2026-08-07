@@ -50,7 +50,7 @@ export default function PaymentSettingsForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl">
+    <form onSubmit={handleSubmit} className="space-y-6 w-full">
       {/* Header Info Banner */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

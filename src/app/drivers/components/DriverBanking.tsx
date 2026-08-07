@@ -1,7 +1,7 @@
 'use client'
 
 import { CreditCard } from 'lucide-react'
-import { Driver } from '../types'
+import { Driver } from '../[id]/types'
 
 interface DriverBankingProps {
   driver: Driver

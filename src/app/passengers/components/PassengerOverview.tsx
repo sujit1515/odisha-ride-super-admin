@@ -1,7 +1,7 @@
 'use client'
 
 import { TrendingUp, IndianRupee, Award, Star, Calendar, MapPin } from 'lucide-react'
-import { Passenger } from '../types'
+import { Passenger } from '../[id]/types'
 
 interface PassengerOverviewProps {
   passenger: Passenger

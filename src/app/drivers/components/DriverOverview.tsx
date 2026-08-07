@@ -1,7 +1,7 @@
 'use client'
 
 import { TrendingUp, IndianRupee, Award, XCircle, CheckCircle2, AlertCircle } from 'lucide-react'
-import { Driver } from '../types'
+import { Driver } from '../[id]/types'
 
 interface DriverOverviewProps {
   driver: Driver

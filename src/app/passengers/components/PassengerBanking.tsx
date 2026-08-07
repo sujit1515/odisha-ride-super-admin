@@ -1,7 +1,7 @@
 'use client'
 
 import { CreditCard } from 'lucide-react'
-import { Passenger } from '../types'
+import { Passenger } from '../[id]/types'
 
 interface PassengerBankingProps {
   passenger: Passenger

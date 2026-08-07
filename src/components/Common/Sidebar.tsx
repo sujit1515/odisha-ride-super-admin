@@ -27,6 +27,7 @@ import {
   History,
   Receipt,
   TrendingUp,
+  RotateCcw,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect, useState } from 'react'
@@ -63,6 +64,7 @@ const nav: NavItem[] = [
     children: [
       { href: '/drivers', label: 'All Drivers', icon: List },
       { href: '/drivers/online', label: 'Online Drivers', icon: Radio },
+      { href: '/drivers/resubmitted', label: 'Resubmitted Applications', icon: RotateCcw },
     ],
   },
   {

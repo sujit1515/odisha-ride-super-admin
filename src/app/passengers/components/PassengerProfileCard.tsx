@@ -1,7 +1,7 @@
 'use client'
 
 import { Phone, Mail, MapPin, Calendar, Star, Award } from 'lucide-react'
-import { Passenger } from '../types'
+import { Passenger } from '../[id]/types'
 
 interface PassengerProfileCardProps {
   passenger: Passenger

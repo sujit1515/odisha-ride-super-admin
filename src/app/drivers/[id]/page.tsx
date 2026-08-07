@@ -6,15 +6,15 @@ import AdminShell from '@/components/Common/AdminShell'
 import { RefreshCw, AlertTriangle } from 'lucide-react'
 
 // Components
-import { DriverHeader } from './components/DriverHeader'
-import { DriverProfileCard } from './components/DriverProfileCard'
-import { DriverVehicleCard } from './components/DriverVehicleCard'
-import { DriverOverview } from './components/DriverOverview'
-import { DriverRideHistory } from './components/DriverRideHistory'
-import { DriverDocuments } from './components/DriverDocuments'
-import { DriverBanking } from './components/DriverBanking'
-import { BlockModal } from './components/BlockModal'
-import { RejectModal } from './components/RejectModal'
+import { DriverHeader } from '../components/DriverHeader'
+import { DriverProfileCard } from '../components/DriverProfileCard'
+import { DriverVehicleCard } from '../components/DriverVehicleCard'
+import { DriverOverview } from '../components/DriverOverview'
+import { DriverRideHistory } from '../components/DriverRideHistory'
+import { DriverDocuments } from '../components/DriverDocuments'
+import { DriverBanking } from '../components/DriverBanking'
+import { BlockModal } from '../components/BlockModal'
+import { RejectModal } from '../components/RejectModal'
 import { getDriverProfile } from '@/api/driver';
 import { blockDriver, unblockDriver, approveDriver, rejectDriver } from '@/api/kyc'
 
@@ -33,6 +33,7 @@ export default function DriverDetailPage() {
   const [showRejectModal, setShowRejectModal] = useState(false)
   const [blockReason,     setBlockReason    ] = useState('')
   const [rejectReason,    setRejectReason   ] = useState('')
+  const [flaggedDocuments, setFlaggedDocuments] = useState<string[]>([])
   const [activeTab,       setActiveTab      ] = useState<'overview' | 'rides' | 'documents' | 'banking'>('overview')
   const [toast,           setToast          ] = useState<ToastState | null>(null)
 
@@ -87,19 +88,24 @@ export default function DriverDetailPage() {
   // ── Reject ───────────────────────────────────────────────
   const handleReject = async () => {
     if (!driver) return
+    if (flaggedDocuments.length === 0) {
+      showToast('Please select at least one document that needs re-upload', 'error')
+      return
+    }
     if (!rejectReason.trim()) {
       showToast('Please provide a rejection reason', 'error')
       return
     }
     setIsLoading(true)
     try {
-      await rejectDriver(driver.driverId, { reason: rejectReason })
+      await rejectDriver(driver.driverId, { reason: rejectReason, flaggedDocuments })
       setDriver(prev => prev
         ? { ...prev, status: 'rejected', isApproved: false, rejectionReason: rejectReason }
         : prev
       )
       setShowRejectModal(false)
       setRejectReason('')
+      setFlaggedDocuments([])
       showToast('Driver rejected successfully!', 'success')
     } catch (err: any) {
       showToast(
@@ -290,8 +296,10 @@ export default function DriverDetailPage() {
           driverName={driver.fullName}
           reason={rejectReason}
           onReasonChange={setRejectReason}
+          flaggedDocuments={flaggedDocuments}
+          onFlaggedDocumentsChange={setFlaggedDocuments}
           onConfirm={handleReject}
-          onClose={() => { setShowRejectModal(false); setRejectReason('') }}
+          onClose={() => { setShowRejectModal(false); setRejectReason(''); setFlaggedDocuments([]) }}
           isLoading={isLoading}
         />
       </div>

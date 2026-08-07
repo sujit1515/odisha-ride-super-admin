@@ -1,9 +1,9 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import AdminShell from '@/components/Common/AdminShell'
-import { MoreVertical } from 'lucide-react'
+import { MoreVertical, RotateCcw } from 'lucide-react'
 import { useEffect, useState, useRef } from 'react'
-import { getAllDrivers } from '../../api/kyc'
+import { getAllDrivers, getResubmittedDrivers } from '../../api/kyc'
 import type { KYCStatus, KYCEntry } from '@/api/types/types'
 
 // ── Helper 
@@ -16,12 +16,27 @@ const pill = (s: KYCStatus): string => {
  export default function KYCPage() {
   const router = useRouter()
   const [drivers, setDrivers] = useState<KYCEntry[]>([])
+  const [resubmittedCount, setResubmittedCount] = useState<number>(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
   const menuRef = useRef<HTMLTableCellElement>(null)
 
-  useEffect(() => { fetchDrivers() }, [])
+  useEffect(() => {
+    fetchDrivers()
+    fetchResubmittedCount()
+    window.addEventListener('focus', fetchResubmittedCount)
+    return () => window.removeEventListener('focus', fetchResubmittedCount)
+  }, [])
+
+  const fetchResubmittedCount = async () => {
+    try {
+      const data = await getResubmittedDrivers()
+      setResubmittedCount(data.total || 0)
+    } catch (err) {
+      console.error('Error fetching resubmitted count:', err)
+    }
+  }
 
   useEffect(() => {
   const handleClickOutside = (e: MouseEvent) => {
@@ -114,9 +129,21 @@ const pill = (s: KYCStatus): string => {
       <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 overflow-x-auto">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-slate-800">Driver KYC Applications</h3>
-          <span className="text-sm text-slate-500">
-            {drivers.filter(k => k.status === 'Pending').length} pending
-          </span>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push('/drivers/resubmitted')}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold hover:bg-amber-100 transition-colors shadow-2xs"
+            >
+              <RotateCcw className="h-3.5 w-3.5 text-amber-600" />
+              Resubmitted
+              <span className="inline-flex items-center justify-center px-2 py-0.5 text-[11px] font-bold bg-amber-500 text-white rounded-full">
+                {resubmittedCount}
+              </span>
+            </button>
+            <span className="text-sm text-slate-500">
+              {drivers.filter(k => k.status === 'Pending').length} pending
+            </span>
+          </div>
         </div>
 
         {drivers.length === 0 ? (

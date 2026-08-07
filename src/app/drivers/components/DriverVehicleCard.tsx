@@ -1,7 +1,7 @@
 'use client'
 
 import { Car } from 'lucide-react'
-import { Driver } from '../types'
+import { Driver } from '../[id]/types'
 
 interface DriverVehicleCardProps {
   driver: Driver
