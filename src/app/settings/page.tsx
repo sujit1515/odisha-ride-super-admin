@@ -5,7 +5,7 @@ import AdminShell from '@/components/Common/AdminShell'
 import { getSettings, updateAutoApprove } from '@/api/settings'
 import {
   Building2, DollarSign, Car, UserCheck, Wallet, Bell, ShieldCheck,
-  CheckCircle2, AlertTriangle, Loader2,
+  CheckCircle, AlertCircle, Loader2,
 } from 'lucide-react'
 
 import { Settings, DEFAULTS } from '@/components/Settings/types'
@@ -91,10 +91,10 @@ export default function SettingsPage() {
 
       {/* ── Toast ── */}
       {toast && (
-        <div className={`fixed top-4 right-4 z-50 flex items-center gap-2 px-5 py-3
-                         rounded-xl text-white text-sm font-medium shadow-lg
-                         ${toast.ok ? 'bg-emerald-500' : 'bg-red-500'}`}>
-          {toast.ok ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
+        <div className={`fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-3
+                         rounded-xl shadow-lg text-sm font-medium text-white
+                         ${toast.ok ? 'bg-green-600' : 'bg-red-500'}`}>
+          {toast.ok ? <CheckCircle className="h-4 w-4 shrink-0" /> : <AlertCircle className="h-4 w-4 shrink-0" />}
           {toast.msg}
         </div>
       )}

@@ -474,9 +474,9 @@ export function FareTab({ settings, update }: {
       {/* ── Toast ── */}
       {toast && (
         <div className={`fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-3
-                         rounded-xl shadow-lg text-sm font-semibold text-white
-                         ${toast.type === 'success' ? 'bg-[#1A73E8]' : 'bg-red-500'}`}>
-          {toast.type === 'success' ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
+                         rounded-xl shadow-lg text-sm font-medium text-white
+                         ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-500'}`}>
+          {toast.type === 'success' ? <CheckCircle className="h-4 w-4 shrink-0" /> : <AlertCircle className="h-4 w-4 shrink-0" />}
           {toast.msg}
         </div>
       )}
