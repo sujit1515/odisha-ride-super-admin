@@ -36,7 +36,7 @@ export default function CompletedRidesPage() {
   const totalFare = rides.reduce((sum, r) => sum + (r.finalFare ?? r.estimatedFare ?? 0), 0)
   const avgFare = rides.length ? Math.round(totalFare / rides.length) : 0
 
- const fetchRides = useCallback(async () => {
+  const fetchRides = useCallback(async () => {
     setLoading(true)
     setError('')
     try {

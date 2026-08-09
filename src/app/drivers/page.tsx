@@ -57,7 +57,7 @@ function Avatar({ name, avatarUrl, size = "md" }: {
       {initials}
     </div>
   );
-} 
+}
 
 function SkeletonRow() {
   return (
@@ -630,7 +630,7 @@ export default function DriversPage() {
                                   View Profile
                                 </button>
                                 <button
-                                  onClick={() => {router.push(`/drivers/${driver.driverId}`); setOpenMenuId(null); }}
+                                  onClick={() => { router.push(`/drivers/${driver.driverId}`); setOpenMenuId(null); }}
                                   className="w-full text-left px-4 py-2 text-sm text-blue-600
            hover:bg-blue-50 transition-colors">
                                   View Driver Detail

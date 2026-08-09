@@ -21,6 +21,7 @@ interface Vehicle {
   baseFare: number
   minFare: number
   perKmRate: number
+  perMinuteRate: number   
   baseDistance: number
   waitTimeFee: number
   freeWaitMinutes: number
@@ -185,13 +186,13 @@ function AddVehicleModal({ onAdd, onClose }: {
   const [desc, setDesc] = useState('')
   const [maxPassengers, setMaxPassengers] = useState(4) 
 
-  const handleAdd = () => {
+ const handleAdd = () => {
     if (!label.trim()) return
     onAdd({
       id: label.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now(),
       label, desc, maxPassengers,
       accent: 'bg-slate-50 border-slate-200',
-      baseFare: 0, minFare: 0, perKmRate: 0,
+      baseFare: 0, minFare: 0, perKmRate: 0, perMinuteRate: 0,
       baseDistance: 1.5, waitTimeFee: 2, freeWaitMinutes: 3,
     })
     onClose()
@@ -399,10 +400,11 @@ export function FareTab({ settings, update }: {
   const pickVehicle = (id: string) => {
     const v = vehicles.find(v => v.id === id)
     if (!v) return undefined
-    return {
+     return {
       baseFare: v.baseFare,
       minFare: v.minFare,
       perKmRate: v.perKmRate,
+      perMinuteRate: v.perMinuteRate,
       baseDistance: v.baseDistance,
       waitTimeFee: v.waitTimeFee,
       freeWaitMinutes: v.freeWaitMinutes,
@@ -421,7 +423,6 @@ export function FareTab({ settings, update }: {
       // PATCH /admin/settings/fare
       const farePayload = {
         cancellationFee: settings.cancellationFee,
-        perMinuteRate: settings.perMinuteRate,
         maxSurgeMultiplier: settings.maxSurgeMultiplier,
         freeCancellationWindow: settings.freeCancellationWindow,
         surgeEnabled: settings.surgeEnabled,
@@ -552,10 +553,7 @@ export function FareTab({ settings, update }: {
               <h3 className="text-sm font-bold text-[#1E293B]">Base Global Charges</h3>
               <p className="text-xs text-slate-400 ml-1">— applied to all vehicle types</p>
             </div>
-            <div className="grid grid-cols-2 gap-6">
-              <Field label="Per Minute Rate (₹)" hint="Applied during traffic / slow speed">
-                <NumInput value={settings.perMinuteRate} onChange={update('perMinuteRate')} />
-              </Field>
+             <div className="grid grid-cols-3 gap-6">
               <Field label="Cancellation Fee (₹)" hint="Charged after driver is assigned">
                 <NumInput value={settings.cancellationFee} onChange={update('cancellationFee')} />
               </Field>
@@ -828,12 +826,9 @@ export function FareTab({ settings, update }: {
                 <NumInput value={activeVehicle.perKmRate}
                   onChange={v => updateVehicle(activeVehicle.id, 'perKmRate', v)} />
               </Field>
-              <Field label="Per Minute Rate (₹)" hint="Shared — edit in Global tab">
-                <div className="relative">
-                  <NumInput value={settings.perMinuteRate} disabled />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px]
-                                   font-bold text-[#1A73E8]">Global</span>
-                </div>
+             <Field label="Per Minute Rate (₹)" hint="Charged per minute of ride time — differs per vehicle">
+                <NumInput value={activeVehicle.perMinuteRate}
+                  onChange={v => updateVehicle(activeVehicle.id, 'perMinuteRate', v)} />
               </Field>
             </div>
 

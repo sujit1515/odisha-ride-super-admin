@@ -16,7 +16,7 @@ const STATUS_STYLES: Record<string, string> = {
   requested: 'bg-blue-50 text-blue-700 border border-blue-200',
   accepted: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
   arrived: 'bg-purple-50 text-purple-700 border border-purple-200',
- started: 'bg-amber-50 text-amber-700 border border-amber-200',
+  started: 'bg-amber-50 text-amber-700 border border-amber-200',
 }
 
 const STATUS_LABEL: Record<string, string> = {
@@ -319,8 +319,8 @@ export default function AllRidesPage() {
                         key={p}
                         onClick={() => setPage(p)}
                         className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${p === page
-                            ? 'bg-blue-600 text-white'
-                            : 'text-slate-600 hover:bg-slate-100'
+                          ? 'bg-blue-600 text-white'
+                          : 'text-slate-600 hover:bg-slate-100'
                           }`}
                       >
                         {p}

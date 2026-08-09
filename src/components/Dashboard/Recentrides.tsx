@@ -19,7 +19,7 @@ interface RecentRidesProps {
 
 const statusBadge = (s: RideStatus): string => {
   if (s === 'Completed') return 'bg-emerald-100 text-emerald-700'
-  if (s === 'Ongoing')   return 'bg-orange-100 text-orange-700'
+  if (s === 'Ongoing') return 'bg-orange-100 text-orange-700'
   if (s === 'Cancelled') return 'bg-red-100 text-red-700'
   return 'bg-slate-100 text-slate-700'
 }

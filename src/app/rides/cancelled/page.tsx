@@ -38,7 +38,7 @@ export default function CancelledRidesPage() {
 
   const limit = 10
 
- const fetchRides = useCallback(async () => {
+  const fetchRides = useCallback(async () => {
     setLoading(true)
     setError('')
     try {

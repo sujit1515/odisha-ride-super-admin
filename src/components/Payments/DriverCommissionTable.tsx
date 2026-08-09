@@ -104,11 +104,10 @@ export default function DriverCommissionTable({
                 <button
                   key={st}
                   onClick={() => setStatus(st)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                    active
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${active
                       ? 'bg-white text-blue-600 shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
-                  }`}
+                    }`}
                 >
                   {st}
                   {st !== 'All' && (
@@ -272,13 +271,12 @@ export default function DriverCommissionTable({
                       <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden ml-auto mt-1">
                         <div
                           style={{ width: `${percent}%` }}
-                          className={`h-full ${
-                            percent >= 100
+                          className={`h-full ${percent >= 100
                               ? 'bg-rose-500'
                               : percent >= 80
-                              ? 'bg-amber-500'
-                              : 'bg-emerald-500'
-                          }`}
+                                ? 'bg-amber-500'
+                                : 'bg-emerald-500'
+                            }`}
                         />
                       </div>
                     </td>
@@ -291,13 +289,12 @@ export default function DriverCommissionTable({
                     {/* Remaining */}
                     <td className="py-4 px-4 text-right whitespace-nowrap">
                       <span
-                        className={`font-bold text-sm ${
-                          driver.remainingAmount === 0
+                        className={`font-bold text-sm ${driver.remainingAmount === 0
                             ? 'text-rose-600'
                             : driver.remainingAmount <= 200
-                            ? 'text-amber-600'
-                            : 'text-emerald-600'
-                        }`}
+                              ? 'text-amber-600'
+                              : 'text-emerald-600'
+                          }`}
                       >
                         ₹{driver.remainingAmount.toLocaleString('en-IN')}
                       </span>
@@ -306,22 +303,20 @@ export default function DriverCommissionTable({
                     {/* Status Badge */}
                     <td className="py-4 px-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${
-                          driver.status === 'Active'
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${driver.status === 'Active'
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                             : driver.status === 'Warning'
-                            ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                            : 'bg-rose-50 text-rose-700 border border-rose-200'
-                        }`}
+                              ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                              : 'bg-rose-50 text-rose-700 border border-rose-200'
+                          }`}
                       >
                         <span
-                          className={`h-1.5 w-1.5 rounded-full ${
-                            driver.status === 'Active'
+                          className={`h-1.5 w-1.5 rounded-full ${driver.status === 'Active'
                               ? 'bg-emerald-500'
                               : driver.status === 'Warning'
-                              ? 'bg-amber-500 animate-pulse'
-                              : 'bg-rose-500'
-                          }`}
+                                ? 'bg-amber-500 animate-pulse'
+                                : 'bg-rose-500'
+                            }`}
                         />
                         {driver.status}
                       </span>

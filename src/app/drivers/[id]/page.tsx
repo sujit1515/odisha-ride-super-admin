@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import AdminShell from '@/components/Common/AdminShell'
 import { RefreshCw, AlertTriangle } from 'lucide-react'
-
-// Components
 import { DriverHeader } from '../components/DriverHeader'
 import { DriverProfileCard } from '../components/DriverProfileCard'
 import { DriverVehicleCard } from '../components/DriverVehicleCard'
@@ -17,8 +15,6 @@ import { BlockModal } from '../components/BlockModal'
 import { RejectModal } from '../components/RejectModal'
 import { getDriverProfile } from '@/api/driver';
 import { blockDriver, unblockDriver, approveDriver, rejectDriver } from '@/api/kyc'
-
-// Types
 import { Driver, RecentRide, Document, ToastState } from './types'
 
 export default function DriverDetailPage() {

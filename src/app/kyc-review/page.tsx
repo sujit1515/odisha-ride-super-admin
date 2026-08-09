@@ -13,7 +13,7 @@ const pill = (s: KYCStatus): string => {
   return 'bg-amber-100 text-amber-700'
 }
 
- export default function KYCPage() {
+export default function KYCPage() {
   const router = useRouter()
   const [drivers, setDrivers] = useState<KYCEntry[]>([])
   const [resubmittedCount, setResubmittedCount] = useState<number>(0)
@@ -39,14 +39,14 @@ const pill = (s: KYCStatus): string => {
   }
 
   useEffect(() => {
-  const handleClickOutside = (e: MouseEvent) => {
-    if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-      setOpenMenu(null)
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpenMenu(null)
+      }
     }
-  }
-  document.addEventListener('mousedown', handleClickOutside)
-  return () => document.removeEventListener('mousedown', handleClickOutside)
-}, [])
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const fetchDrivers = async () => {
     try {
@@ -85,7 +85,7 @@ const pill = (s: KYCStatus): string => {
     }))
   }
 
-   
+
   const handleRowClick = (driverId: string) => {
     router.push(`/kyc-review/${driverId}`)
   }
@@ -105,7 +105,7 @@ const pill = (s: KYCStatus): string => {
     )
   }
 
-   if (error) {
+  if (error) {
     return (
       <AdminShell title="KYC Review">
         <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
@@ -123,8 +123,8 @@ const pill = (s: KYCStatus): string => {
     )
   }
 
-  
-   return (
+
+  return (
     <AdminShell title="KYC Review">
       <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 overflow-x-auto">
         <div className="flex justify-between items-center mb-4">

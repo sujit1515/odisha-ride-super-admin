@@ -13,19 +13,9 @@ import { useRegistrationStats } from '@/hooks/useRegistrationStats'
 import { useSosStats } from '@/hooks/useSosStats'
 import { useSosSocket } from '@/hooks/useSosSocket'
 import { getRecentRides, getRideStats, type Ride as ApiRide, type RideStats } from '@/api/rides'
+import type { MappedRide, RideStatus } from '@/components/Types/types'
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-type RideStatus = 'Completed' | 'Ongoing' | 'Cancelled' | 'Pending'
-
-interface MappedRide {
-  id: string
-  displayId: string
-  passenger: string
-  driver: string
-  fare: number
-  status: RideStatus
-  time: string
-}
+ 
 
 const STATUS_MAP: Record<string, RideStatus> = {
   completed: 'Completed',

@@ -7,7 +7,7 @@ import AdminShell from '@/components/Common/AdminShell'
 import { getOngoingRides } from '@/api/rides'
 
 
- 
+
 type OngoingStatus = 'requested' | 'accepted' | 'arrived' | 'started'
 
 interface Ride {
@@ -143,7 +143,7 @@ export default function OngoingRidesPage() {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <div className="flex items-center gap-2">
-             <Radio className="h-6 w-6 text-green-500 animate-pulse" />
+              <Radio className="h-6 w-6 text-green-500 animate-pulse" />
               <h1 className="text-2xl font-bold text-slate-800">Ongoing Rides</h1>
             </div>
             <p className="text-sm text-slate-500 mt-0.5">Live rides — auto-refreshes every {AUTO_REFRESH_SEC}s</p>

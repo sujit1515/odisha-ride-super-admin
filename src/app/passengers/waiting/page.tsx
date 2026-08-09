@@ -28,8 +28,8 @@ function waitSeverity(seconds: number) {
 }
 
 const severityStyles = {
-  normal:   { bg: '#ECFDF5', text: '#059669', dot: '#10B981' },
-  warning:  { bg: '#FFFBEB', text: '#B45309', dot: '#F59E0B' },
+  normal: { bg: '#ECFDF5', text: '#059669', dot: '#10B981' },
+  warning: { bg: '#FFFBEB', text: '#B45309', dot: '#F59E0B' },
   critical: { bg: '#FEF2F2', text: '#DC2626', dot: '#EF4444' },
 }
 

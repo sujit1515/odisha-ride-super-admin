@@ -7,7 +7,7 @@ import {
   Hash, ChevronLeft, ChevronRight, AlertTriangle,
   RefreshCw, X, Users
 } from 'lucide-react'
-import { getPassengers, activatePassenger } from '@/api/passengers' 
+import { getPassengers, activatePassenger } from '@/api/passengers'
 import type { DeactivatedUser } from '@/api/types/types'
 
 
@@ -85,15 +85,15 @@ function formatDate(raw: string) {
 const PAGE_SIZE = 10
 
 export default function DeactivatedUsersPage() {
-  const [users,           setUsers          ] = useState<DeactivatedUser[]>([])
-  const [filtered,        setFiltered       ] = useState<DeactivatedUser[]>([])
-  const [loading,         setLoading        ] = useState(true)
-  const [error,           setError          ] = useState<string | null>(null)
-  const [search,          setSearch         ] = useState('')
-  const [page,            setPage           ] = useState(1)
-  const [confirmUser,     setConfirmUser    ] = useState<DeactivatedUser | null>(null)
+  const [users, setUsers] = useState<DeactivatedUser[]>([])
+  const [filtered, setFiltered] = useState<DeactivatedUser[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
+  const [confirmUser, setConfirmUser] = useState<DeactivatedUser | null>(null)
   const [activateLoading, setActivateLoading] = useState(false)
-  const [successMsg,      setSuccessMsg     ] = useState<string | null>(null)
+  const [successMsg, setSuccessMsg] = useState<string | null>(null)
 
   useEffect(() => { fetchUsers() }, [])
 
@@ -101,11 +101,11 @@ export default function DeactivatedUsersPage() {
     const q = search.toLowerCase().trim()
     const result = q
       ? users.filter(u =>
-          u.name.toLowerCase().includes(q) ||
-          u.email.toLowerCase().includes(q) ||
-          u.phone.includes(q) ||
-          u.passengerId.toLowerCase().includes(q)
-        )
+        u.name.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q) ||
+        u.phone.includes(q) ||
+        u.passengerId.toLowerCase().includes(q)
+      )
       : users
     setFiltered(result)
     setPage(1)
@@ -122,12 +122,12 @@ export default function DeactivatedUsersPage() {
       const deactivated = allUsers
         .filter((u: any) => !u.isActive)
         .map((u: any) => ({
-          id:          u._id,
+          id: u._id,
           passengerId: u.passengerId ?? '—',
-          name:        u.fullName   ?? 'Unknown',
-          email:       u.email      ?? '—',
-          phone:       u.phoneNumber ?? '—',
-          createdAt:   u.createdAt  ?? '',
+          name: u.fullName ?? 'Unknown',
+          email: u.email ?? '—',
+          phone: u.phoneNumber ?? '—',
+          createdAt: u.createdAt ?? '',
         }))
       setUsers(deactivated)
       setFiltered(deactivated)
@@ -157,7 +157,7 @@ export default function DeactivatedUsersPage() {
 
   // ── Pagination ──────────────────────────────────────────────────────────────
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   // ── Loading skeleton ────────────────────────────────────────────────────────
   if (loading) {
@@ -304,9 +304,8 @@ export default function DeactivatedUsersPage() {
                     <tr
                       key={user.id}
                       className={`border-b border-slate-50 hover:bg-slate-50/60
-                                  transition-colors ${
-                        idx === paginated.length - 1 ? 'border-b-0' : ''
-                      }`}
+                                  transition-colors ${idx === paginated.length - 1 ? 'border-b-0' : ''
+                        }`}
                     >
                       {/* Passenger ID */}
                       <td className="px-5 py-4">
@@ -387,7 +386,7 @@ export default function DeactivatedUsersPage() {
               const { date, time } = formatDate(user.createdAt)
               return (
                 <div key={user.id}
-                     className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
+                  className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center
@@ -462,11 +461,10 @@ export default function DeactivatedUsersPage() {
                   <button
                     key={i}
                     onClick={() => setPage(i + 1)}
-                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
-                      page === i + 1
+                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${page === i + 1
                         ? 'bg-blue-600 text-white'
                         : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
-                    }`}
+                      }`}
                   >
                     {i + 1}
                   </button>

@@ -103,15 +103,15 @@ function formatBlockedAt(raw: string) {
 const PAGE_SIZE = 10
 
 export default function BlockedDriversPage() {
-  const [drivers, setDrivers]           = useState<BlockedDriver[]>([])
-  const [filtered, setFiltered]         = useState<BlockedDriver[]>([])
-  const [loading, setLoading]           = useState(true)
-  const [error, setError]               = useState<string | null>(null)
-  const [search, setSearch]             = useState('')
-  const [page, setPage]                 = useState(1)
+  const [drivers, setDrivers] = useState<BlockedDriver[]>([])
+  const [filtered, setFiltered] = useState<BlockedDriver[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
   const [confirmDriver, setConfirmDriver] = useState<BlockedDriver | null>(null)
   const [unblockLoading, setUnblockLoading] = useState(false)
-  const [successMsg, setSuccessMsg]     = useState<string | null>(null)
+  const [successMsg, setSuccessMsg] = useState<string | null>(null)
 
   useEffect(() => { fetchDrivers() }, [])
 
@@ -119,11 +119,11 @@ export default function BlockedDriversPage() {
     const q = search.toLowerCase().trim()
     const result = q
       ? drivers.filter(d =>
-          d.name.toLowerCase().includes(q) ||
-          d.email.toLowerCase().includes(q) ||
-          d.phone.includes(q) ||
-          d.driverId.toLowerCase().includes(q)
-        )
+        d.name.toLowerCase().includes(q) ||
+        d.email.toLowerCase().includes(q) ||
+        d.phone.includes(q) ||
+        d.driverId.toLowerCase().includes(q)
+      )
       : drivers
     setFiltered(result)
     setPage(1)
@@ -135,14 +135,14 @@ export default function BlockedDriversPage() {
     try {
       const res = await getBlockedDrivers()
       const list: BlockedDriver[] = (res.drivers || res || []).map((d: any) => ({
-        id:            d._id,
-        driverId:      d._id?.slice(-8).toUpperCase() || 'N/A',
-        name:          d.fullName || d.name || 'Unknown',
-        email:         d.email    || '—',
-        phone:         d.phone    || '—',
-        blockedAt:     d.blockedAt || d.updatedAt || '',
+        id: d._id,
+        driverId: d._id?.slice(-8).toUpperCase() || 'N/A',
+        name: d.fullName || d.name || 'Unknown',
+        email: d.email || '—',
+        phone: d.phone || '—',
+        blockedAt: d.blockedAt || d.updatedAt || '',
         blockedReason: d.blockedReason || d.blockReason || 'No reason provided',
-        blockedBy:     d.blockedBy || 'Admin',
+        blockedBy: d.blockedBy || 'Admin',
       }))
       setDrivers(list)
       setFiltered(list)
@@ -171,7 +171,7 @@ export default function BlockedDriversPage() {
 
   // ── Pagination ──────────────────────────────────────────────────────────────
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   // ── Loading skeleton ────────────────────────────────────────────────────────
   if (loading) {
@@ -293,9 +293,8 @@ export default function BlockedDriversPage() {
                   return (
                     <tr
                       key={driver.id}
-                      className={`border-b border-slate-50 hover:bg-slate-50/60 transition-colors ${
-                        idx === paginated.length - 1 ? 'border-b-0' : ''
-                      }`}
+                      className={`border-b border-slate-50 hover:bg-slate-50/60 transition-colors ${idx === paginated.length - 1 ? 'border-b-0' : ''
+                        }`}
                     >
                       {/* Driver info */}
                       <td className="px-5 py-4">
@@ -448,11 +447,10 @@ export default function BlockedDriversPage() {
                   <button
                     key={i}
                     onClick={() => setPage(i + 1)}
-                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
-                      page === i + 1
+                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${page === i + 1
                         ? 'bg-blue-600 text-white'
                         : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
-                    }`}
+                      }`}
                   >
                     {i + 1}
                   </button>
