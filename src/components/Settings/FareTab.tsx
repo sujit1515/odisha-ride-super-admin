@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Save, CheckCircle, AlertCircle,Bike, Car, Zap, Moon, CloudRain,
+import {
+  Save, CheckCircle, AlertCircle, Bike, Car, Zap, Moon, CloudRain,
   Clock, IndianRupee, TrendingUp, Slash,
   Plus, Trash2, Settings2, Pencil, Users,
   Percent, Timer, Wallet, Receipt,
@@ -10,7 +11,7 @@ import { saveFareSettings, saveRideSettings } from '@/api/settings'
 import type { Settings } from './types'
 
 
-type TabId = 'global' | string 
+type TabId = 'global' | string
 
 interface Vehicle {
   id: string
@@ -21,7 +22,7 @@ interface Vehicle {
   baseFare: number
   minFare: number
   perKmRate: number
-  perMinuteRate: number   
+  perMinuteRate: number
   baseDistance: number
   waitTimeFee: number
   freeWaitMinutes: number
@@ -184,9 +185,9 @@ function AddVehicleModal({ onAdd, onClose }: {
 }) {
   const [label, setLabel] = useState('')
   const [desc, setDesc] = useState('')
-  const [maxPassengers, setMaxPassengers] = useState(4) 
+  const [maxPassengers, setMaxPassengers] = useState(4)
 
- const handleAdd = () => {
+  const handleAdd = () => {
     if (!label.trim()) return
     onAdd({
       id: label.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now(),
@@ -369,7 +370,7 @@ export function FareTab({ settings, update }: {
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
 
 
-   // The backend always provides settings.vehicles — no frontend defaults needed.
+  // The backend always provides settings.vehicles — no frontend defaults needed.
   useEffect(() => {
     setVehicles(settings.vehicles ?? [])
   }, [settings.vehicles])
@@ -393,14 +394,14 @@ export function FareTab({ settings, update }: {
     setVehicles(updated)
     if (activeTab === deleteConfirm.id) setActiveTab('global')
     setDeleteConfirm(null)
-     setTimeout(() => handleSave(updated), 50)
+    setTimeout(() => handleSave(updated), 50)
   }
 
   // ── helper ───────────────────────────────────────────
   const pickVehicle = (id: string) => {
     const v = vehicles.find(v => v.id === id)
     if (!v) return undefined
-     return {
+    return {
       baseFare: v.baseFare,
       minFare: v.minFare,
       perKmRate: v.perKmRate,
@@ -553,7 +554,7 @@ export function FareTab({ settings, update }: {
               <h3 className="text-sm font-bold text-[#1E293B]">Base Global Charges</h3>
               <p className="text-xs text-slate-400 ml-1">— applied to all vehicle types</p>
             </div>
-             <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-6">
               <Field label="Cancellation Fee (₹)" hint="Charged after driver is assigned">
                 <NumInput value={settings.cancellationFee} onChange={update('cancellationFee')} />
               </Field>
@@ -826,7 +827,7 @@ export function FareTab({ settings, update }: {
                 <NumInput value={activeVehicle.perKmRate}
                   onChange={v => updateVehicle(activeVehicle.id, 'perKmRate', v)} />
               </Field>
-             <Field label="Per Minute Rate (₹)" hint="Charged per minute of ride time — differs per vehicle">
+              <Field label="Per Minute Rate (₹)" hint="Charged per minute of ride time — differs per vehicle">
                 <NumInput value={activeVehicle.perMinuteRate}
                   onChange={v => updateVehicle(activeVehicle.id, 'perMinuteRate', v)} />
               </Field>
