@@ -6,7 +6,7 @@ import { Save, CheckCircle, AlertCircle,Bike, Car, Zap, Moon, CloudRain,
   Plus, Trash2, Settings2, Pencil, Users,
   Percent, Timer, Wallet, Receipt,
 } from 'lucide-react'
-import { saveFareSettings, saveRideSettings } from '@/api/settings'
+import { saveFareSettings } from '@/api/settings'
 import type { Settings } from './types'
 
 
@@ -438,22 +438,12 @@ export function FareTab({ settings, update }: {
         tollChargeEnabled: settings.tollChargeEnabled,
         tollGstPercentage: settings.tollGstPercentage,
         tollRounding: settings.tollRounding,
-      }
-
-      // PATCH /admin/settings/ride — vehicle settings
-      const ridePayload = {
         bikeSettings: pickVehicle('bike'),
         autoSettings: pickVehicle('auto'),
-        nonacSettings: pickVehicle('nonac'),
-        acSettings: pickVehicle('ac'),
-        xlSettings: pickVehicle('xl'),
         vehicles: vehiclesToSave,
       }
 
-      await Promise.all([
-        saveFareSettings(farePayload),
-        saveRideSettings(ridePayload),
-      ])
+      await saveFareSettings(farePayload)
 
       setToast({ type: 'success', msg: 'Fare settings saved.' })
     } catch (err: any) {

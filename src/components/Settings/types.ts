@@ -55,7 +55,6 @@ export interface Settings {
 
   // ── Ride Configuration ────────────────────────────────
   searchRadiiKm:       number[]
-  avgSpeedKmh:         number
   etaTieThresholdMin:  number
   maxWaitingTime:      number
 
@@ -72,7 +71,6 @@ export interface Settings {
 
   // ── Driver Settings ───────────────────────────────────
   backgroundCheck: boolean
-  minDriverRating: number
 
   // ── Payout Settings ───────────────────────────────────
   payoutFrequency: string   // 'daily' | 'weekly' | 'monthly'
@@ -149,7 +147,6 @@ export const DEFAULTS: Settings = {
 
   // ── Ride Configuration ────────────────────────────────
   searchRadiiKm:      [3, 5, 8, 10],
-  avgSpeedKmh:        25,
   etaTieThresholdMin: 1,
   maxWaitingTime:     12,
 
@@ -166,7 +163,6 @@ export const DEFAULTS: Settings = {
 
   // ── Driver Settings ───────────────────────────────────
   backgroundCheck: false,
-  minDriverRating: 3.5,
 
   // ── Payout Settings ───────────────────────────────────
   payoutFrequency: 'weekly',

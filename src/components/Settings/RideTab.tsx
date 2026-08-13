@@ -158,7 +158,6 @@ export function RideTab({ settings, update }: {
     try {
       const payload = {
         searchRadiiKm: settings.searchRadiiKm,
-        avgSpeedKmh: settings.avgSpeedKmh,
         etaTieThresholdMin: settings.etaTieThresholdMin,
         maxWaitingTime: settings.maxWaitingTime,
       }
@@ -200,12 +199,6 @@ export function RideTab({ settings, update }: {
 
         <div className="space-y-6">
           <Card title="Matching & ETA" icon={Gauge}>
-            <Field label="Average City Speed (km/h)"
-                   hint="Used to estimate driver arrival time (ETA) for ranking and dispatch">
-              <TextInput type="number" value={settings.avgSpeedKmh}
-                         onChange={update('avgSpeedKmh')} suffix="km/h" />
-            </Field>
-
             <Field label="ETA Tie Threshold (minutes)"
                    hint="If two or more drivers' ETAs are within this many minutes of each other, the ride is offered to all of them at once instead of one at a time">
               <TextInput type="number" value={settings.etaTieThresholdMin}
