@@ -54,10 +54,9 @@ export interface Settings {
   tollRounding: string  // "none" | "1" | "5" | "10"
 
   // ── Ride Configuration ────────────────────────────────
-  searchRadiiKm: number[]
-  avgSpeedKmh: number
-  etaTieThresholdMin: number
-  maxWaitingTime: number
+  searchRadiiKm:       number[]
+  etaTieThresholdMin:  number
+  maxWaitingTime:      number
 
   // ── Notifications ─────────────────────────────────────
   emailPushNotif: boolean
@@ -72,7 +71,6 @@ export interface Settings {
 
   // ── Driver Settings ───────────────────────────────────
   backgroundCheck: boolean
-  minDriverRating: number
 
   // ── Payout Settings ───────────────────────────────────
   payoutFrequency: string   // 'daily' | 'weekly' | 'monthly'
@@ -148,8 +146,7 @@ export const DEFAULTS: Settings = {
   tollRounding: 'none',
 
   // ── Ride Configuration ────────────────────────────────
-  searchRadiiKm: [3, 5, 8, 10],
-  avgSpeedKmh: 25,
+  searchRadiiKm:      [3, 5, 8, 10],
   etaTieThresholdMin: 1,
   maxWaitingTime: 12,
 
@@ -166,7 +163,6 @@ export const DEFAULTS: Settings = {
 
   // ── Driver Settings ───────────────────────────────────
   backgroundCheck: false,
-  minDriverRating: 3.5,
 
   // ── Payout Settings ───────────────────────────────────
   payoutFrequency: 'weekly',

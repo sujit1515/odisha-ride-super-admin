@@ -57,15 +57,8 @@ export const saveFareSettings = async (data: any) => {
 // Save Ride Configuration (Driver Matching & ETA settings)
 export const saveRideSettings = async (data: {
   searchRadiiKm?: number[];
-  avgSpeedKmh?: number;
   etaTieThresholdMin?: number;
   maxWaitingTime?: number;
-  bikeSettings?: any;
-  autoSettings?: any;
-  nonacSettings?: any;
-  acSettings?: any;
-  xlSettings?: any;
-  vehicles?: any[];
 }) => {
   const res = await adminApi.patch("/admin/settings/ride", data);
   return res.data; // { message: string, settings: Settings }

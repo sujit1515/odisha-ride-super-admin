@@ -263,7 +263,6 @@ export interface Settings {
   // Driver
   autoApproveDrivers: boolean
   kycMandatory: boolean
-  minDriverRating: number
   backgroundCheck: boolean
 
   // Payout
@@ -313,7 +312,6 @@ export const DEFAULTS: Settings = {
   maxRidesPerDay: 20,
   autoApproveDrivers: false,
   kycMandatory: true,
-  minDriverRating: 3.5,
   backgroundCheck: true,
   payoutFrequency: 'weekly',
   minPayoutAmount: 500,

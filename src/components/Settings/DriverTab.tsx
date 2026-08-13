@@ -1,6 +1,4 @@
-'use client'
-
-import { UserCheck, Star, AlertTriangle } from 'lucide-react'
+import { UserCheck } from 'lucide-react'
 import type { Settings } from './types'
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
@@ -134,21 +132,6 @@ export function DriverTab({ settings, update, handleAutoApproveToggle, savingTog
           value={settings.backgroundCheck}
           onChange={update('backgroundCheck')}
         />
-      </Card>
-      <Card title="Quality Control" icon={Star}>
-        <Field label="Minimum Driver Rating"
-               hint="Drivers below this are auto-suspended">
-          <TextInput type="number" value={settings.minDriverRating}
-                     onChange={update('minDriverRating')} />
-        </Field>
-        <div className="mt-2 p-3 bg-amber-50 border border-amber-100 rounded-xl
-                        text-xs text-amber-700 flex items-start gap-2">
-          <AlertTriangle size={14} className="mt-0.5 shrink-0" />
-          <span>
-            Drivers with rating below <strong>{settings.minDriverRating}</strong> will
-            be flagged for review automatically.
-          </span>
-        </div>
       </Card>
     </div>
   )
