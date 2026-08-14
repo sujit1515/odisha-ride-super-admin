@@ -15,7 +15,6 @@ export interface Settings {
 
   // ── General ──────────────────────────────────────────
   platformName: string
-  commission: number
   supportEmail: string
   supportPhone: string
   autoApproveDrivers: boolean
@@ -27,10 +26,9 @@ export interface Settings {
   maxSurgeMultiplier: number   // cap: no combined surge can exceed this
   freeCancellationWindow: number   // minutes rider can cancel free
 
-  // ── Platform, Tax & Commission ────────────────────────
+  // ── Platform & Tax ────────────────────────────────────
   platformFee: number
   taxPercentage: number
-  driverCommissionPercentage: number
 
   // ── Peak Hour Surge (Auto) ────────────────────────────
   surgeEnabled: boolean
@@ -100,6 +98,7 @@ export interface Vehicle {
   baseDistance: number
   waitTimeFee: number
   freeWaitMinutes: number
+  commission: number
 }
 
 // ── Default Values ─────────────────────────────────────────────────────────
@@ -107,7 +106,6 @@ export const DEFAULTS: Settings = {
 
   // ── General ──────────────────────────────────────────
   platformName: 'Odisha Ride',
-  commission: 15,
   supportEmail: 'support@odisharide.com',
   supportPhone: '+91 9999999999',
   autoApproveDrivers: false,
@@ -119,10 +117,9 @@ export const DEFAULTS: Settings = {
   maxSurgeMultiplier: 3,
   freeCancellationWindow: 5,
 
-  // ── Platform, Tax & Commission ────────────────────────
+  // ── Platform & Tax ────────────────────────────────────
   platformFee: 5,
   taxPercentage: 5,
-  driverCommissionPercentage: 20,
 
   // ── Peak Hour Surge ───────────────────────────────────
   surgeEnabled: false,

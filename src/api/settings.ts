@@ -15,7 +15,6 @@ export const updateAutoApprove = async (autoApproveDrivers: boolean) => {
 // PATCH /api/v1/admin/settings/general
 export const saveGeneralSettings = async (data: {
   platformName?: string | null
-  commission?: number
   supportEmail?: string | null
   supportPhone?: string | null
   platformFee?: number
@@ -26,9 +25,6 @@ export const saveGeneralSettings = async (data: {
 
   if (data.platformName !== null && data.platformName !== undefined) {
     cleanData.platformName = data.platformName;
-  }
-  if (data.commission !== null && data.commission !== undefined) {
-    cleanData.commission = data.commission;
   }
   if (data.supportEmail !== null && data.supportEmail !== undefined) {
     cleanData.supportEmail = data.supportEmail;

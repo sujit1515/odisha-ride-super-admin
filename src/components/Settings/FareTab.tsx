@@ -26,6 +26,7 @@ interface Vehicle {
   baseDistance: number
   waitTimeFee: number
   freeWaitMinutes: number
+  commission: number
 }
 
 
@@ -195,6 +196,7 @@ function AddVehicleModal({ onAdd, onClose }: {
       accent: 'bg-slate-50 border-slate-200',
       baseFare: 0, minFare: 0, perKmRate: 0, perMinuteRate: 0,
       baseDistance: 1.5, waitTimeFee: 2, freeWaitMinutes: 3,
+      commission: 15,
     })
     onClose()
   }
@@ -410,6 +412,7 @@ export function FareTab({ settings, update }: {
       waitTimeFee: v.waitTimeFee,
       freeWaitMinutes: v.freeWaitMinutes,
       maxPassengers: v.maxPassengers,
+      commission: v.commission ?? 15,
     }
   }
 
@@ -557,14 +560,14 @@ export function FareTab({ settings, update }: {
             </div>
           </div>
 
-          {/* ── NEW: Taxes, Fees & Commissions ── */}
+          {/* ── NEW: Taxes & Fees ── */}
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
             <div className="flex items-center gap-2 mb-5">
               <Wallet size={16} className="text-[#1A73E8]" />
-              <h3 className="text-sm font-bold text-[#1E293B]">Taxes, Fees & Commissions</h3>
+              <h3 className="text-sm font-bold text-[#1E293B]">Taxes & Fees</h3>
               <p className="text-xs text-slate-400 ml-1">— deducted / added on every ride</p>
             </div>
-            <div className="grid grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 gap-6">
               <Field label="Platform Fee (₹)" hint="Flat fee charged to rider for app maintenance">
                 <NumInput
                   value={settings.platformFee}
@@ -572,31 +575,11 @@ export function FareTab({ settings, update }: {
                   min={0}
                 />
               </Field>
-              <Field label="Platform Commission (%)" hint="% of each ride fare taken by platform">
-                <div className="relative">
-                  <NumInput
-                    value={settings.commission}
-                    onChange={update('commission')}
-                    min={0}
-                  />
-                  <Percent size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                </div>
-              </Field>
               <Field label="Tax / GST (%)" hint="Tax applied to the final fare">
                 <div className="relative">
                   <NumInput
                     value={settings.taxPercentage}
                     onChange={update('taxPercentage')}
-                    min={0}
-                  />
-                  <Percent size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                </div>
-              </Field>
-              <Field label="Driver Commission (%)" hint="Platform's cut from the driver's earnings">
-                <div className="relative">
-                  <NumInput
-                    value={settings.driverCommissionPercentage}
-                    onChange={update('driverCommissionPercentage')}
                     min={0}
                   />
                   <Percent size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
@@ -804,7 +787,7 @@ export function FareTab({ settings, update }: {
             </div>
 
             {/* Row 1 — core fare fields */}
-            <div className="grid grid-cols-4 gap-6">
+            <div className="grid grid-cols-5 gap-6">
               <Field label="Base Fare (₹)" hint="Fixed charge when ride starts">
                 <NumInput value={activeVehicle.baseFare}
                   onChange={v => updateVehicle(activeVehicle.id, 'baseFare', v)} />
@@ -817,9 +800,19 @@ export function FareTab({ settings, update }: {
                 <NumInput value={activeVehicle.perKmRate}
                   onChange={v => updateVehicle(activeVehicle.id, 'perKmRate', v)} />
               </Field>
-              <Field label="Per Minute Rate (₹)" hint="Charged per minute of ride time — differs per vehicle">
+              <Field label="Per Minute Rate (₹)" hint="Charged per minute of ride time">
                 <NumInput value={activeVehicle.perMinuteRate}
                   onChange={v => updateVehicle(activeVehicle.id, 'perMinuteRate', v)} />
+              </Field>
+              <Field label="Driver Commission (%)" hint="Platform's cut from driver's earnings">
+                <div className="relative">
+                  <NumInput
+                    value={activeVehicle.commission ?? 15}
+                    onChange={v => updateVehicle(activeVehicle.id, 'commission', v)}
+                    min={0}
+                  />
+                  <Percent size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                </div>
               </Field>
             </div>
 
