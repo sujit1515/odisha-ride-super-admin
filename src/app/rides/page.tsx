@@ -6,7 +6,8 @@ import AdminShell from '@/components/Common/AdminShell'
 import {
   Search, Trash2, Eye, ChevronLeft, ChevronRight, RefreshCw
 } from 'lucide-react'
-import { getAllRides, deleteRide, type Ride } from '@/api/rides'
+import Loader from '@/components/Common/Loader'
+import { getAllRides, deleteRide, type Ride } from '@/app/rides/api/rides'
 
 type RideStatus = 'requested' | 'accepted' | 'arrived' | 'started' | 'completed' | 'cancelled' | 'all'
 
@@ -204,7 +205,11 @@ export default function AllRidesPage() {
               </thead>
               <tbody>
                 {loading ? (
-                  Array.from({ length: 8 }).map((_, i) => <SkeletonRow key={i} />)
+                  <tr>
+                    <td colSpan={10} className="px-4 py-12">
+                      <Loader text="Loading rides..." />
+                    </td>
+                  </tr>
                 ) : error ? (
                   <tr>
                     <td colSpan={10} className="px-4 py-12 text-center text-red-500 text-sm">

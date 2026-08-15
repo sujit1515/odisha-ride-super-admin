@@ -1,5 +1,5 @@
-import adminApi from './axiosinstance'
-import type { Ride, RidesResponse, RideStats } from './types/types'
+import adminApi from '@/api/axiosinstance'
+import type { Ride, RidesResponse, RideStats } from '@/api/types/types'
 
 
 // ── GET all rides ─────────────────────────────────────────────────────────────

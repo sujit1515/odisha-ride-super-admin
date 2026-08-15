@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { APIProvider, Map } from '@vis.gl/react-google-maps'
 import AdminShell from '@/components/Common/AdminShell'
+import Loader from '@/components/Common/Loader'
 import type { OnlineDriver, LiveMapStats, } from '@/api/types/types'
 import { DriverMarker } from '@/components/Live-map/DriverMarker'
 import { fetchOnlineDriversApi } from '@/api/driver-location'
@@ -171,13 +172,8 @@ export default function LiveMapPage() {
 
           {/* Loading overlay */}
           {isLoading && (
-            <div className="absolute inset-0 z-10 flex items-center
-                            justify-center bg-white/80 rounded-xl">
-              <div className="flex flex-col items-center gap-2">
-                <div className="w-8 h-8 border-4 border-slate-200
-                                border-t-slate-800 rounded-full animate-spin" />
-                <span className="text-xs text-slate-500">Loading map...</span>
-              </div>
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/80 rounded-xl">
+              <Loader text="Loading live map..." />
             </div>
           )}
 

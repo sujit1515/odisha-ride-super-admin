@@ -6,11 +6,12 @@ import {
 } from 'lucide-react'
 
 const AUTO_REFRESH_SEC = 15
+import Loader from '@/components/Common/Loader'
 import AdminShell from '@/components/Common/AdminShell'
 import {
   getWaitingPassengers,
   adminCancelRide,
-} from '@/api/passengers-waiting'
+} from '@/app/passengers/waiting/api/passengers-waiting'
 import { SearchingPassenger, MatchedPassenger } from '@/api/types/types';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -358,9 +359,7 @@ export default function PassengersWaitingPage() {
       <div className="mb-6">
         <SectionCard title="Searching for a driver" liveDotColor="#3B82F6" count={filteredSearching.length}>
           {loading ? (
-            <div className="divide-y divide-gray-100">
-              {[...Array(3)].map((_, i) => <SkeletonRow key={i} />)}
-            </div>
+            <Loader text="Loading searching passengers..." />
           ) : filteredSearching.length === 0 ? (
             <EmptyState label="No passengers currently searching for a driver." />
           ) : (
@@ -403,9 +402,7 @@ export default function PassengersWaitingPage() {
       <div>
         <SectionCard title="Driver assigned · en route" liveDotColor="#10B981" count={filteredMatched.length}>
           {loading ? (
-            <div className="divide-y divide-gray-100">
-              {[...Array(2)].map((_, i) => <SkeletonRow key={i} />)}
-            </div>
+            <Loader text="Loading matched passengers..." />
           ) : filteredMatched.length === 0 ? (
             <EmptyState label="No passengers currently waiting on an assigned driver." />
           ) : (

@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import {
-  Save, CheckCircle, AlertCircle, Bike, Car, Zap, Moon, CloudRain,
+import { Save, CheckCircle, AlertCircle,Bike, Car, Zap, Moon, CloudRain,
   Clock, IndianRupee, TrendingUp, Slash,
   Plus, Trash2, Settings2, Pencil, Users,
   Percent, Timer, Wallet, Receipt,
@@ -11,7 +10,7 @@ import { saveFareSettings } from '@/api/settings'
 import type { Settings } from './types'
 
 
-type TabId = 'global' | string
+type TabId = 'global' | string 
 
 interface Vehicle {
   id: string
@@ -22,11 +21,10 @@ interface Vehicle {
   baseFare: number
   minFare: number
   perKmRate: number
-  perMinuteRate: number
+  perMinuteRate: number   
   baseDistance: number
   waitTimeFee: number
   freeWaitMinutes: number
-  commission: number
 }
 
 
@@ -186,9 +184,9 @@ function AddVehicleModal({ onAdd, onClose }: {
 }) {
   const [label, setLabel] = useState('')
   const [desc, setDesc] = useState('')
-  const [maxPassengers, setMaxPassengers] = useState(4)
+  const [maxPassengers, setMaxPassengers] = useState(4) 
 
-  const handleAdd = () => {
+ const handleAdd = () => {
     if (!label.trim()) return
     onAdd({
       id: label.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now(),
@@ -196,7 +194,6 @@ function AddVehicleModal({ onAdd, onClose }: {
       accent: 'bg-slate-50 border-slate-200',
       baseFare: 0, minFare: 0, perKmRate: 0, perMinuteRate: 0,
       baseDistance: 1.5, waitTimeFee: 2, freeWaitMinutes: 3,
-      commission: 15,
     })
     onClose()
   }
@@ -372,7 +369,7 @@ export function FareTab({ settings, update }: {
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
 
 
-  // The backend always provides settings.vehicles — no frontend defaults needed.
+   // The backend always provides settings.vehicles — no frontend defaults needed.
   useEffect(() => {
     setVehicles(settings.vehicles ?? [])
   }, [settings.vehicles])
@@ -396,14 +393,14 @@ export function FareTab({ settings, update }: {
     setVehicles(updated)
     if (activeTab === deleteConfirm.id) setActiveTab('global')
     setDeleteConfirm(null)
-    setTimeout(() => handleSave(updated), 50)
+     setTimeout(() => handleSave(updated), 50)
   }
 
   // ── helper ───────────────────────────────────────────
   const pickVehicle = (id: string) => {
     const v = vehicles.find(v => v.id === id)
     if (!v) return undefined
-    return {
+     return {
       baseFare: v.baseFare,
       minFare: v.minFare,
       perKmRate: v.perKmRate,
@@ -412,7 +409,6 @@ export function FareTab({ settings, update }: {
       waitTimeFee: v.waitTimeFee,
       freeWaitMinutes: v.freeWaitMinutes,
       maxPassengers: v.maxPassengers,
-      commission: v.commission ?? 15,
     }
   }
 
@@ -547,7 +543,7 @@ export function FareTab({ settings, update }: {
               <h3 className="text-sm font-bold text-[#1E293B]">Base Global Charges</h3>
               <p className="text-xs text-slate-400 ml-1">— applied to all vehicle types</p>
             </div>
-            <div className="grid grid-cols-3 gap-6">
+             <div className="grid grid-cols-3 gap-6">
               <Field label="Cancellation Fee (₹)" hint="Charged after driver is assigned">
                 <NumInput value={settings.cancellationFee} onChange={update('cancellationFee')} />
               </Field>
@@ -560,14 +556,14 @@ export function FareTab({ settings, update }: {
             </div>
           </div>
 
-          {/* ── NEW: Taxes & Fees ── */}
+          {/* ── NEW: Taxes, Fees & Commissions ── */}
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
             <div className="flex items-center gap-2 mb-5">
               <Wallet size={16} className="text-[#1A73E8]" />
-              <h3 className="text-sm font-bold text-[#1E293B]">Taxes & Fees</h3>
+              <h3 className="text-sm font-bold text-[#1E293B]">Taxes, Fees & Commissions</h3>
               <p className="text-xs text-slate-400 ml-1">— deducted / added on every ride</p>
             </div>
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-4 gap-6">
               <Field label="Platform Fee (₹)" hint="Flat fee charged to rider for app maintenance">
                 <NumInput
                   value={settings.platformFee}
@@ -575,11 +571,31 @@ export function FareTab({ settings, update }: {
                   min={0}
                 />
               </Field>
+              <Field label="Platform Commission (%)" hint="% of each ride fare taken by platform">
+                <div className="relative">
+                  <NumInput
+                    value={settings.commission}
+                    onChange={update('commission')}
+                    min={0}
+                  />
+                  <Percent size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                </div>
+              </Field>
               <Field label="Tax / GST (%)" hint="Tax applied to the final fare">
                 <div className="relative">
                   <NumInput
                     value={settings.taxPercentage}
                     onChange={update('taxPercentage')}
+                    min={0}
+                  />
+                  <Percent size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                </div>
+              </Field>
+              <Field label="Driver Commission (%)" hint="Platform's cut from the driver's earnings">
+                <div className="relative">
+                  <NumInput
+                    value={settings.driverCommissionPercentage}
+                    onChange={update('driverCommissionPercentage')}
                     min={0}
                   />
                   <Percent size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
@@ -787,7 +803,7 @@ export function FareTab({ settings, update }: {
             </div>
 
             {/* Row 1 — core fare fields */}
-            <div className="grid grid-cols-5 gap-6">
+            <div className="grid grid-cols-4 gap-6">
               <Field label="Base Fare (₹)" hint="Fixed charge when ride starts">
                 <NumInput value={activeVehicle.baseFare}
                   onChange={v => updateVehicle(activeVehicle.id, 'baseFare', v)} />
@@ -800,19 +816,9 @@ export function FareTab({ settings, update }: {
                 <NumInput value={activeVehicle.perKmRate}
                   onChange={v => updateVehicle(activeVehicle.id, 'perKmRate', v)} />
               </Field>
-              <Field label="Per Minute Rate (₹)" hint="Charged per minute of ride time">
+             <Field label="Per Minute Rate (₹)" hint="Charged per minute of ride time — differs per vehicle">
                 <NumInput value={activeVehicle.perMinuteRate}
                   onChange={v => updateVehicle(activeVehicle.id, 'perMinuteRate', v)} />
-              </Field>
-              <Field label="Driver Commission (%)" hint="Platform's cut from driver's earnings">
-                <div className="relative">
-                  <NumInput
-                    value={activeVehicle.commission ?? 15}
-                    onChange={v => updateVehicle(activeVehicle.id, 'commission', v)}
-                    min={0}
-                  />
-                  <Percent size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                </div>
               </Field>
             </div>
 

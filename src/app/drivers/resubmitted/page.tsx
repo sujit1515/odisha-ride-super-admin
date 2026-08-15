@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import AdminShell from '@/components/Common/AdminShell'
-import { getResubmittedDrivers, approveDriver, rejectDriver } from '@/api/kyc'
+import { getResubmittedDrivers, approveDriver, rejectDriver } from '@/app/drivers/api/kyc'
 import { RejectModal } from '../components/RejectModal'
 import { Check, X, Eye, Phone, Mail, Car, RotateCcw, Sparkles } from 'lucide-react'
 

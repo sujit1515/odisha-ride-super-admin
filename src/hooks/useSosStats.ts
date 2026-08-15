@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { getSosStats } from '@/api/sos'
+import { getSosStats } from '@/app/support/sos/api/sos'
 import type { SosStats } from '@/api/types/types'
 
 export function useSosStats(pollInterval = 10_000) {

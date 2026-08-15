@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import AdminShell from '@/components/Common/AdminShell'
-import { getResolvedSosAlerts, clearResolvedSosAlerts } from '@/api/sos'
+import { getResolvedSosAlerts, clearResolvedSosAlerts } from '@/app/support/sos/api/sos'
 import type { ResolvedSosAlert } from '@/api/types/types'
 
 const CONFIRM_PHRASE = 'DELETE ALL'

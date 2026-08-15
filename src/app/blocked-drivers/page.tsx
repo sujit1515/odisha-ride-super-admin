@@ -7,9 +7,9 @@ import {
   User, Hash, ChevronLeft, ChevronRight, AlertTriangle,
   RefreshCw, X
 } from 'lucide-react'
-import { getBlockedDrivers, unblockDriver } from '@/api/kyc'
+import Loader from '@/components/Common/Loader'
+import { getBlockedDrivers, unblockDriver } from '@/app/drivers/api/kyc'
 import type { BlockedDriver } from '@/api/types/types'
-
 
 // ── Unblock Confirm Modal ─────────────────────────────────────────────────────
 const UnblockConfirmModal = ({
@@ -176,20 +176,9 @@ export default function BlockedDriversPage() {
   // ── Loading skeleton ────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <AdminShell title="Blocked Driver" >
-        <div className="animate-pulse space-y-3">
-          <div className="h-10 bg-slate-100 rounded-xl w-72" />
-          <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="flex gap-4 px-5 py-4 border-b border-slate-50">
-                <div className="h-4 w-24 bg-slate-100 rounded" />
-                <div className="h-4 w-32 bg-slate-100 rounded" />
-                <div className="h-4 w-40 bg-slate-100 rounded" />
-                <div className="h-4 w-28 bg-slate-100 rounded" />
-                <div className="h-4 w-20 bg-slate-100 rounded ml-auto" />
-              </div>
-            ))}
-          </div>
+      <AdminShell title="Blocked Drivers">
+        <div className="bg-white rounded-2xl border border-slate-100 p-12 flex items-center justify-center">
+          <Loader text="Loading blocked drivers..." />
         </div>
       </AdminShell>
     )

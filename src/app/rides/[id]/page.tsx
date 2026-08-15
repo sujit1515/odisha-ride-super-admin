@@ -9,7 +9,7 @@ import {
   XCircle, AlertCircle, MessageSquare, Download,
 } from 'lucide-react'
 import { JSX } from 'react'
-import { getRideById, downloadInvoice, type Ride } from '@/api/rides'
+import { getRideById, downloadInvoice, type Ride } from '@/app/rides/api/rides'
 
 
 const STATUS_STYLES: Record<string, string> = {

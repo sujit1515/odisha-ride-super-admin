@@ -18,6 +18,7 @@ import {
   Lock,
   Unlock,
 } from 'lucide-react'
+import Loader from '@/components/Common/Loader'
 import { DriverCommission, DriverStatus, VehicleType } from './types'
 
 interface DriverCommissionTableProps {
@@ -156,41 +157,11 @@ export default function DriverCommissionTable({
           </thead>
           <tbody className="divide-y divide-slate-100 text-sm">
             {isLoading ? (
-              // Skeleton rows
-              Array.from({ length: 5 }).map((_, idx) => (
-                <tr key={idx} className="animate-pulse">
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 bg-slate-200 rounded-full" />
-                      <div className="space-y-1">
-                        <div className="h-4 w-32 bg-slate-200 rounded" />
-                        <div className="h-3 w-20 bg-slate-100 rounded" />
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-4 px-4">
-                    <div className="h-4 w-24 bg-slate-200 rounded" />
-                  </td>
-                  <td className="py-4 px-4 text-right">
-                    <div className="h-4 w-16 bg-slate-200 rounded ml-auto" />
-                  </td>
-                  <td className="py-4 px-4 text-right">
-                    <div className="h-4 w-16 bg-slate-200 rounded ml-auto" />
-                  </td>
-                  <td className="py-4 px-4 text-right">
-                    <div className="h-4 w-16 bg-slate-200 rounded ml-auto" />
-                  </td>
-                  <td className="py-4 px-4">
-                    <div className="h-6 w-20 bg-slate-200 rounded-full" />
-                  </td>
-                  <td className="py-4 px-4">
-                    <div className="h-4 w-28 bg-slate-200 rounded" />
-                  </td>
-                  <td className="py-4 px-6 text-right">
-                    <div className="h-8 w-24 bg-slate-200 rounded-xl ml-auto" />
-                  </td>
-                </tr>
-              ))
+              <tr>
+                <td colSpan={8} className="py-12">
+                  <Loader text="Loading drivers..." />
+                </td>
+              </tr>
             ) : filteredDrivers.length === 0 ? (
               // Empty State
               <tr>

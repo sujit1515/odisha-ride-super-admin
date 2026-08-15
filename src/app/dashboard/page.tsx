@@ -12,7 +12,7 @@ import { useDriverStatusSummary } from '@/hooks/useDriverStatusSummary'
 import { useRegistrationStats } from '@/hooks/useRegistrationStats'
 import { useSosStats } from '@/hooks/useSosStats'
 import { useSosSocket } from '@/hooks/useSosSocket'
-import { getRecentRides, getRideStats, type Ride as ApiRide, type RideStats } from '@/api/rides'
+import { getRecentRides, getRideStats, type Ride as ApiRide, type RideStats } from '@/app/rides/api/rides'
 import type { MappedRide, RideStatus } from '@/components/Types/types'
 
  

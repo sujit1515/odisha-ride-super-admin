@@ -9,7 +9,7 @@ import {
   updateTicketPriority,
   deleteTicket,
   exportTickets,
-} from '@/api/support'
+} from '@/app/support/api/support'
 import  {
   SupportTicket,
   TicketStats,

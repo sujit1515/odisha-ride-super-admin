@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Building2, Phone, Save, CheckCircle, AlertCircle } from 'lucide-react'
-import { saveGeneralSettings } from '@/api/settings'
+import { saveGeneralSettings } from '@/app/settings/api/settings'
 import type { Settings } from './types'
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {

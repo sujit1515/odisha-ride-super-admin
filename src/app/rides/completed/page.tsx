@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, Eye, ChevronLeft, ChevronRight, RefreshCw, CheckCircle2 } from 'lucide-react'
+import Loader from '@/components/Common/Loader'
 import AdminShell from '@/components/Common/AdminShell'
-import { getCompletedRides, type Ride } from '@/api/rides'
+import { getCompletedRides, type Ride } from '@/app/rides/api/rides'
 
 function SkeletonRow() {
   return (
@@ -153,8 +154,12 @@ export default function CompletedRidesPage() {
                 </thead>
                 <tbody>
                   {loading ? (
-                    Array.from({ length: 8 }).map((_, i) => <SkeletonRow key={i} />)
-                  ) : error ? (
+                  <tr>
+                    <td colSpan={11} className="px-4 py-12">
+                      <Loader text="Loading completed rides..." />
+                    </td>
+                  </tr>
+                ) : error ? (
                     <tr>
                       <td colSpan={11} className="px-4 py-12 text-center text-red-500 text-sm">{error}</td>
                     </tr>

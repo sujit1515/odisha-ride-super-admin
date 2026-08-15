@@ -4,7 +4,7 @@ import AdminShell from '@/components/Common/AdminShell'
 import { ArrowLeft, Check, X, Download, User, FileText, Eye, Ban, Unlock, AlertTriangle } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { getDriverById, approveDriver, rejectDriver, blockDriver, unblockDriver } from '../../../api/kyc'
+import { getDriverById, approveDriver, rejectDriver, blockDriver, unblockDriver } from '../../drivers/api/kyc'
 import type { DocStatus, KYCStatus,  KYCDriverStatus, Document, DriverKYC } from '@/api/types/types'
 
 // ── Helper: safely format a date string ──────────────────────────────────────

@@ -2,7 +2,8 @@
 
 :root,
 html {
-  font-size: 90%;
+  zoom: 82%;
+  -webkit-text-size-adjust: 100%;
 }
 
 /* Login page styles */

@@ -1,5 +1,5 @@
-import adminApi from './axiosinstance'
-import { SearchingPassenger,WaitingPassengersResponse,MatchedPassenger } from './types/types'
+import adminApi from '../../../../api/axiosinstance'
+import { SearchingPassenger,WaitingPassengersResponse,MatchedPassenger } from '../../../../api/types/types'
  
 
 export const getWaitingPassengers = async (): Promise<WaitingPassengersResponse> => {

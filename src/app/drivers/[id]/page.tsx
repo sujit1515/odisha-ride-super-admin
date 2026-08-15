@@ -14,7 +14,7 @@ import { DriverBanking } from '../components/DriverBanking'
 import { BlockModal } from '../components/BlockModal'
 import { RejectModal } from '../components/RejectModal'
 import { getDriverProfile } from '@/api/driver';
-import { blockDriver, unblockDriver, approveDriver, rejectDriver } from '@/api/kyc'
+import { blockDriver, unblockDriver, approveDriver, rejectDriver } from '@/app/drivers/api/kyc'
 import { Driver, RecentRide, Document, ToastState } from './types'
 
 export default function DriverDetailPage() {

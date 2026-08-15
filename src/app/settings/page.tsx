@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import AdminShell from '@/components/Common/AdminShell'
-import { getSettings, updateAutoApprove } from '@/api/settings'
+import { getSettings, updateAutoApprove } from '@/app/settings/api/settings'
 import {
   Building2, DollarSign, Car, UserCheck, Wallet, Bell, ShieldCheck,
   CheckCircle, AlertCircle, Loader2,

@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Eye, RefreshCw, Radio, Clock } from 'lucide-react'
+import Loader from '@/components/Common/Loader'
 import AdminShell from '@/components/Common/AdminShell'
-import { getOngoingRides } from '@/api/rides'
+import { getOngoingRides } from '@/app/rides/api/rides'
 
 
 
@@ -219,7 +220,11 @@ export default function OngoingRidesPage() {
               </thead>
               <tbody>
                 {loading ? (
-                  Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)
+                  <tr>
+                    <td colSpan={10} className="px-4 py-12">
+                      <Loader text="Loading ongoing rides..." />
+                    </td>
+                  </tr>
                 ) : error ? (
                   <tr>
                     <td colSpan={10} className="px-4 py-12 text-center text-red-500 text-sm">{error}</td>

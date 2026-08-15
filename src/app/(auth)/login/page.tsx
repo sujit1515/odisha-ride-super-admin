@@ -7,7 +7,7 @@ import {
   Mail, Lock, Calendar, Eye, EyeOff,
   AlertCircle, Shield, ChevronLeft, ChevronRight, X,
 } from 'lucide-react'
-import { adminLogin } from "@/api/auth"
+import { adminLogin } from "@/app/(auth)/api/auth"
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 

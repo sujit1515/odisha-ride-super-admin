@@ -80,7 +80,7 @@ export function PayoutTab({ settings, update }: {
           <p className="font-medium text-blue-800 mb-1">Current Setup</p>
           <p>Frequency: <strong className="capitalize">{settings.payoutFrequency}</strong></p>
           <p>Min payout: <strong>₹{settings.minPayoutAmount}</strong></p>
-          <p>Commission: <strong>Vehicle-specific</strong></p>
+          <p>Commission: <strong>{settings.commission}%</strong> per ride</p>
         </div>
       </Card>
     </div>

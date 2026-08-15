@@ -5,6 +5,8 @@ import { RefreshCw, Wifi, WifiOff } from 'lucide-react'
 import { getDriverStatusSummary } from '@/api/driver'
 import type { DriverStatusSummary } from '@/api/driver'
 
+import Loader from '@/components/Common/Loader'
+
 interface DriverStatusProps {
   /** Auto-refresh interval in ms. Default: 30s */
   pollInterval?: number
@@ -48,24 +50,11 @@ export default function DriverStatus({ pollInterval = 30_000 }: DriverStatusProp
   const total   = data?.total   ?? 0
   const barMax  = total || 1
 
-  // ── Loading skeleton ──────────────────────────────────────
+  // ── Loading state ────────────────────────────────────────
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 animate-pulse">
-        <div className="h-5 w-32 bg-slate-100 rounded mb-6" />
-        {[1, 2, 3].map(i => (
-          <div key={i} className="mb-5">
-            <div className="flex justify-between mb-2">
-              <div className="h-4 w-20 bg-slate-100 rounded" />
-              <div className="h-4 w-8  bg-slate-100 rounded" />
-            </div>
-            <div className="h-2 w-full bg-slate-100 rounded-full" />
-          </div>
-        ))}
-        <div className="mt-6 pt-4 border-t flex justify-between">
-          <div className="h-4 w-24 bg-slate-100 rounded" />
-          <div className="h-4 w-20 bg-slate-100 rounded" />
-        </div>
+      <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 min-h-[220px] flex items-center justify-center">
+        <Loader size="md" />
       </div>
     )
   }

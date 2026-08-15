@@ -11,7 +11,7 @@ import {
   deletePassenger,
   Passenger,
   PassengerStats,
-} from '@/api/passengers'
+} from '@/app/passengers/api/passengers'
 import { Eye, MoreVertical, UserX, UserCheck, Trash2 } from 'lucide-react'
 
 // ── Delete Confirm Modal ──────────────────────────────────────────────────────

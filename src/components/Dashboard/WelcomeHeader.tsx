@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { RefreshCw, ShieldCheck, ChevronUp, ChevronDown } from 'lucide-react'
-import { getSystemHealth, type OverallSystemStatus } from '@/api/dashboard'
+import { getSystemHealth, type OverallSystemStatus } from '@/app/dashboard/api/dashboard'
 
 const STORAGE_KEY = 'welcome-header-collapsed'
 

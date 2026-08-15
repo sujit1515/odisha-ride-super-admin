@@ -3,8 +3,10 @@ import { useRouter } from 'next/navigation'
 import AdminShell from '@/components/Common/AdminShell'
 import { MoreVertical, RotateCcw } from 'lucide-react'
 import { useEffect, useState, useRef } from 'react'
-import { getAllDrivers, getResubmittedDrivers } from '../../api/kyc'
+import { getAllDrivers, getResubmittedDrivers } from '../drivers/api/kyc'
 import type { KYCStatus, KYCEntry } from '@/api/types/types'
+
+import Loader from '@/components/Common/Loader'
 
 // ── Helper 
 const pill = (s: KYCStatus): string => {
@@ -93,13 +95,8 @@ export default function KYCPage() {
   if (loading) {
     return (
       <AdminShell title="KYC Review">
-        <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
-          <div className="flex justify-center items-center h-64">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto" />
-              <p className="mt-4 text-slate-600">Loading drivers...</p>
-            </div>
-          </div>
+        <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 min-h-[300px] flex items-center justify-center">
+          <Loader text="Loading driver applications..." />
         </div>
       </AdminShell>
     )

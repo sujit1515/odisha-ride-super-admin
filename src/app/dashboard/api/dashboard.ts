@@ -1,4 +1,4 @@
-import adminApi from './axiosinstance'
+import adminApi from '../../../api/axiosinstance'
 
 export type OverallSystemStatus = 'healthy' | 'degraded' | 'critical'
 export type ServiceConnectionStatus = 'connected' | 'disconnected'

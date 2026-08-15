@@ -31,7 +31,7 @@ import {
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { adminLogout } from '@/api/auth'
+import { adminLogout } from '@/app/(auth)/api/auth'
 import SidebarItem from './SidebarItem'
 
 interface NavItem {
@@ -248,7 +248,7 @@ export default function Sidebar({
         animate={isMobileOpen ? 'open' : 'closed'}
         variants={mobileSlideVariants}
         transition={{ duration: 0.3, ease: 'easeOut' }}
-        className="fixed top-0 left-0 z-50 h-screen w-[190px] lg:hidden flex flex-col shadow-2xl"
+        className="fixed inset-y-0 left-0 z-50 w-[190px] lg:hidden flex flex-col shadow-2xl"
       >
         {/* On mobile, it's always expanded visually (width 260px) */}
         {renderSidebarContent(false, true)}
@@ -264,7 +264,7 @@ export default function Sidebar({
             ? { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
             : { duration: 0 }
         }
-        className="fixed top-0 left-0 z-30 h-screen hidden lg:block overflow-hidden"
+        className="fixed inset-y-0 left-0 z-30 hidden lg:block overflow-hidden"
       >
         {renderSidebarContent(contentCollapsed, false)}
       </motion.aside>

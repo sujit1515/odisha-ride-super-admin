@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Car, MapPin, Gauge, Scale, Save, CheckCircle, AlertCircle } from 'lucide-react'
-import { saveRideSettings } from '@/api/settings'
+import { saveRideSettings } from '@/app/settings/api/settings'
 import type { Settings } from './types'
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {

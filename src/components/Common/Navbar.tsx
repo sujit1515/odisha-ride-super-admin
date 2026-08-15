@@ -3,7 +3,7 @@ import { Search, Bell, HelpCircle, PanelLeft, User, LogOut } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { adminLogout } from '@/api/auth'
+import { adminLogout } from '@/app/(auth)/api/auth'
 
 interface NavbarProps {
   title?: string

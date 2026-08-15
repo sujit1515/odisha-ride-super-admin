@@ -1,4 +1,4 @@
-import adminApi from "./axiosinstance";
+import adminApi from "@/api/axiosinstance";
 
 // ── Admin Login
 export const adminLogin = async (data: {

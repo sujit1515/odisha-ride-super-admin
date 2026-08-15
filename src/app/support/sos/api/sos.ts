@@ -1,5 +1,5 @@
-import api from './axiosinstance'
-import { SosAlert,ResolvedAlertsResponse,SosStats } from './types/types';
+import api from '@/api/axiosinstance'
+import { SosAlert,ResolvedAlertsResponse,SosStats } from '@/api/types/types';
 
 
 export async function getSosStats(): Promise<SosStats> {

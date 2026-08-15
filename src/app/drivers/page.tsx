@@ -4,9 +4,11 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import AdminShell from '@/components/Common/AdminShell';
 import { Users, Wifi, WifiOff, Clock, ShieldOff } from 'lucide-react'
-import { getAllDrivers, approveDriver, rejectDriver, blockDriver, unblockDriver, } from "@/api/kyc";
+import { getAllDrivers, approveDriver, rejectDriver, blockDriver, unblockDriver, } from "@/app/drivers/api/kyc";
 import type { Driver, DriverStatus, ToastState, ActionModalState, } from '@/api/types/types'
 import { useRouter } from 'next/navigation'
+
+import Loader from '@/components/Common/Loader';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -542,10 +544,13 @@ export default function DriversPage() {
                 </tr>
               </thead>
               <tbody>
-                {isLoading
-                  ? Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)
-                  : paginated.length === 0
-                    ? (
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={8} className="py-12">
+                      <Loader text="Loading drivers..." />
+                    </td>
+                  </tr>
+                ) : paginated.length === 0 ? (
                       <tr>
                         <td colSpan={8} className="px-4 py-20 text-center">
                           <div className="flex flex-col items-center gap-3">

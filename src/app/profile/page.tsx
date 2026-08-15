@@ -1,9 +1,10 @@
  'use client';
  
 import { useState, useEffect } from 'react'
+import Loader from '@/components/Common/Loader'
 import AdminShell from '@/components/Common/AdminShell'
 import { User, Mail, Phone, Shield, Camera, Edit3,Key, Save, X, Check, Globe, Lock,Activity, Clock, LogOut, Eye, EyeOff, AlertCircle, } from 'lucide-react'
-import { getAdminProfile, updateAdminProfile, changeAdminPassword, adminLogout } from '@/api/auth'
+import { getAdminProfile, updateAdminProfile, changeAdminPassword, adminLogout } from '@/app/(auth)/api/auth'
 import { useRouter } from 'next/navigation' 
 import type { Tab,FormState,PasswordState,ProfileMeta, } from '@/api/types/types'
 
@@ -162,25 +163,8 @@ export default function ProfilePage() {
   if (profileLoading) {
     return (
       <AdminShell title="My Profile">
-        <div className="max-w-4xl mx-auto animate-pulse">
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm mb-5 overflow-hidden">
-            <div className="h-24 bg-slate-200" />
-            <div className="px-6 pb-5 pt-3">
-              <div className="w-20 h-20 rounded-2xl bg-slate-200 -mt-10 mb-4" />
-              <div className="h-5 w-40 bg-slate-200 rounded mb-2" />
-              <div className="h-3 w-56 bg-slate-100 rounded" />
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-            <div className="grid grid-cols-2 gap-5">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i}>
-                  <div className="h-3 w-20 bg-slate-100 rounded mb-2" />
-                  <div className="h-10 bg-slate-100 rounded-lg" />
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="max-w-4xl mx-auto bg-white rounded-2xl border border-slate-100 p-12 flex items-center justify-center min-h-[350px]">
+          <Loader text="Loading profile..." />
         </div>
       </AdminShell>
     )

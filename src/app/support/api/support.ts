@@ -1,5 +1,5 @@
-import adminApi from './axiosinstance'
-import type { SupportTicket,TicketMessage,TicketStats,TicketsResponse,TicketFilters,TicketStatus,TicketPriority } from './types/types'
+import adminApi from '@/api/axiosinstance'
+import type { SupportTicket,TicketMessage,TicketStats,TicketsResponse,TicketFilters,TicketStatus,TicketPriority } from '../../../api/types/types'
 
 // ── GET /support/tickets ──────────────────────────────────────────────────────
 export const getTickets = async (

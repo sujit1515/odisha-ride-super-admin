@@ -6,6 +6,7 @@ import {
   Radio, RefreshCw, Clock, Search, Car, Phone,
   MapPin, Wifi, WifiOff, AlertCircle, Loader2, ChevronRight,
 } from 'lucide-react'
+import Loader from '@/components/Common/Loader'
 import { fetchOnlineDriversApi } from '@/api/driver-location'
 import type { OnlineDriver } from '@/api/types/types'
 import { io } from 'socket.io-client'
@@ -320,9 +321,7 @@ export default function DriversOnlinePage() {
 
           <div className="p-4">
             {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-                {[...Array(6)].map((_, i) => <DriverCardSkeleton key={i} />)}
-              </div>
+              <Loader text="Loading online drivers..." />
             ) : filtered.length === 0 ? (
               <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
