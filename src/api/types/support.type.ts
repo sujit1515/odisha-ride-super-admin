@@ -230,10 +230,12 @@ export interface TicketFilters {
 export interface Settings {
   // General
   platformName: string
+  platformCommission: number
   supportEmail: string
   supportPhone: string
   platformFee: number
   taxPercentage: number
+  driverCommission: number
 
   // Fare
   baseFare: number
@@ -283,10 +285,12 @@ export interface Settings {
 // ── Default Values 
 export const DEFAULTS: Settings = {
   platformName: 'Odisha Ride',
+  platformCommission: 15,
   supportEmail: 'support@odisharide.com',
   supportPhone: '+91 9999999999',
   platformFee: 10,
   taxPercentage: 5,
+  driverCommission: 15,
   baseFare: 50,
   perKmRate: 12,
   minFare: 30,

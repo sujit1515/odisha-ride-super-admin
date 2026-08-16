@@ -11,7 +11,7 @@ import { saveFareSettings } from '@/api/settings'
 import type { Settings } from './types'
 
 
-type TabId = 'global' | string
+type TabId = 'global' | string 
 
 interface Vehicle {
   id: string
@@ -22,11 +22,12 @@ interface Vehicle {
   baseFare: number
   minFare: number
   perKmRate: number
-  perMinuteRate: number
+  perMinuteRate: number   
   baseDistance: number
   waitTimeFee: number
   freeWaitMinutes: number
-  commission: number
+  platformCommission?: number
+  driverCommission?: number
 }
 
 
@@ -196,7 +197,6 @@ function AddVehicleModal({ onAdd, onClose }: {
       accent: 'bg-slate-50 border-slate-200',
       baseFare: 0, minFare: 0, perKmRate: 0, perMinuteRate: 0,
       baseDistance: 1.5, waitTimeFee: 2, freeWaitMinutes: 3,
-      commission: 15,
     })
     onClose()
   }
@@ -241,10 +241,12 @@ function EditVehicleModal({ vehicle, onSave, onClose }: {
   const [desc, setDesc] = useState(vehicle.desc)
   const [maxPassengers, setMaxPassengers] = useState(vehicle.maxPassengers)
 
+
   const handleSave = () => {
     if (!label.trim()) return
-    onSave({ ...vehicle, label, desc, maxPassengers })
-    onClose()
+        onSave({ ...vehicle, label, desc, maxPassengers })
+
+     onClose()
   }
 
   return (
@@ -289,6 +291,7 @@ function EditVehicleModal({ vehicle, onSave, onClose }: {
             </div>
             <NumInput value={maxPassengers} onChange={setMaxPassengers} min={1} />
           </Field>
+
         </div>
 
         <div className="flex gap-3 mt-5">
@@ -412,7 +415,8 @@ export function FareTab({ settings, update }: {
       waitTimeFee: v.waitTimeFee,
       freeWaitMinutes: v.freeWaitMinutes,
       maxPassengers: v.maxPassengers,
-      commission: v.commission ?? 15,
+      platformCommission: v.platformCommission,
+      driverCommission: v.driverCommission,
     }
   }
 
@@ -429,6 +433,8 @@ export function FareTab({ settings, update }: {
         cancellationFee: settings.cancellationFee,
         maxSurgeMultiplier: settings.maxSurgeMultiplier,
         freeCancellationWindow: settings.freeCancellationWindow,
+        platformCommission: settings.platformCommission,
+        driverCommission: settings.driverCommission,
         surgeEnabled: settings.surgeEnabled,
         surgeMultiplier: settings.surgeMultiplier,
         surgeStartTime: settings.surgeStartTime,
@@ -575,11 +581,31 @@ export function FareTab({ settings, update }: {
                   min={0}
                 />
               </Field>
+              <Field label="Platform Commission (%)" hint="Default % taken by platform — used when a vehicle has no override">
+                <div className="relative">
+                  <NumInput
+                    value={settings.platformCommission}
+                    onChange={update('platformCommission')}
+                    min={0}
+                  />
+                  <Percent size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                </div>
+              </Field>
               <Field label="Tax / GST (%)" hint="Tax applied to the final fare">
                 <div className="relative">
                   <NumInput
                     value={settings.taxPercentage}
                     onChange={update('taxPercentage')}
+                    min={0}
+                  />
+                  <Percent size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                </div>
+              </Field>
+              <Field label="Driver Commission (%)" hint="Default driver cut — used when a vehicle has no override">
+                <div className="relative">
+                  <NumInput
+                    value={settings.driverCommission}
+                    onChange={update('driverCommission')}
                     min={0}
                   />
                   <Percent size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
@@ -804,16 +830,6 @@ export function FareTab({ settings, update }: {
                 <NumInput value={activeVehicle.perMinuteRate}
                   onChange={v => updateVehicle(activeVehicle.id, 'perMinuteRate', v)} />
               </Field>
-              <Field label="Driver Commission (%)" hint="Platform's cut from driver's earnings">
-                <div className="relative">
-                  <NumInput
-                    value={activeVehicle.commission ?? 15}
-                    onChange={v => updateVehicle(activeVehicle.id, 'commission', v)}
-                    min={0}
-                  />
-                  <Percent size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                </div>
-              </Field>
             </div>
 
             {/* Divider */}
@@ -879,6 +895,33 @@ export function FareTab({ settings, update }: {
                 After that, <span className="font-semibold text-[#1E293B]">₹{activeVehicle.waitTimeFee}/min</span> is
                 added to the final fare to compensate the driver for lost time.
               </p>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-slate-100 my-5" />
+
+            {/* Row 3 — Per-vehicle commission overrides */}
+            <div className="grid grid-cols-4 gap-6">
+              <Field label="Platform Commission (%)" hint={`Overrides global default (${settings.platformCommission}%) — leave blank to inherit`}>
+                <div className="relative">
+                  <NumInput
+                    value={activeVehicle.platformCommission ?? settings.platformCommission}
+                    onChange={v => updateVehicle(activeVehicle.id, 'platformCommission', v)}
+                    min={0}
+                  />
+                  <Percent size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                </div>
+              </Field>
+              <Field label="Driver Commission (%)" hint={`Overrides global default (${settings.driverCommission}%) — leave blank to inherit`}>
+                <div className="relative">
+                  <NumInput
+                    value={activeVehicle.driverCommission ?? settings.driverCommission}
+                    onChange={v => updateVehicle(activeVehicle.id, 'driverCommission', v)}
+                    min={0}
+                  />
+                  <Percent size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                </div>
+              </Field>
             </div>
           </div>
 

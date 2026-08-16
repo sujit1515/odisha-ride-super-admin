@@ -14,9 +14,10 @@ export interface VehicleSettings {
 export interface Settings {
 
   // ── General ──────────────────────────────────────────
-  platformName: string
-  supportEmail: string
-  supportPhone: string
+  platformName:       string
+  platformCommission: number
+  supportEmail:       string
+  supportPhone:       string
   autoApproveDrivers: boolean
   kycMandatory: boolean
 
@@ -26,9 +27,10 @@ export interface Settings {
   maxSurgeMultiplier: number   // cap: no combined surge can exceed this
   freeCancellationWindow: number   // minutes rider can cancel free
 
-  // ── Platform & Tax ────────────────────────────────────
-  platformFee: number
-  taxPercentage: number
+  // ── Platform, Tax & Commission ────────────────────────
+  platformFee:                number
+  taxPercentage:              number
+  driverCommission: number
 
   // ── Peak Hour Surge (Auto) ────────────────────────────
   surgeEnabled: boolean
@@ -85,6 +87,8 @@ export interface Settings {
   vehicles?: Vehicle[]
 }
 
+export type TabId = 'global' | string 
+
 export interface Vehicle {
   id: string
   label: string
@@ -94,20 +98,22 @@ export interface Vehicle {
   baseFare: number
   minFare: number
   perKmRate: number
-  perMinuteRate: number
+  perMinuteRate: number   
   baseDistance: number
   waitTimeFee: number
   freeWaitMinutes: number
-  commission: number
+  platformCommission?: number
+  driverCommission?: number
 }
 
 // ── Default Values ─────────────────────────────────────────────────────────
 export const DEFAULTS: Settings = {
 
   // ── General ──────────────────────────────────────────
-  platformName: 'Odisha Ride',
-  supportEmail: 'support@odisharide.com',
-  supportPhone: '+91 9999999999',
+  platformName:       'Odisha Ride',
+  platformCommission: 15,
+  supportEmail:       'support@odisharide.com',
+  supportPhone:       '+91 9999999999',
   autoApproveDrivers: false,
   kycMandatory: true,
 
@@ -117,9 +123,10 @@ export const DEFAULTS: Settings = {
   maxSurgeMultiplier: 3,
   freeCancellationWindow: 5,
 
-  // ── Platform & Tax ────────────────────────────────────
-  platformFee: 5,
-  taxPercentage: 5,
+  // ── Platform, Tax & Commission ────────────────────────
+  platformFee:                5,
+  taxPercentage:              5,
+  driverCommission: 20,
 
   // ── Peak Hour Surge ───────────────────────────────────
   surgeEnabled: false,
