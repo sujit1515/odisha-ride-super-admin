@@ -450,7 +450,16 @@ export function FareTab({ settings, update }: {
         tollRounding: settings.tollRounding,
         bikeSettings: pickVehicle('bike'),
         autoSettings: pickVehicle('auto'),
-        vehicles: vehiclesToSave,
+        // Strip any legacy `commission` field that MongoDB may still store on old vehicle records
+        vehicles: vehiclesToSave.map(({ id, label, desc, accent, maxPassengers,
+          baseFare, minFare, perKmRate, perMinuteRate, baseDistance,
+          waitTimeFee, freeWaitMinutes, platformCommission, driverCommission }) => ({
+          id, label, desc, accent, maxPassengers,
+          baseFare, minFare, perKmRate, perMinuteRate, baseDistance,
+          waitTimeFee, freeWaitMinutes,
+          ...(platformCommission !== undefined && { platformCommission }),
+          ...(driverCommission !== undefined && { driverCommission }),
+        })),
       }
 
       await saveFareSettings(farePayload)
